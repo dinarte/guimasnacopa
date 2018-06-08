@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+            
+            
+            
+            <div class="row">
+                <div class="col-lg-12">
+                	<div class="text-align: center"></div>
+                	<a href="/palpite/editar">
+	                    <div class="progress">
+						  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40"
+						  aria-valuemin="0" aria-valuemax="100" 
+						  th:style="${'width:' + #numbers.formatDecimal(autenticacao.participante.porcentagemPalpites,2,0) + '%'}" 
+						  th:text="${#numbers.formatDecimal(autenticacao.participante.porcentagemPalpites,2,1,'COMMA') + '% dos palpites preenchidos'}">
+						    40% 
+						  </div>
+					  </a>
+					</div>
+                </div>
+            </div>
+  
+             
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-users fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge" th:text="${qtdParticipantes}">38</div>
+                                    <div>Participantes!</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/russia2018/participantes">
+                            <div class="panel-footer">
+                                <span class="pull-left">Veja quem sÃ£o!</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <!-- div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-usd fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">R$ 1.500,00</div>
+                                    <div>PrÃªmio Estimado!</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Saiba mais</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-yellow">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-trophy fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge"><span th:text="${session.autenticacao.participante.pontuacao}">1340</span> pts</div>
+                                    <div><span th:text="${session.autenticacao.participante.classificacao}">1</span>Âª colocado</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/russia2018/ranking">
+                            <div class="panel-footer">
+                                <span class="pull-left">Ranking completo</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-book fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge"></div>
+                                    <div>Consulte o  Regulamento!</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/russia2018/regulamento">
+                            <div class="panel-footer">
+                                <span class="pull-left">Leia agora</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Acompanhe seus palpites 
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                        Outros Palpites
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right" role="menu">
+                                        <li><a href="#">Opção Bloqueada</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <img alt="tabela" src="/img/tabela.PNG" width="100%">
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                    
+                </div>
+                <!-- /.col-lg-8 -->
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-tachometer fa-fw"></i> Ranking
+                        </div>
+                        <!-- /.panel-heading -->
+                        <table class="table">
+                        	<thead>
+                        		<tr>
+                        			<th></th>
+                        			<th>Jogador</th>
+                        			<th>Pontos</th>
+                        			<th>Aproveitamento</th>
+                        		</tr>
+                        	</thead>
+                        	<tbody>
+                        		<th:block th:each="participante : ${top10}">
+	                        		<tr>
+	                        			<td><span th:text="${participante.classificacao}">1</span>º</td>
+	                        			<td th:text="${participante.usuario.name}">Dinarte filho</td>
+	                        			<td th:text="${participante.pontuacao}">180</td>
+	                        			<td><span th:text="${participante.aproveitamento}">100</span>%</td>
+	                        		</tr>
+                        		</th:block>
+                        	</tbody>
+                        
+                        	<tfoot>
+                        		<tr>
+                        			<td colspan="4">
+                        				<a href="/russia2018/ranking" class="btn btn-info btn-block">Ver Ranking completo</button>
+                        			</td>
+                        		</tr>
+                        	</tfoot>
+                        
+                        </table>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                    
+                  
+                </div>
+                <!-- /.col-lg-4 -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>

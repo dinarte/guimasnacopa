@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header" th:text="${bolao.nome}">Descrição do Bolão</h1>
+                    <h3>Participantes</h3>
+                </div>
+            </div>
+        
+        
+            <table class="table">
+                        	<thead>
+                        		<tr>
+                        			<th>Jogador</th>
+                        			<th>Email</th>
+                        			<th>Situação</th>
+                        			<th>Preenchimento</th>
+                        		</tr>
+                        	</thead>
+                        	<tbody>
+                        		<th:block th:each="participante : ${participantes}">
+	                        		<tr>
+	                        			<td th:text="${participante.usuario.name}">Dinarte filho</td>
+	                        			<td th:text="${participante.usuario.email}">email@servidor.com</td>
+	                        			<td>
+	                        				<a th:class="${participante.pg == true ? 'btn btn-primary' : 'btn btn-danger'}" th:if="${autenticacao.usuario.admin}" th:href="${'/participante/'+ participante.id +'/alterarpagamento' }"  th:text="${participante.pg == true ? 'Confirmado' : 'Pendente'}">
+	                        					Confirmado
+	                        				</a>
+	                        				
+	                        				<span th:class="${participante.pg == true ? 'badge badge-primary' : 'badge badge-danger'}" th:if="${!autenticacao.usuario.admin}" th:text="${participante.pg == true ? 'Confirmado' : 'Pendente'}">
+	                        					Confirmado
+	                        				</span>
+	                        			</td>
+	                        			<td> 
+	                        			
+	                        			<div class="progress">
+										  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40"
+										  aria-valuemin="0" aria-valuemax="100" th:style="${'width:' + #numbers.formatDecimal(participante.porcentagemPalpites,2,0) + '%'}" th:text="${#numbers.formatDecimal(participante.porcentagemPalpites,2,1,'COMMA') + '%'}">
+										    40% 
+										  </div>
+										</div>
+	                        			
+	                        			
+	                        			</td>
+	                        		</tr>
+                        		</th:block>
+                        	</tbody>
+                        </table>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>

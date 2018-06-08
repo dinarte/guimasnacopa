@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header" th:text="${autenticacao.bolao.nome}">Descrição do Bolão</h1>
+                    <h3>Jogos</h3>
+                </div>
+            </div>
+        
+       		<form role="form" action="/#" th:action="@{/jogos/save}"  method="post">
+       		
+	            <table class="table">
+	            	<thead>
+	            		<tr>
+	            			<th>Fase</th>
+	            			<th>Grupo</th>
+	            			<th style="text-align: center"> Jogo </th>
+	            			<th>Data do Jogo</th>
+	            			<th>Alterar Data</th>
+	            		</tr>
+	            	</thead>
+	            	<tbody>
+	            		<th:block th:each="jogo : ${jogos}">
+	             		<tr>
+	             			<td th:text="${jogo.fase.nome}">Fase</td>
+	             			<td th:text="${jogo.grupo}">Grupo A</td>
+	             			<td th:text="${jogo.timesDescricao}" style="text-align: center">
+	             				Time a x Time b
+	             			</td>
+	             			<td th:text=" ${ #dates.format(jogo.data, 'dd MMM hh:mm')}" >
+	             			   X/XX/XXXX XX:XX
+	             			</td>
+	             			<td >
+	             			<input th:name="${jogo.id}" type="datetime-local" th:value="${jogo.data}" class="form-control">
+	             			</td>
+	             		</tr>
+	            		</th:block>
+	            	</tbody>
+	            	<tfoot>
+	            		<tr>
+	            			<td colspan="5">
+	            				<button class="btn btn-info btn-block">Salvar Jogos</button>
+	            			</td>
+	            		</tr>
+	            	</tfoot>
+	            </table>
+            </form>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>
+
+

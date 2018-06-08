@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header" th:text="${bolao.nome}">Descriçao do Bolão</h1>
+                    <h3>Renking Completo</h3>
+                </div>
+            </div>
+        
+        
+           <table class="table">
+                        	<thead>
+                        		<tr>
+                        			<th></th>
+                        			<th>Jogador</th>
+                        			<th>Pontos</th>
+                        			<th>Aproveitamento</th>
+                        		</tr>
+                        	</thead>
+                        	<tbody>
+                        		<th:block th:each="participante : ${participantes}">
+	                        		<tr>
+	                        			<td><span th:text="${participante.classificacao}">1</span>ª</td>
+	                        			<td th:text="${participante.usuario.name}">Dinarte filho</td>
+	                        			<td th:text="${participante.pontuacao}">180</td>
+	                        			<td><span th:text="${participante.aproveitamento}">100</span>%</td>
+	                        		</tr>
+                        		</th:block>
+                        	</tbody>
+                        </table>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>
