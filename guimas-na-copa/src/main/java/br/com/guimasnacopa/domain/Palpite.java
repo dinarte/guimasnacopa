@@ -46,9 +46,13 @@ public class Palpite {
 	
 	@Transient
 	public boolean isApostaAberta() {
-		ZonedDateTime agora = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("America/Sao_Paulo"));
-		ZonedDateTime limite = ZonedDateTime.of(limiteAposta, ZoneId.of("America/Sao_Paulo"));
-		return agora.isBefore(limite);
+		if (limiteAposta != null) {
+			ZonedDateTime agora = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("America/Sao_Paulo"));
+			ZonedDateTime limite = ZonedDateTime.of(limiteAposta, ZoneId.of("America/Sao_Paulo"));
+			return agora.isBefore(limite);
+		}else {
+			return true;
+		}
 	}
 	
 	public boolean isResultado() {
