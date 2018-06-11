@@ -1,6 +1,7 @@
 package br.com.guimasnacopa.repository;
 
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public interface JogoRepository  extends CrudRepository<Jogo, Integer>{
 	
 	@Modifying(clearAutomatically = true)
 	@Query("update Jogo set data = :data where id = :jogoId")
-	public void updateData(@Param("data") Date data, @Param("jogoId") Integer jogoId);
+	public void updateData(@Param("data") LocalDateTime data, @Param("jogoId") Integer jogoId);
 	
 	
 }

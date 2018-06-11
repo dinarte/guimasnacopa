@@ -1,5 +1,6 @@
 package br.com.guimasnacopa.domain;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -11,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 @Entity
 public class Jogo {
 
@@ -18,9 +21,13 @@ public class Jogo {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 	
-	private Date data;
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+	private LocalDateTime data;
 	
 	private String grupo;
+	
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+	private LocalDateTime limiteAposta;
 	
 	@OneToMany(mappedBy="jogo") 
 	Set<TimeNoJogo> timesNoJogo;
@@ -45,11 +52,11 @@ public class Jogo {
 		this.id = id;
 	}
 
-	public Date getData() {
+	public LocalDateTime getData() {
 		return data;
 	}
 
-	public void setData(Date data) {
+	public void setData(LocalDateTime data) {
 		this.data = data;
 	}
 
@@ -75,6 +82,14 @@ public class Jogo {
 
 	public void setTimesNoJogo(Set<TimeNoJogo> timesNoJogo) {
 		this.timesNoJogo = timesNoJogo;
+	}
+
+	public LocalDateTime getLimiteAposta() {
+		return limiteAposta;
+	}
+
+	public void setLimiteAposta(LocalDateTime limiteAposta) {
+		this.limiteAposta = limiteAposta;
 	}
 
 		

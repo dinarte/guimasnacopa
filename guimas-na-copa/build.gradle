@@ -28,7 +28,7 @@ repositories {
 task createWar(type : War){
     destinationDir = file("$buildDir")
     baseName = "bolao"
-    version = "1.0.3"
+    version = "1.0.4C"
     caseSensitive = true
     from "src"
 }

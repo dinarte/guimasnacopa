@@ -51,7 +51,7 @@ public class PalpiteService {
 			
 			palpite.setTimeA(times.get(1).getTime());
 			palpite.setTimeB(times.get(2).getTime());
-			
+			palpite.setLimiteAposta(jogo.getLimiteAposta());
 			palpiteRepo.save(palpite);
 			novosPalpites.add(palpite);
 		});

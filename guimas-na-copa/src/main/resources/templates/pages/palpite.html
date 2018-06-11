@@ -15,7 +15,7 @@
         
         	<div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header" th:text="${session.autenticacao.bolao.nome}">DescriÃ§ao do BolÃ£o</h1>
+                    <h1 class="page-header" th:text="${session.autenticacao.bolao.nome}">Descrição do Bolão</h1>
                     <h3>Editar meus palpites</h3>
                 </div>
             </div>
@@ -37,13 +37,19 @@
 		                        		<tr>
 		                        			<td th:text="${palpite.jogo.fase.nome}">Fase do Jogo</td>
 		                        			<td th:text="${palpite.jogo.grupo}">Grupo</td>
-		                        			<td th:text=" ${ #dates.format(palpite.jogo.data, 'dd MMM hh:mm')}" style="text-align: right;" >
+		                        			<td th:text=" ${ #temporals.format(palpite.jogo.data, 'dd MMM hh:mm')}" style="text-align: right;" >
 					             			   X/XX/XXXX XX:XX
 					             			</td> 
 		                        			<td th:text="${palpite.timeA.nome}" style="text-align: right;">Time A</td>
-		                        			<td width="20px" style="text-align: right;"><input th:name="${palpite.keyGolsTimeA}" th:value="${palpite.golsTimeA}" type="number" min="0" max="99" maxlength="2" />	</td>
+		                        			<td width="20px" style="text-align: right;">
+		                        				<input th:if="${palpite.apostaAberta}" th:name="${palpite.keyGolsTimeA}" th:value="${palpite.golsTimeA}" type="number" min="0" max="99" maxlength="2" />	
+		                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.golsTimeA}"></span>
+		                        			</td>
 		                        			<td width="3px">x</td>
-		                        			<td width="20px"><input th:name="${palpite.keyGolsTimeB}" th:value="${palpite.golsTimeB}" type="number" min="0" max="99" maxlength="2" /></td>
+		                        			<td width="20px">
+		                        				<input th:if="${palpite.apostaAberta}" th:name="${palpite.keyGolsTimeB}" th:value="${palpite.golsTimeB}" type="number" min="0" max="99" maxlength="2" />
+		                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.golsTimeB}"></span>
+		                        			</td>
 		                        			<td th:text="${palpite.timeB.nome}" style="text-align: left;">Time B</td>
 		                        		</tr>
 		                        	</th:block>
@@ -55,20 +61,23 @@
 		                        			<td  style="text-align: right;">Time A</td>
 		                        			<td width="20px">
 		                        			
-			                        			<select th:name="${palpite.keyGolsTimeA}">
+			                        			<select th:if="${palpite.apostaAberta}"  th:name="${palpite.keyGolsTimeA}" >
 			                        				<option  th:each="time : ${times}" th:value="${time.id}" th:selected="${palpite.timeA == null || palpite.timeA.id==time.id}">[[${time.nome}]]</option>
 			                        			</select>
-		                        			
+			                       				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.timeA.nome}"></span>
+			                        			
+			                        		
 		                        			</td>
 		                        			
 		                        			<td width="3px">x</td>
 		                        			
 		                        			<td width="20px">
 											
-												<select th:name="${palpite.keyGolsTimeB}">
+												<select th:if="${palpite.apostaAberta}" th:name="${palpite.keyGolsTimeB}" >
 			                        				<option  th:each="time : ${times}" th:value="${time.id}" th:selected="${palpite.timeB ==null || palpite.timeB.id==time.id}">[[${time.nome}]]</option>
 			                        			</select>			
-
+												<span th:if="${!palpite.apostaAberta}" th:text="${palpite.timeB.nome}"></span>
+			                        			
 		                        			</td>
 		                        			<td>Time B</td>
 		                        		</tr>
@@ -81,10 +90,11 @@
 		                        			<td  style="text-align: right;">Selecionar Campeão</td>
 		                        			<td width="20px" colspan="7">
 		                        			
-			                        			<select th:name="${palpite.keyGolsTimeA}">
+			                        			<select th:if="${palpite.apostaAberta}" th:name="${palpite.keyGolsTimeA}" >
 			                        				<option  th:each="time : ${times}" th:value="${time.id}" th:selected="${palpite.timeA == null || palpite.timeA.id==time.id}">[[${time.nome}]]</option>
 			                        			</select>
-		                        			
+		                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.timeA.nome}"></span>
+			                        			
 		                        			
 		                        			</td>
 		                        			

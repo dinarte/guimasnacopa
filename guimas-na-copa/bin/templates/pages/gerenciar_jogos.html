@@ -27,7 +27,6 @@
 	            			<th>Grupo</th>
 	            			<th style="text-align: center"> Jogo </th>
 	            			<th>Data do Jogo</th>
-	            			<th>Alterar Data</th>
 	            		</tr>
 	            	</thead>
 	            	<tbody>
@@ -37,9 +36,6 @@
 	             			<td th:text="${jogo.grupo}">Grupo A</td>
 	             			<td th:text="${jogo.timesDescricao}" style="text-align: center">
 	             				Time a x Time b
-	             			</td>
-	             			<td th:text=" ${ #dates.format(jogo.data, 'dd MMM hh:mm')}" >
-	             			   X/XX/XXXX XX:XX
 	             			</td>
 	             			<td >
 	             			<input th:name="${jogo.id}" type="datetime-local" th:value="${jogo.data}" class="form-control">

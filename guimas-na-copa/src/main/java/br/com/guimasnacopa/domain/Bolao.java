@@ -21,6 +21,8 @@ public class Bolao {
 	private String permalink;
 	
 	private Double valor;
+	
+	private Double taxaAdministrativa;
 
 	public Integer getId() {
 		return id;
@@ -60,6 +62,14 @@ public class Bolao {
 
 	public void setValor(Double valor) {
 		this.valor = valor;
+	}
+
+	public Double getTaxaAdministrativa() {
+		return taxaAdministrativa;
+	}
+
+	public void setTaxaAdministrativa(Double taxaAdministrativa) {
+		this.taxaAdministrativa = taxaAdministrativa;
 	}
 	
 	

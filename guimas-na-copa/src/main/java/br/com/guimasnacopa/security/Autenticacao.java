@@ -2,8 +2,10 @@ package br.com.guimasnacopa.security;
 
 import javax.security.auth.login.LoginException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.Model;
 
 import br.com.guimasnacopa.domain.Bolao;
 import br.com.guimasnacopa.domain.Participante;
@@ -30,6 +32,11 @@ public class Autenticacao{
 			throw new LoginException("Você precisa estar autenticado para acessar esta operação");
 		if (getUsuario().getAdmin()!= true)
 			throw new LoginException("Você precisa ser admin para acessar esta operação");
+	}
+	
+	public void checkAdminAthorization(Model model) throws LoginException {
+		checkAdminAthorization();
+		model.addAttribute(this);
 	}
 	
 

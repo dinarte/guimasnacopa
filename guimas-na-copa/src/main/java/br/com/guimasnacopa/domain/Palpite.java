@@ -1,10 +1,15 @@
 package br.com.guimasnacopa.domain;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 @Entity
 public class Palpite {
@@ -36,6 +41,15 @@ public class Palpite {
 	private Time timeB;
 	
 	private Integer golsTimeB;
+	
+	private LocalDateTime limiteAposta;
+	
+	@Transient
+	public boolean isApostaAberta() {
+		ZonedDateTime agora = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("America/Sao_Paulo"));
+		ZonedDateTime limite = ZonedDateTime.of(limiteAposta, ZoneId.of("America/Sao_Paulo"));
+		return agora.isBefore(limite);
+	}
 	
 	public boolean isResultado() {
 		return tipo.equals( RESULTADO );
@@ -121,6 +135,14 @@ public class Palpite {
 	
 	public String getKeyGolsTimeB() {
 		return id + "-timeB";
+	}
+
+	public LocalDateTime getLimiteAposta() {
+		return limiteAposta;
+	}
+
+	public void setLimiteAposta(LocalDateTime limiteAposta) {
+		this.limiteAposta = limiteAposta;
 	}
 	
 }

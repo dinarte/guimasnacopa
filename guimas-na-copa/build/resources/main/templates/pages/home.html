@@ -11,8 +11,6 @@
 
         <div id="page-wrapper">
             
-            
-            
             <div class="row">
                 <div class="col-lg-12">
                 	<div class="text-align: center"></div>
@@ -47,14 +45,14 @@
                         </div>
                         <a href="/russia2018/participantes">
                             <div class="panel-footer">
-                                <span class="pull-left">Veja quem sÃ£o!</span>
+                                <span class="pull-left">Veja quem são!</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                 <div class="clearfix"></div>
                             </div>
                         </a>
                     </div>
                 </div>
-                <!-- div class="col-lg-3 col-md-6">
+                <div class="col-lg-3 col-md-6">
                     <div class="panel panel-green">
                         <div class="panel-heading">
                             <div class="row">
@@ -62,12 +60,12 @@
                                     <i class="fa fa-usd fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div class="huge">R$ 1.500,00</div>
-                                    <div>PrÃªmio Estimado!</div>
+                                    <div class="huge" th:text="${premioEstimado}">R$ 1.500,00</div>
+                                    <div>Prêmio Estimado!</div>
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
+                        <a href="/russia2018/regulamento">
                             <div class="panel-footer">
                                 <span class="pull-left">Saiba mais</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -75,7 +73,7 @@
                             </div>
                         </a>
                     </div>
-                </div -->
+                </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="panel panel-yellow">
                         <div class="panel-heading">
@@ -85,7 +83,7 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><span th:text="${session.autenticacao.participante.pontuacao}">1340</span> pts</div>
-                                    <div><span th:text="${session.autenticacao.participante.classificacao}">1</span>Âª colocado</div>
+                                    <div><span th:text="${session.autenticacao.participante.classificacao}">1</span>ª  colocado</div>
                                 </div>
                             </div>
                         </div>

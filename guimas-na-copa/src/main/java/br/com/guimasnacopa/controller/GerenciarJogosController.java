@@ -2,6 +2,7 @@ package br.com.guimasnacopa.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -42,30 +43,16 @@ public class GerenciarJogosController {
 	@Transactional
 	public String salvar(HttpServletRequest reuqest, Model m) throws LoginException {
 		autenticacao.checkAdminAthorization();
-		
-		
-		System.out.println( reuqest.getParameterNames() );
-		
 		List<Jogo> jogos = jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
 		jogos.forEach(j -> {
 			String value = reuqest.getParameter(j.getId().toString());
+			
 			if (value != null && value != "") {
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-				Date date = null;
-				try {
-					date = format.parse(value.replace("T", " "));
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}		
-				System.out.println(">>>>>>>>>>>>>>>>>" + value);
-				jogoRepo.updateData(date, j.getId());
+				LocalDateTime dateTime = LocalDateTime.parse(value);
+				jogoRepo.updateData(dateTime, j.getId());
 			}	
 		});
-		
-		
-		//jogoRepo.updateData(jogo.getData(), jogo.getId());
 		return gerenciar(m);
 	}
-	
 	
 }

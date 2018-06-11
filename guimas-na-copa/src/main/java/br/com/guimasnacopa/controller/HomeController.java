@@ -1,6 +1,8 @@
 package br.com.guimasnacopa.controller;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,8 +63,12 @@ public class HomeController {
 			autenticacao.setParticipante(participante);
 			m.addAttribute(autenticacao);
 			m.addAttribute("qtdParticipantes",participanteRepo.countByBolao(bolao));
+			Long totalParticipaantesAtivos = participanteRepo.countPgByBolao(bolao);
+			Double totalValor = totalParticipaantesAtivos * bolao.getValor();
+			if (bolao.getTaxaAdministrativa() != null)
+				m.addAttribute("premioEstimado", totalValor - ((totalValor * bolao.getTaxaAdministrativa()) / 100) );
 			List<Participante> top10 = participanteRepo.findTop10ByBolaoOrderByClassificacaoDesc(bolao); 
-			m.addAttribute("top10",top10);
+			m.addAttribute("top10",top10.stream().filter(p -> p.getPg()).collect(Collectors.toList()) );
 			criarUsuarioAdminCasoNecessario();
 			return redirecionaDeAcordoComAutenticacao(m,linkBolao);
 		}else {

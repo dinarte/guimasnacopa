@@ -1,6 +1,7 @@
 package br.com.guimasnacopa.componentes;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -69,7 +70,11 @@ public class ParticipanteHelper {
 	
 	public void prepareRankingParticipantes(String linkBolao, Model model) throws AppException {
 		Bolao bolao = prepareModel(linkBolao, model);
-		model.addAttribute("participantes", participanteRepo.findAllByBolaoOrderByClassificacaoDesc(bolao));
+		model.addAttribute("participantes", participanteRepo
+				.findAllByBolaoOrderByClassificacaoDesc(bolao)
+				.stream()
+				.filter(p -> p.getPg())
+				.collect(Collectors.toList()));
 	}
 
 	private Bolao prepareModel(String linkBolao, Model model) throws AppException {

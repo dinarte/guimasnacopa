@@ -8,6 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import br.com.guimasnacopa.domain.Jogo;
 import br.com.guimasnacopa.domain.Palpite;
 import br.com.guimasnacopa.domain.Participante;
 
@@ -22,6 +23,8 @@ public interface PalpiteRepository  extends CrudRepository<Palpite, Integer>{
 			+ "where p.participante = :participante "
 			+ "order by p.jogo.fase.nome, p.jogo.grupo, p.jogo.data, p.jogo.id")
 	public List<Palpite> findAllByParticipante(@Param("participante") Participante participante);
+
+	public List<Palpite> findAllByJogo(Jogo jogo);
 	
 	
 }
