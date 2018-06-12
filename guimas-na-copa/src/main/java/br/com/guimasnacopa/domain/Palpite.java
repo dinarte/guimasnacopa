@@ -59,6 +59,24 @@ public class Palpite {
 		}
 	}
 	
+	@Transient
+	public String getColorClass() {
+		return jogo != null ? jogo.getColorClass() : "";
+	}
+	
+	@Transient
+	public String getDescricaoDaFase() {
+		
+		if (jogo != null) 
+			return jogo.getFase().getNome() + " - " +(jogo.getGrupo() != null ? jogo.getGrupo() : "");
+		if (isAcertarTimes() || isAcertarCampeao()) {
+			return "Finais";
+		}
+		
+		return "";
+		
+	}
+	
 	public boolean isResultado() {
 		return tipo.equals( RESULTADO );
 	}

@@ -43,6 +43,11 @@ public class Jogo {
 		}
 		return desc.replaceFirst(" ", " x ");
 	}
+	
+	@Transient
+	public String getColorClass() {
+		return grupo != null ? grupo.trim().toLowerCase().replace(" ", "") : "default"; 
+	}
 
 	public Integer getId() {
 		return id;

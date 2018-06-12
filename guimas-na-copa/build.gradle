@@ -46,7 +46,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
-    compile("org.flywaydb:flyway-core:5.0.7")
+   //compile("org.flywaydb:flyway-core:5.0.7")
     compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212.jre7'
     testCompile("junit:junit")
 }
