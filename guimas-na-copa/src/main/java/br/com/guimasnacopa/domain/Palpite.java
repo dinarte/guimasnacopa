@@ -43,7 +43,11 @@ public class Palpite {
 	private Integer golsTimeB;
 	
 	private LocalDateTime limiteAposta;
-	
+
+	@Transient
+	private Palpite palpiteComparado;
+
+
 	@Transient
 	public boolean isApostaAberta() {
 		if (limiteAposta != null) {
@@ -147,6 +151,15 @@ public class Palpite {
 
 	public void setLimiteAposta(LocalDateTime limiteAposta) {
 		this.limiteAposta = limiteAposta;
+	}
+
+	public void setPalpiteComparado(Palpite palpite) {
+		this.palpiteComparado = palpite;
+		
+	}
+	
+	public Palpite getPalpiteComparado() {
+		return palpiteComparado;
 	}
 	
 }

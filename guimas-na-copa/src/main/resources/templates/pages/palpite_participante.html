@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+ 
+            <div th:replace="fragments/main :: messages"></div>
+        
+        	<div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header" th:text="${session.autenticacao.bolao.nome}">Descrição do Bolão</h1>
+                    <h3>Ver os palpites de <span th:text="${participanteConsultado.usuario.name}"></span></h3>
+                </div>
+            </div>
+            
+            
+            <form role="form" action="/#" th:action="@{/palpite/save}"  method="post">
+            <table class="table">
+                        	<thead>
+                        		<tr>
+                        			<th>Fase</th>
+                        			<th>Grupo</th>
+                        			<th style="text-align: right;">Data</th>
+                        			<th colspan="5"><center>Jogo</center></th>
+                        		</tr>
+                        	</thead>
+                        	<tbody>
+                        		<th:block th:each="palpite : ${palpites}">
+	                        		<th:block th:if="${palpite.resultado}">
+		                        		<tr>
+		                        			<td th:text="${palpite.jogo.fase.nome}">Fase do Jogo</td>
+		                        			<td th:text="${palpite.jogo.grupo}">Grupo</td>
+		                        			<td th:text=" ${ #temporals.format(palpite.jogo.data, 'dd MMM hh:mm')}" style="text-align: right;" >
+					             			   X/XX/XXXX XX:XX
+					             			</td> 
+		                        			<td th:text="${palpite.timeA.nome}" style="text-align: right;">Time A</td>
+		                        			<td width="20px" style="text-align: right;">
+												<span th:if="${palpite.apostaAberta}" > ? </span>
+		                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.golsTimeA}"></span>
+		                        				<span style="color:#ccc"  th:text="${palpite.palpiteComparado.golsTimeA}"></span>
+		                        			</td>
+		                        			<td width="3px">x</td>
+		                        			<td width="20px">
+		                        				<span style="color:#ccc"  th:text="${palpite.palpiteComparado.golsTimeB}"></span>
+		                        				<span th:if="${palpite.apostaAberta}" > ? </span>
+		                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.golsTimeB}"></span>
+		                        			</td>
+		                        			<td th:text="${palpite.timeB.nome}" style="text-align: left;">Time B</td>
+		                        		</tr>
+		                        	</th:block>
+		                        	  <th:block th:if="${palpite.acertarTimes}">
+		                        		<tr>
+		                        			<td> Final </td>
+		                        			<td> Acerte os finalistas! </td>
+		                        			<td>  </td>
+		                        			<td  style="text-align: right;">Time A</td>
+		                        			<td width="20px">
+		                        			
+			                        			<select th:if="${palpite.apostaAberta}"  th:name="${palpite.keyGolsTimeA}" >
+			                        				<option  th:each="time : ${times}" th:value="${time.id}" th:selected="${palpite.timeA == null || palpite.timeA.id==time.id}">[[${time.nome}]]</option>
+			                        			</select>
+			                       				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.timeA.nome}"></span>
+			                       				<span style="color: #ccc" th:text="${palpite.palpiteComparado.timeA.nome}"></span>
+			                        			
+			                        		
+		                        			</td>
+		                        			
+		                        			<td width="3px">x</td>
+		                        			
+		                        			<td width="20px">
+											
+												<span th:if="${palpite.apostaAberta}" > ? </span>			
+												<span th:if="${!palpite.apostaAberta}" th:text="${palpite.timeB.nome}"></span>
+												<span style="color: #ccc" th:text="${palpite.palpiteComparado.timeB.nome}"></span>
+			                        			
+		                        			</td>
+		                        			<td>Time B</td>
+		                        		</tr>
+		                        	</th:block>
+		                        	<th:block th:if="${palpite.acertarCampeao}">
+		                        		<tr>
+		                        			<td> Final </td>
+		                        			<td> Acerte o Campeão</td>
+		                        			<td>  </td>
+		                        			<td  style="text-align: right;">Selecionar Campeão</td>
+		                        			<td width="20px" colspan="7">
+		                        			
+			                        			<span th:if="${palpite.apostaAberta}" > ? </span>
+		                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.timeA.nome}"></span>
+			                        			<span style="color: #ccc" th:text="${palpite.palpiteComparado.timeA.nome}"></span>
+		                        			
+		                        			</td>
+		                        			
+		                        		</tr>
+		                        	</th:block>
+                        		</th:block>
+                        		
+                        	</tbody>
+                        </table>
+               </form>         
+        
+        
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>

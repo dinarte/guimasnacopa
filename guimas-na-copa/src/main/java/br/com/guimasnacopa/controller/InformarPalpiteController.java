@@ -55,14 +55,29 @@ public class InformarPalpiteController {
 	}
 	
 	@GetMapping("/palpite/{participante}/consultar")
-	public String editarPalpite(@PathVariable("participante") Participante participante, Model model){
+	public String consultarPalpitesDoParticipante(@PathVariable("participante") Participante participante, Model model){
 		List<Palpite> palpites = palpiteRepo.findAllByParticipante(participante);
+		List<Palpite> meusPalpites = palpiteRepo.findAllByParticipante(autenticacao.getParticipante());
+		palpites.forEach(p ->{
+			meusPalpites.forEach(meuPalpite ->{
+				if (meuPalpite.getJogo() != null && p.getJogo() != null) {
+					if (meuPalpite.getJogo().getId().equals(p.getJogo().getId())) {
+						p.setPalpiteComparado(meuPalpite);
+					}
+				} else if ((meuPalpite.isAcertarTimes() && p.isAcertarTimes())
+						|| (meuPalpite.isAcertarCampeao() && p.isAcertarCampeao()) ) {
+					p.setPalpiteComparado(meuPalpite);
+				}
+				
+			});
+		});
 		if (palpites == null || palpites.size() == 0)
 			palpites = palpiteService.criarPalpites(autenticacao.getParticipante());
 		model.addAttribute("times", timeRepositpry.findAllByBolao(autenticacao.getBolao()));
 		model.addAttribute(autenticacao);
+		model.addAttribute("participanteConsultado",palpites.get(0).getParticipante());
 		model.addAttribute("palpites",palpites);
-		return "pages/palpite";
+		return "pages/palpite_participante";
 		
 	}
 	
