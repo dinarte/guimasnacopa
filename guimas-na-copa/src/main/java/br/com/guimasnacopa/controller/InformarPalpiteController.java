@@ -8,13 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.annotation.RequestScope;
 
 import br.com.guimasnacopa.domain.Palpite;
+import br.com.guimasnacopa.domain.Participante;
 import br.com.guimasnacopa.domain.Time;
+import br.com.guimasnacopa.domain.Usuario;
 import br.com.guimasnacopa.messages.AppMessages;
 import br.com.guimasnacopa.repository.PalpiteRepository;
+import br.com.guimasnacopa.repository.ParticipanteRepository;
 import br.com.guimasnacopa.repository.TimeRepository;
 import br.com.guimasnacopa.security.Autenticacao;
 import br.com.guimasnacopa.service.PalpiteService;
@@ -35,10 +39,24 @@ public class InformarPalpiteController {
 	@Autowired
 	TimeRepository timeRepositpry;
 	
+	@Autowired 
+	ParticipanteRepository participanteRepo;
 	
 	@GetMapping("/palpite/editar")
 	public String editarPalpite(Model model){
 		List<Palpite> palpites = palpiteRepo.findAllByParticipante(autenticacao.getParticipante());
+		if (palpites == null || palpites.size() == 0)
+			palpites = palpiteService.criarPalpites(autenticacao.getParticipante());
+		model.addAttribute("times", timeRepositpry.findAllByBolao(autenticacao.getBolao()));
+		model.addAttribute(autenticacao);
+		model.addAttribute("palpites",palpites);
+		return "pages/palpite";
+		
+	}
+	
+	@GetMapping("/palpite/{participante}/consultar")
+	public String editarPalpite(@PathVariable("participante") Participante participante, Model model){
+		List<Palpite> palpites = palpiteRepo.findAllByParticipante(participante);
 		if (palpites == null || palpites.size() == 0)
 			palpites = palpiteService.criarPalpites(autenticacao.getParticipante());
 		model.addAttribute("times", timeRepositpry.findAllByBolao(autenticacao.getBolao()));

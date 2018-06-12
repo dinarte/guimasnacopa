@@ -167,7 +167,7 @@
                         		<th:block th:each="participante : ${top10}">
 	                        		<tr>
 	                        			<td><span th:text="${participante.classificacao}">1</span>º</td>
-	                        			<td th:text="${participante.usuario.name}">Dinarte filho</td>
+	                        			<td><a th:href="${'/palpite/'+participante.id+'/consultar'}" th:text="${participante.usuario.name}">Dnarte</a></td>
 	                        			<td th:text="${participante.pontuacao}">180</td>
 	                        			<td><span th:text="${participante.aproveitamento}">100</span>%</td>
 	                        		</tr>

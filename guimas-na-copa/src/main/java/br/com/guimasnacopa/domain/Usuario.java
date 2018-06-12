@@ -28,6 +28,12 @@ public class Usuario {
 	
 	private Boolean admin;
 
+	public Usuario() {}
+	
+	public Usuario(Integer id) {
+	 this.id = id;
+	}
+
 	public Integer getId() {
 		return id;
 	}

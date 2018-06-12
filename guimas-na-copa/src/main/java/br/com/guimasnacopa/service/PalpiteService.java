@@ -59,12 +59,14 @@ public class PalpiteService {
 		Palpite pfinal = new Palpite();
 		pfinal.setParticipante(p);
 		pfinal.setTipo(Palpite.ACERTAR_TIMES);
+		pfinal.setLimiteAposta(jogos.get(0).getLimiteAposta());
 		palpiteRepo.save(pfinal);
 		novosPalpites.add(pfinal);
 		
 		Palpite campeao = new Palpite();
 		campeao.setParticipante(p);
 		campeao.setTipo(Palpite.ACERTAR_CAMPEAO);
+		campeao.setLimiteAposta(jogos.get(0).getLimiteAposta());
 		palpiteRepo.save(campeao);
 		novosPalpites.add(campeao);
 		
