@@ -23,6 +23,20 @@ public class Fase {
 	private Date inicioPalpite;
 	
 	private Date fimPaltpite;
+	
+	private Double pontuacaoAcertarPlacar;
+	
+	private Double pontuacaoAcertarVencedorEQtdGols;
+	
+	private Double pontuacaoAcertarVencedor;
+	
+	private Double acertarEmpate;
+	
+	private Double acertarQtdGolsPerdedor;
+	
+	private Double acertarUmTime;
+	
+	private Double acertarTimes;
 
 	public Integer getId() {
 		return id;
@@ -62,6 +76,62 @@ public class Fase {
 
 	public void setBolao(Bolao bolao) {
 		this.bolao = bolao;
+	}
+
+	public Double getPontuacaoAcertarPlacar() {
+		return pontuacaoAcertarPlacar;
+	}
+
+	public void setPontuacaoAcertarPlacar(Double pontuacaoAcertarPlacar) {
+		this.pontuacaoAcertarPlacar = pontuacaoAcertarPlacar;
+	}
+
+	public Double getPontuacaoAcertarVencedorEQtdGols() {
+		return pontuacaoAcertarVencedorEQtdGols;
+	}
+
+	public void setPontuacaoAcertarVencedorEQtdGols(Double pontuacaoAcertarVencedorEQtdGols) {
+		this.pontuacaoAcertarVencedorEQtdGols = pontuacaoAcertarVencedorEQtdGols;
+	}
+
+	public Double getPontuacaoAcertarVencedor() {
+		return pontuacaoAcertarVencedor;
+	}
+
+	public void setPontuacaoAcertarVencedor(Double pontuacaoAcertarVencedor) {
+		this.pontuacaoAcertarVencedor = pontuacaoAcertarVencedor;
+	}
+
+	public Double getAcertarEmpate() {
+		return acertarEmpate;
+	}
+
+	public void setAcertarEmpate(Double acertarEmpate) {
+		this.acertarEmpate = acertarEmpate;
+	}
+
+	public Double getAcertarQtdGolsPerdedor() {
+		return acertarQtdGolsPerdedor;
+	}
+
+	public void setAcertarQtdGolsPerdedor(Double acertarQtdGolsPerdedor) {
+		this.acertarQtdGolsPerdedor = acertarQtdGolsPerdedor;
+	}
+
+	public Double getAcertarUmTime() {
+		return acertarUmTime;
+	}
+
+	public void setAcertarUmTime(Double acertarUmTime) {
+		this.acertarUmTime = acertarUmTime;
+	}
+
+	public Double getAcertarTimes() {
+		return acertarTimes;
+	}
+
+	public void setAcertarTimes(Double acertarTimes) {
+		this.acertarTimes = acertarTimes;
 	}
 	
 	

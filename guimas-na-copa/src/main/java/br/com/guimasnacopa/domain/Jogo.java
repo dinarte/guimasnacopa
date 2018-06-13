@@ -2,6 +2,7 @@ package br.com.guimasnacopa.domain;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -30,7 +31,7 @@ public class Jogo {
 	private LocalDateTime limiteAposta;
 	
 	@OneToMany(mappedBy="jogo") 
-	Set<TimeNoJogo> timesNoJogo;
+	List<TimeNoJogo> timesNoJogo;
 	
 	@ManyToOne
 	private Fase fase;
@@ -81,11 +82,11 @@ public class Jogo {
 		this.fase = fase;
 	}
 
-	public Set<TimeNoJogo> getTimesNoJogo() {
+	public List<TimeNoJogo> getTimesNoJogo() {
 		return timesNoJogo;
 	}
 
-	public void setTimesNoJogo(Set<TimeNoJogo> timesNoJogo) {
+	public void setTimesNoJogo(List<TimeNoJogo> timesNoJogo) {
 		this.timesNoJogo = timesNoJogo;
 	}
 

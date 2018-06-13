@@ -62,10 +62,19 @@ public class HomeController {
 	@RequestMapping("/{linkBolao}")
 	public String home(@PathVariable("linkBolao") String linkBolao, Model m) throws AppException, LoginException {
 		if (autenticacao.isAutenticado()) {
-			//seta o bolao acessado
 			Bolao bolao = bolaoHelper.getBolaoByPermaLink(linkBolao);
 			autenticacao.setBolao(bolao);
+			populaHomoDoParticipante(m, bolao);
+			criarUsuarioAdminCasoNecessario();
+			return redirecionaDeAcordoComAutenticacao(m,linkBolao);
+		}else {
+			return redirecionaDeAcordoComAutenticacao(m);
+		}
 			
+	}
+
+	private void populaHomoDoParticipante(Model m, Bolao bolao) {
+		if (! autenticacao.getUsuario().getAdmin()) {
 			//seta o card de participante
 			Participante participante = participanteRepo.findOneByBolaoAndUsuario(bolao, autenticacao.getUsuario());
 			participanteHelper.popularPorcentagemDePreenchimentoDoParticipante(participante);
@@ -89,15 +98,7 @@ public class HomeController {
 			palpiteHelper.processarConsultaDePalpiteRelacionandoApenasComResultadosDosJogos(participante, m, palpiteRepo.findTop6ByParticipanteOrderByJogo_Data(participante));
 			m.addAttribute("colunasCards",4);
 			m.addAttribute("meuPalpite",true);
-			
-			//processa o startup do sistema caso necessario
-			criarUsuarioAdminCasoNecessario();
-			
-			return redirecionaDeAcordoComAutenticacao(m,linkBolao);
-		}else {
-			return redirecionaDeAcordoComAutenticacao(m);
-		}
-			
+		}	
 	}
 
 	

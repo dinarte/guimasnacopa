@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header" th:text="${autenticacao.bolao.nome}">Descrição do Bolão</h1>
+                    <h3>Fases</h3>
+                </div>
+            </div>
+       
+	            <table class="table">
+	            	<thead>
+	            		<tr>
+	            			<th>Fase</th>
+	            			<th></th>
+	            		</tr>
+	            	</thead>
+	            	<tbody>
+	            		<th:block th:each="fase : ${faseList}">
+	             		<tr>
+	             			<td th:text="${fase.nome}">Fase</td>
+	             			<td>
+                      			<a class="btn btn-primary" th:href="${fase.id+'/editar'}"
+                      				data-toggle="tooltip" 
+                      				data-placement="top" 
+                      				title="Editar Dados da Fase">
+                      				<span class="glyphicon glyphicon-pencil"></span>
+                      			</a>
+                     		</td>
+	             		</tr>	
+	            		</th:block>
+	            	</tbody>
+	            </table>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+
+</html>

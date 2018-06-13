@@ -1,9 +1,6 @@
 package br.com.guimasnacopa.controller;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 import javax.security.auth.login.LoginException;
@@ -19,14 +16,18 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import br.com.guimasnacopa.domain.Jogo;
 import br.com.guimasnacopa.repository.JogoRepository;
+import br.com.guimasnacopa.repository.TimeNoJogoRepository;
 import br.com.guimasnacopa.security.Autenticacao;
 
 @Controller
 @RequestScope
-public class GerenciarJogosController {
+public class GerenciarDatasEResultadosController {
 
 	@Autowired 
 	JogoRepository jogoRepo;
+	
+	@Autowired
+	TimeNoJogoRepository timeNoJogoRepo;
 	
 	@Autowired
 	Autenticacao autenticacao;
@@ -34,7 +35,8 @@ public class GerenciarJogosController {
 	@GetMapping("/jogos/gerenciar")
 	public String gerenciar(Model m) throws LoginException {
 		autenticacao.checkAdminAthorization();
-		m.addAttribute("jogos",jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao()));
+		List<Jogo> jogos = jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
+		m.addAttribute("jogos",jogos);
 		m.addAttribute(autenticacao);
 		return "/pages/gerenciar_jogos";
 	}
@@ -47,12 +49,22 @@ public class GerenciarJogosController {
 		jogos.forEach(j -> {
 			String value = reuqest.getParameter(j.getId().toString());
 			
-			if (value != null && value != "") {
+			//salva as datas
+			if (value != null && !value.equals("")) {
 				LocalDateTime dateTime = LocalDateTime.parse(value);
 				jogoRepo.updateData(dateTime, j.getId());
 			}	
+			
+			//salva os gols
+			j.getTimesNoJogo().forEach(tnj ->{
+				String gols = reuqest.getParameter("timeNoJogo_"+tnj.getId().toString());
+				if (gols != null && !gols.equals(""))
+					timeNoJogoRepo.updateGols(Integer.parseInt(gols),tnj.getId());
+				
+			});
+			
 		});
-		return gerenciar(m);
+		return "redirect:/jogos/gerenciar";
 	}
 	
 }

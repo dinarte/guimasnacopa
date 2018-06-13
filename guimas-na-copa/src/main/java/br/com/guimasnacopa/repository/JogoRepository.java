@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -17,7 +18,8 @@ import br.com.guimasnacopa.domain.Jogo;
 @Repository
 public interface JogoRepository  extends CrudRepository<Jogo, Integer>{
 
-	@Query("from Jogo j where j.fase.bolao = :bolao order by j.fase, j.grupo, j.data")
+	@EntityGraph(attributePaths = { "timesNoJogo" })
+	@Query("select j from Jogo as j where j.fase.bolao = :bolao order by j.fase, j.grupo, j.data")
 	public List<Jogo> findAllByFase_BolaoOrderByFaseGrupoData(@Param("bolao") Bolao bolao);
 	
 	@Modifying(clearAutomatically = true)

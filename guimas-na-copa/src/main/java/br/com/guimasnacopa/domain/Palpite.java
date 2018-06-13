@@ -43,6 +43,8 @@ public class Palpite {
 	private Integer golsTimeB;
 	
 	private LocalDateTime limiteAposta;
+	
+	private Double pontuacaoAtingida; 
 
 	@Transient
 	private Palpite palpiteComparado;
@@ -204,5 +206,15 @@ public class Palpite {
 	public void setGolsDoJogoTimaB(Integer golsDoJogoTimaB) {
 		this.golsDoJogoTimaB = golsDoJogoTimaB;
 	}
+
+	public Double getPontuacaoAtingida() {
+		return pontuacaoAtingida;
+	}
+
+	public void setPontuacaoAtingida(Double pontuacaoAtingida) {
+		this.pontuacaoAtingida = pontuacaoAtingida;
+	}
+	
+	
 	
 }
