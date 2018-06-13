@@ -23,6 +23,9 @@ public interface PalpiteRepository  extends CrudRepository<Palpite, Integer>{
 			+ "where p.participante = :participante "
 			+ "order by p.jogo.fase.nome, p.jogo.grupo, p.jogo.data, p.jogo.id")
 	public List<Palpite> findAllByParticipante(@Param("participante") Participante participante);
+	
+
+	public List<Palpite> findTop6ByParticipanteOrderByJogo_Data(Participante participante);
 
 	public List<Palpite> findAllByJogo(Jogo jogo);
 	

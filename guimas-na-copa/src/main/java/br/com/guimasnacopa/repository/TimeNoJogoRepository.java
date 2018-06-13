@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import br.com.guimasnacopa.domain.Bolao;
 import br.com.guimasnacopa.domain.Jogo;
 import br.com.guimasnacopa.domain.TimeNoJogo;
 
@@ -14,5 +15,7 @@ public interface TimeNoJogoRepository  extends CrudRepository<TimeNoJogo, Intege
 
 	
 	public List<TimeNoJogo> findAllByJogo(Jogo jogo);
+
+	public List<TimeNoJogo> findAllByJogo_Fase_Bolao(Bolao bolao);
 	
 }

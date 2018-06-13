@@ -124,7 +124,7 @@
                 <div class="col-lg-8">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> Acompanhe seus palpites 
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Próximos Jogos 
                             <div class="pull-right">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -139,8 +139,10 @@
                             </div>
                         </div>
                         <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <img alt="tabela" src="/img/tabela.PNG" width="100%">
+                        <div class="panel-body" style="padding: 10px">
+                            <div th:replace="fragments/game_cards :: cards"></div>
+                            
+                            <a href="/palpite/editar" class="btn btn-default btn-block">Ver todos os meus palpites</a>
                         </div>
                         <!-- /.panel-body -->
                     </div>
@@ -177,7 +179,7 @@
                         	<tfoot>
                         		<tr>
                         			<td colspan="4">
-                        				<a href="/russia2018/ranking" class="btn btn-info btn-block">Ver Ranking completo</button>
+                        				<a href="/russia2018/ranking" class="btn btn-default btn-block">Ver Ranking completo</a>
                         			</td>
                         		</tr>
                         	</tfoot>

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.annotation.RequestScope;
 
+import br.com.guimasnacopa.componentes.PalpiteHelper;
 import br.com.guimasnacopa.domain.Palpite;
 import br.com.guimasnacopa.domain.Participante;
 import br.com.guimasnacopa.domain.Time;
@@ -26,42 +27,34 @@ import br.com.guimasnacopa.service.PalpiteService;
 @RequestScope
 public class ConsultarPalpiteController {
 
-	@Autowired
-	Autenticacao autenticacao;
-	
-	@Autowired
-	PalpiteRepository palpiteRepo;
 	
 	
 	
 	@Autowired 
-	ParticipanteRepository participanteRepo;
+	PalpiteRepository palpiteRepo;
+	
+	@Autowired
+	PalpiteHelper palpiteHelper;
 	
 	
 	
 	@GetMapping("/palpite/{participante}/consultar")
 	public String consultarPalpitesDoParticipante(@PathVariable("participante") Participante participante, Model model){
-		List<Palpite> palpites = palpiteRepo.findAllByParticipante(participante);
-		List<Palpite> meusPalpites = palpiteRepo.findAllByParticipante(autenticacao.getParticipante());
-		palpites.forEach(p ->{
-			meusPalpites.forEach(meuPalpite ->{
-				if (meuPalpite.getJogo() != null && p.getJogo() != null) {
-					if (meuPalpite.getJogo().getId().equals(p.getJogo().getId())) {
-						p.setPalpiteComparado(meuPalpite);
-					}
-				} else if ((meuPalpite.isAcertarTimes() && p.isAcertarTimes())
-						|| (meuPalpite.isAcertarCampeao() && p.isAcertarCampeao()) ) {
-					p.setPalpiteComparado(meuPalpite);
-				}
-				
-			});
-		});
-		
-		model.addAttribute(autenticacao);
-		model.addAttribute("participanteConsultado",palpites.get(0).getParticipante());
-		model.addAttribute("palpites",palpites);
+		palpiteHelper.processarConsultaDePalpite(participante, model, palpiteRepo.findAllByParticipante(participante));
+		model.addAttribute("colunasCards",2);
+		model.addAttribute("meuPalpite",false);
 		return "pages/palpite_participante";
 	}
+	
+	@GetMapping("/palpite/{participante}/consultar/tab")
+	public String consultarPalpitesDoParticipanteEmTabela(@PathVariable("participante") Participante participante, Model model){
+		palpiteHelper.processarConsultaDePalpite(participante, model, palpiteRepo.findAllByParticipante(participante));
+		model.addAttribute("colunasCards",2);
+		model.addAttribute("meuPalpite",false);
+		return "pages/palpite_participante_tabela";
+	}
+
+	
 	
 	
 	

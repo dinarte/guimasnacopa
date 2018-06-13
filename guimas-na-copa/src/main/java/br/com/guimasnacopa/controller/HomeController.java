@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.annotation.RequestScope;
 
 import br.com.guimasnacopa.componentes.BolaoHelper;
+import br.com.guimasnacopa.componentes.PalpiteHelper;
 import br.com.guimasnacopa.componentes.ParticipanteHelper;
 import br.com.guimasnacopa.domain.Bolao;
 import br.com.guimasnacopa.domain.Participante;
 import br.com.guimasnacopa.domain.Usuario;
 import br.com.guimasnacopa.exception.AppException;
 import br.com.guimasnacopa.exception.LoginException;
+import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.ParticipanteRepository;
 import br.com.guimasnacopa.repository.UserRepository;
 import br.com.guimasnacopa.security.Autenticacao;
@@ -45,6 +47,11 @@ public class HomeController {
 	@Autowired
 	private ParticipanteHelper participanteHelper;
 	
+	@Autowired
+	private PalpiteHelper palpiteHelper;
+	
+	@Autowired PalpiteRepository palpiteRepo;
+	
 	@RequestMapping("/")
 	public String home(Model m) throws AppException {
 		criarUsuarioAdminCasoNecessario();
@@ -55,20 +62,37 @@ public class HomeController {
 	@RequestMapping("/{linkBolao}")
 	public String home(@PathVariable("linkBolao") String linkBolao, Model m) throws AppException, LoginException {
 		if (autenticacao.isAutenticado()) {
+			//seta o bolao acessado
 			Bolao bolao = bolaoHelper.getBolaoByPermaLink(linkBolao);
 			autenticacao.setBolao(bolao);
+			
+			//seta o card de participante
 			Participante participante = participanteRepo.findOneByBolaoAndUsuario(bolao, autenticacao.getUsuario());
 			participanteHelper.popularPorcentagemDePreenchimentoDoParticipante(participante);
 			autenticacao.setParticipante(participante);
 			m.addAttribute(autenticacao);
 			m.addAttribute("qtdParticipantes",participanteRepo.countByBolao(bolao));
+			
+			//seta o card de total de participantes
 			Long totalParticipaantesAtivos = participanteRepo.countPgByBolao(bolao);
 			Double totalValor = totalParticipaantesAtivos * bolao.getValor();
+			
+			//seta o card do valor do premio
 			if (bolao.getTaxaAdministrativa() != null)
 				m.addAttribute("premioEstimado", totalValor - ((totalValor * bolao.getTaxaAdministrativa()) / 100) );
+			
+			//seta o quadro de top10 do rannking
 			List<Participante> top10 = participanteRepo.findTop10ByBolaoOrderByClassificacaoDesc(bolao); 
 			m.addAttribute("top10",top10.stream().filter(p -> p.getPg()).collect(Collectors.toList()) );
+			
+			//seta o quadro com os prpoximos jogos
+			palpiteHelper.processarConsultaDePalpiteRelacionandoApenasComResultadosDosJogos(participante, m, palpiteRepo.findTop6ByParticipanteOrderByJogo_Data(participante));
+			m.addAttribute("colunasCards",4);
+			m.addAttribute("meuPalpite",true);
+			
+			//processa o startup do sistema caso necessario
 			criarUsuarioAdminCasoNecessario();
+			
 			return redirecionaDeAcordoComAutenticacao(m,linkBolao);
 		}else {
 			return redirecionaDeAcordoComAutenticacao(m);

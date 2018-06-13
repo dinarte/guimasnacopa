@@ -46,6 +46,13 @@ public class Palpite {
 
 	@Transient
 	private Palpite palpiteComparado;
+	
+	@Transient
+	private Integer golsDoJogoTimaA;
+	
+	@Transient
+	private Integer golsDoJogoTimaB;
+	
 
 
 	@Transient
@@ -69,8 +76,10 @@ public class Palpite {
 		
 		if (jogo != null) 
 			return jogo.getFase().getNome() + " - " +(jogo.getGrupo() != null ? jogo.getGrupo() : "");
-		if (isAcertarTimes() || isAcertarCampeao()) {
-			return "Finais";
+		if (isAcertarTimes()) 
+			return "Acertar a Final";
+		if (isAcertarCampeao()) {
+			return "Acertar o Campeão";
 		}
 		
 		return "";
@@ -178,6 +187,22 @@ public class Palpite {
 	
 	public Palpite getPalpiteComparado() {
 		return palpiteComparado;
+	}
+
+	public Integer getGolsDoJogoTimaA() {
+		return golsDoJogoTimaA;
+	}
+
+	public void setGolsDoJogoTimaA(Integer golsDoJogoTimaA) {
+		this.golsDoJogoTimaA = golsDoJogoTimaA;
+	}
+
+	public Integer getGolsDoJogoTimaB() {
+		return golsDoJogoTimaB;
+	}
+
+	public void setGolsDoJogoTimaB(Integer golsDoJogoTimaB) {
+		this.golsDoJogoTimaB = golsDoJogoTimaB;
 	}
 	
 }
