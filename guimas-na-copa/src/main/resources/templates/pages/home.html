@@ -142,7 +142,7 @@
                         <div class="panel-body" style="padding: 10px">
                             <div th:replace="fragments/game_cards :: cards"></div>
                             
-                            <a href="/palpite/editar" class="btn btn-default btn-block">Ver todos os meus palpites</a>
+                            <a href="/palpite/consultar" class="btn btn-default btn-block">Ver todos os meus palpites</a>
                         </div>
                         <!-- /.panel-body -->
                     </div>
@@ -166,9 +166,9 @@
                         		</tr>
                         	</thead>
                         	<tbody>
-                        		<th:block th:each="participante : ${top10}">
+                        		<th:block th:each="participante, status : ${top10}">
 	                        		<tr>
-	                        			<td><span th:text="${participante.classificacao}">1</span>º</td>
+	                        			<td><span th:text="${status.count}">1</span>º</td>
 	                        			<td><a th:href="${'/palpite/'+participante.id+'/consultar'}" th:text="${participante.usuario.name}">Dnarte</a></td>
 	                        			<td th:text="${participante.pontuacao}">180</td>
 	                        			<td><span th:text="${participante.aproveitamento}">100</span>%</td>

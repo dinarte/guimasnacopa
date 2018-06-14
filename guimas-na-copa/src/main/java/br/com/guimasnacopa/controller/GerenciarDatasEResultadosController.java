@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.annotation.RequestScope;
 
 import br.com.guimasnacopa.domain.Jogo;
+import br.com.guimasnacopa.domain.Palpite;
 import br.com.guimasnacopa.repository.JogoRepository;
+import br.com.guimasnacopa.repository.PalpiteRepository;
+import br.com.guimasnacopa.repository.ParticipanteRepository;
 import br.com.guimasnacopa.repository.TimeNoJogoRepository;
 import br.com.guimasnacopa.security.Autenticacao;
 
@@ -31,6 +34,12 @@ public class GerenciarDatasEResultadosController {
 	
 	@Autowired
 	Autenticacao autenticacao;
+	
+	@Autowired
+	PalpiteRepository palpiteRepo;
+	
+	@Autowired
+	ParticipanteRepository participanteRepo;
 	
 	@GetMapping("/jogos/gerenciar")
 	public String gerenciar(Model m) throws LoginException {
@@ -62,8 +71,19 @@ public class GerenciarDatasEResultadosController {
 					timeNoJogoRepo.updateGols(Integer.parseInt(gols),tnj.getId());
 				
 			});
-			
+			//processa o ranking
+			Iterable<Palpite> palpites = palpiteRepo.findAllByJogo(j);
+			palpites.forEach(palpite ->{
+				if(palpite.getGolsTimeA() != null && palpite.getGolsTimeB() != null) {
+					palpite.processarPontuacao();
+					palpiteRepo.updatePontuacao(palpite.getPontuacaoAtingida(), palpite.getRegraPontuacao(), palpite.getId());;
+					System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + palpite.getPontuacaoAtingida());
+				}
+			});
 		});
+		
+		participanteRepo.updatePontuacao();
+		
 		return "redirect:/jogos/gerenciar";
 	}
 	

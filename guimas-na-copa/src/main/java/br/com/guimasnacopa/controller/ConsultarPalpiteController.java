@@ -36,12 +36,15 @@ public class ConsultarPalpiteController {
 	@Autowired
 	PalpiteHelper palpiteHelper;
 	
+	@Autowired
+	Autenticacao autenticacao;
+	
 	
 	
 	@GetMapping("/palpite/{participante}/consultar")
 	public String consultarPalpitesDoParticipante(@PathVariable("participante") Participante participante, Model model){
 		palpiteHelper.processarConsultaDePalpite(participante, model, palpiteRepo.findAllByParticipante(participante));
-		model.addAttribute("colunasCards",2);
+		model.addAttribute("colunasCards",3);
 		model.addAttribute("meuPalpite",false);
 		return "pages/palpite_participante";
 	}
@@ -49,14 +52,20 @@ public class ConsultarPalpiteController {
 	@GetMapping("/palpite/{participante}/consultar/tab")
 	public String consultarPalpitesDoParticipanteEmTabela(@PathVariable("participante") Participante participante, Model model){
 		palpiteHelper.processarConsultaDePalpite(participante, model, palpiteRepo.findAllByParticipante(participante));
-		model.addAttribute("colunasCards",2);
+		model.addAttribute("colunasCards",3);
 		model.addAttribute("meuPalpite",false);
 		return "pages/palpite_participante_tabela";
 	}
 
+	@GetMapping("/palpite/consultar")
+	public String consultarMeusPalites(Model m) {
+		//seta o quadro com os prpoximos jogos
+		palpiteHelper.processarConsultaDePalpiteRelacionandoApenasComResultadosDosJogos(autenticacao.getParticipante()
+							, m
+							, palpiteRepo.findAllByParticipante(autenticacao.getParticipante()));
+		m.addAttribute("colunasCards",4);
+		m.addAttribute("meuPalpite",true);
+		return "pages/palpite_participante";
 	
-	
-	
-	
-	
-}
+	}
+}	

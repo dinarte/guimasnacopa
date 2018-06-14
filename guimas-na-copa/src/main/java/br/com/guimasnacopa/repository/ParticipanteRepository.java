@@ -3,6 +3,7 @@ package br.com.guimasnacopa.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -27,4 +28,19 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 	public List<Participante> findAllByBolaoOrderByClassificacaoDesc(Bolao b);
 	
 	public List<Participante> findTop10ByBolaoOrderByClassificacaoDesc(Bolao b);
+	
+	@Modifying(clearAutomatically = true)
+	@Query(value = " update participante set pontuacao = t.pts "
+					+"		from ( "
+					+"		    select participante_id, sum(coalesce(pontuacao_atingida,0)) pts "
+					+"		    from palpite "
+					+"		    group by participante_id "
+					+"		    order by 2 desc "
+					+"		) as t "
+					+" where t.participante_id = participante.id "
+			, nativeQuery = true)
+	public void updatePontuacao();	
+	
+	
+	
 }

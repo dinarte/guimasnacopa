@@ -3,6 +3,7 @@ package br.com.guimasnacopa.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -28,6 +29,10 @@ public interface PalpiteRepository  extends CrudRepository<Palpite, Integer>{
 	public List<Palpite> findTop6ByParticipanteOrderByJogo_Data(Participante participante);
 
 	public List<Palpite> findAllByJogo(Jogo jogo);
+	
+	@Modifying(clearAutomatically = true)
+	@Query("update Palpite set pontuacaoAtingida = :pontuacao, regraPontuacao =:regraPontuacao where id = :id")
+	public void updatePontuacao(@Param("pontuacao") Double pontuacao, @Param("regraPontuacao") String regraPontuacao, @Param("id") Integer id);
 	
 	
 }

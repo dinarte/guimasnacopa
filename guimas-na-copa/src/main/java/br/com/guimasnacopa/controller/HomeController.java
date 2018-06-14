@@ -96,7 +96,7 @@ public class HomeController {
 			
 			//seta o quadro com os prpoximos jogos
 			palpiteHelper.processarConsultaDePalpiteRelacionandoApenasComResultadosDosJogos(participante, m, palpiteRepo.findTop6ByParticipanteOrderByJogo_Data(participante));
-			m.addAttribute("colunasCards",4);
+			m.addAttribute("colunasCards",6);
 			m.addAttribute("meuPalpite",true);
 		}	
 	}

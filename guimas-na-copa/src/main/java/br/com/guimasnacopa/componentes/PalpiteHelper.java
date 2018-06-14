@@ -77,19 +77,13 @@ public class PalpiteHelper {
 	}
 	
 	private void relacionarComResultadosDosJogos(List<Palpite> palpites) {
-		List<TimeNoJogo> timesNosJogos = timeNoJogoRepo.findAllByJogo_Fase_Bolao(palpites.get(0).getJogo().getFase().getBolao()); 
-		timesNosJogos.forEach(tnj ->{
+		
 			palpites.forEach(palpite ->{
 				if (palpite.isResultado()) {
-					if (palpite.getTimeA().getId().equals( tnj.getTime().getId() )) {
-						palpite.setGolsDoJogoTimaA(tnj.getGols());
-					}
-					if (palpite.getTimeB().getId().equals( tnj.getTime().getId() )) {
-						palpite.setGolsDoJogoTimaB(tnj.getGols());
-					}
+					palpite.popularGolsDoJogo();
 				}	
 			});
-		});
+	
 	
 	}
 }

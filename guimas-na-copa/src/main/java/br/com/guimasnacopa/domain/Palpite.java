@@ -3,6 +3,7 @@ package br.com.guimasnacopa.domain;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -45,6 +46,8 @@ public class Palpite {
 	private LocalDateTime limiteAposta;
 	
 	private Double pontuacaoAtingida; 
+	
+	private String regraPontuacao;
 
 	@Transient
 	private Palpite palpiteComparado;
@@ -99,6 +102,77 @@ public class Palpite {
 	public boolean isAcertarCampeao() {
 		return tipo.equals( ACERTAR_CAMPEAO );
 	}
+	
+	private void incrementarPontuacao(Double pontuacao) {
+		this.pontuacaoAtingida = this.pontuacaoAtingida + pontuacao;
+	}
+	
+	public void popularGolsDoJogo() {
+		getJogo().getTimesNoJogo().forEach(tmj ->{
+			
+			if (getTimeA().getId().equals( tmj.getTime().getId() )) {
+				setGolsDoJogoTimaA(tmj.getGols());
+			} 
+			if (getTimeB().getId().equals( tmj.getTime().getId() )){
+				setGolsDoJogoTimaB(tmj.getGols());
+			} 
+		});
+	}
+	
+	public void processarPontuacao() {
+		popularGolsDoJogo();
+		if (golsDoJogoTimaA != null && golsDoJogoTimaB != null) {
+			setPontuacaoAtingida(0.0);
+			setRegraPontuacao("Acertou nada");
+			//acertar empate	
+			if (golsTimeA.equals(golsTimeB) 
+					&& golsDoJogoTimaA.equals(golsTimeA)
+					&& golsDoJogoTimaB.equals(golsTimeB)) {
+				incrementarPontuacao(jogo.getFase().getAcertarEmpate());
+				setRegraPontuacao("Acertou empate");
+				return;
+			}
+			//acertar placar
+			if (golsDoJogoTimaA.equals(getGolsTimeA())
+					&& golsDoJogoTimaB.equals(getGolsTimeB())) {
+				incrementarPontuacao(jogo.getFase().getPontuacaoAcertarPlacar());
+				setRegraPontuacao("Acertou placar");
+				return;
+			}
+			
+			//acertar apenas vencedor
+			if ( (golsDoJogoTimaA > golsDoJogoTimaB && getGolsTimeA() > getGolsTimeB()) 
+					&& golsDoJogoTimaA.equals(getGolsTimeA())) {
+				incrementarPontuacao(jogo.getFase().getPontuacaoAcertarVencedorEQtdGols());
+				setRegraPontuacao("Acertou o vencedor com gols");
+				return;
+			}
+			if( (golsDoJogoTimaB > golsDoJogoTimaA && getGolsTimeB() > getGolsTimeA()) 
+					&& golsDoJogoTimaB.equals(getGolsTimeB())) {
+				incrementarPontuacao(jogo.getFase().getPontuacaoAcertarVencedorEQtdGols());
+				setRegraPontuacao("Acertou vencedor com gols");
+				return;
+			}
+			
+			//acertar apenas vencedor
+			if ( (golsDoJogoTimaA > golsDoJogoTimaB && getGolsTimeA() > getGolsTimeB())
+					|| (golsDoJogoTimaB > golsDoJogoTimaA && getGolsTimeB() > getGolsTimeA()) ) {
+				incrementarPontuacao(jogo.getFase().getPontuacaoAcertarVencedor());
+				setRegraPontuacao("Acertou o vencedor");
+				return;
+			}
+			
+			//acertar gols de um time (perdedor)
+			if (!golsDoJogoTimaA.equals(golsDoJogoTimaB)) {
+				if (golsDoJogoTimaA.equals(getGolsTimeA()) || golsDoJogoTimaB.equals(getGolsTimeB())) {
+					incrementarPontuacao(jogo.getFase().getAcertarQtdGolsPerdedor());
+					setRegraPontuacao("Acertou os gols do perdedor");
+					return;
+				}
+			}
+		}	
+	}
+	
 
 
 	public Integer getId() {
@@ -216,5 +290,57 @@ public class Palpite {
 	}
 	
 	
+	public String getRegraPontuacao() {
+		return regraPontuacao;
+	}
+
+	public void setRegraPontuacao(String regraPontuacao) {
+		this.regraPontuacao = regraPontuacao;
+	}
+
+	public static void main(String[] args) {
+		
+		Fase fase = new Fase();
+		fase.setAcertarEmpate(30.0);
+		fase.setAcertarQtdGolsPerdedor(10.0);
+		fase.setPontuacaoAcertarPlacar(45.0);
+		fase.setPontuacaoAcertarVencedor(31.0);
+		fase.setPontuacaoAcertarVencedorEQtdGols(95.0);
+		
+		Jogo jogo = new Jogo();
+		jogo.setFase(fase);
+		jogo.setTimesNoJogo(new ArrayList<>());
+
+		TimeNoJogo brasil = new TimeNoJogo();
+		brasil.setJogo(jogo);
+		jogo.getTimesNoJogo().add(brasil);
+		TimeNoJogo alemanha = new TimeNoJogo();
+		alemanha.setJogo(jogo);
+		jogo.getTimesNoJogo().add(alemanha);
+		
+		Time a = new Time();
+		a.setId(1);
+		brasil.setTime(a);
+		Time b = new Time();
+		b.setId(2);
+		alemanha.setTime(b);
+		
+		
+		
+		Palpite palpite = new Palpite();
+		palpite.setJogo(jogo);
+		palpite.setTimeA(a);
+		palpite.setTimeB(b);
+		
+		brasil.setGols(7);
+		alemanha.setGols(2);
+		
+		palpite.setGolsTimeA(1);
+		palpite.setGolsTimeB(2);
+
+		palpite.processarPontuacao();
+		System.out.println(palpite.pontuacaoAtingida);
+		
+	}
 	
 }

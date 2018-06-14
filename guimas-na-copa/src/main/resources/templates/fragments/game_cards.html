@@ -46,6 +46,10 @@
             	font-weight: bolder;
             }
             
+            .p-result{
+            	color: #1E90FF;
+            	font-weight: bolder;
+            }
             .campeao{
             	text-align: center;
             }
@@ -114,9 +118,9 @@
 					    		<th:block th:if="${palpite.acertarCampeao}" >
 						    		<tr>
 						    			<td colspan="4" class="campeao">
-						    					<span th:text="${ palpite.apostaAberta ? '?' :  palpite.timeA.nome}">Brasil</span>
+						    					<span th:text="${ palpite.apostaAberta ? '?' :  palpite.timeA?.nome}">Brasil</span>
 						    					<br />
-						    					<span style="color: #ccc" th:text="${palpite.palpiteComparado.timeA.nome}">Uruguai</span>
+						    					<span style="color: #ccc" th:text="${palpite.palpiteComparado.timeA?.nome}">Uruguai</span>
 						    			</td>
 						    		</tr>
 					    		</th:block>
@@ -125,15 +129,15 @@
 					    		<th:block th:if="${palpite.acertarTimes}" >
 						    		<tr>
 						    			<td colspan="1" class="campeao">
-						    					<span th:text="${ palpite.apostaAberta ? '?' :  palpite.timeA.nome}">Brasil</span>
+						    					<span th:text="${ palpite.apostaAberta ? '?' :  palpite.timeA?.nome}">Brasil</span>
 						    					<br />
-						    					<span style="color: #ccc" th:text="${palpite.palpiteComparado.timeA.nome}">Uruguai</span>
+						    					<span style="color: #ccc" th:text="${palpite.palpiteComparado.timeA?.nome}">Uruguai</span>
 						    			</td>
 						    			<td colspan="1" style="text-align: cent;"> VS </td>
 						    			<td colspan="2" class="campeao">
-						    					<span th:text="${ palpite.apostaAberta ? '?' :  palpite.timeB.nome}">Brasil</span>
+						    					<span th:text="${ palpite.apostaAberta ? '?' :  palpite.timeB?.nome}">Brasil</span>
 						    					<br />
-						    					<span style="color: #ccc" th:text="${palpite.palpiteComparado.timeB.nome}">Uruguai</span>
+						    					<span style="color: #ccc" th:text="${palpite.palpiteComparado.timeB?.nome}">Uruguai</span>
 						    			</td>
 						    		</tr>
 					    		</th:block>
@@ -176,10 +180,14 @@
 						    				<span th:text="${palpite.golsDoJogoTimaB}" > 1 </span>
 						    			</td>
 						    		</tr>
+						    	
+						    	
 					    		</th:block>
 					    		
 					    	</table>
 					    </div>
+					    <div style="text-align: center; color:blue; height:30px;"  
+					    	th:text="${palpite.pontuacaoAtingida != null ? palpite.regraPontuacao + ' ' + palpite.pontuacaoAtingida + ' pts' : ' ' }"> 10 pts  </div>
 					  </div>
 					 </div>
 				</th:block> 
