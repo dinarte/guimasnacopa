@@ -11,7 +11,8 @@
 
         <div id="page-wrapper">
         
-        	<div class="row">
+        
+	        <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header" th:text="${autenticacao.bolao.nome}">Descrição do Bolão</h1>
                     <h3>Jogos</h3>
@@ -19,39 +20,41 @@
             </div>
         
        		<form role="form" action="/#" th:action="@{/jogos/save}"  method="post">
-       		
-	            <table class="table">
-	            	<thead>
-	            		<tr>
-	            			<th>Fase</th>
-	            			<th>Grupo</th>
-	            			<th style="text-align: center"> Jogo </th>
-	            			<th>Data do Jogo</th>
-	            		</tr>
-	            	</thead>
-	            	<tbody>
-	            		<th:block th:each="jogo : ${jogos}">
-	             		<tr>
-	             			<td th:text="${jogo.fase.nome}">Fase</td>
-	             			<td th:text="${jogo.grupo}">Grupo A</td>
-	             			<td th:text="${jogo.timesDescricao}" style="text-align: center">
-	             				Time a x Time b
-	             			</td>
-	             			<td >
-	             			<input th:name="${jogo.id}" type="datetime-local" th:value="${jogo.data}" class="form-control">
-	             			</td>
-	             		</tr>
-	            		</th:block>
-	            	</tbody>
-	            	<tfoot>
-	            		<tr>
-	            			<td colspan="5">
-	            				<button class="btn btn-info btn-block">Salvar Jogos</button>
-	            			</td>
-	            		</tr>
-	            	</tfoot>
-	            </table>
-            </form>
+        
+          <div class="row">
+	    	<th:block th:each="jogo : ${jogos}">
+	    		<div class="col-lg-4">
+	    			<div class="panel panel-info">
+		    			<div class="panel-heading" >
+						  	<span th:text="${jogo.fase.nome + ' - ' + jogo.grupo }">Eliminatórias - Grupo A</span> 
+						</div>
+						<table class="table">
+							<tr>
+							  <th:block th:each="timeNoJogo, status : ${jogo.timesNoJogo}">
+								<td>
+									<label th:text="${timeNoJogo.time.nome}">Brasil</label>
+									<input th:name="${'timeNoJogo_' + timeNoJogo.id}" type="number" class="form-control" th:value="${ timeNoJogo.gols }">
+								</td>
+								<td th:if="${status.count==1}"> VS </td>
+								
+								</th:block>
+							</tr>
+							<tr>
+								<td colspan="5">
+								<label th:for="${jogo.id}">Data</label>
+									<input th:name="${jogo.id}" type="datetime-local" th:value="${jogo.data}" class="form-control">
+								</td>
+							</tr>
+						</table>
+	    			
+	    			</div>
+	    		</div>
+	    	</th:block>
+	    </div>
+        
+        <button class="btn btn-info btn-block">Salvar Jogos</button>
+        	
+         </form>
         </div>
         <!-- /#page-wrapper -->
 

@@ -71,7 +71,7 @@ public class ParticipanteHelper {
 	public void prepareRankingParticipantes(String linkBolao, Model model) throws AppException {
 		Bolao bolao = prepareModel(linkBolao, model);
 		model.addAttribute("participantes", participanteRepo
-				.findAllByBolaoOrderByClassificacaoDesc(bolao)
+				.findAllByBolaoOrderByClassificacaoAsc(bolao)
 				.stream()
 				.filter(p -> p.getPg())
 				.collect(Collectors.toList()));

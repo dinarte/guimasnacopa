@@ -1,5 +1,8 @@
 package br.com.guimasnacopa.domain;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -124,15 +127,9 @@ public class Palpite {
 		if (golsDoJogoTimaA != null && golsDoJogoTimaB != null) {
 			setPontuacaoAtingida(0.0);
 			setRegraPontuacao("Acertou nada");
-			//acertar empate	
-			if (golsTimeA.equals(golsTimeB) 
-					&& golsDoJogoTimaA.equals(golsTimeA)
-					&& golsDoJogoTimaB.equals(golsTimeB)) {
-				incrementarPontuacao(jogo.getFase().getAcertarEmpate());
-				setRegraPontuacao("Acertou empate");
-				return;
-			}
-			//acertar placar
+			
+			
+			//acertar placar 90 pontos e para
 			if (golsDoJogoTimaA.equals(getGolsTimeA())
 					&& golsDoJogoTimaB.equals(getGolsTimeB())) {
 				incrementarPontuacao(jogo.getFase().getPontuacaoAcertarPlacar());
@@ -140,21 +137,31 @@ public class Palpite {
 				return;
 			}
 			
-			//acertar apenas vencedor
+			
+			//acertar vencedor com gols 45 
 			if ( (golsDoJogoTimaA > golsDoJogoTimaB && getGolsTimeA() > getGolsTimeB()) 
-					&& golsDoJogoTimaA.equals(getGolsTimeA())) {
+					&& (golsDoJogoTimaA.equals(getGolsTimeA()) || golsDoJogoTimaB.equals(getGolsTimeB()) )) {
 				incrementarPontuacao(jogo.getFase().getPontuacaoAcertarVencedorEQtdGols());
-				setRegraPontuacao("Acertou o vencedor com gols");
-				return;
-			}
-			if( (golsDoJogoTimaB > golsDoJogoTimaA && getGolsTimeB() > getGolsTimeA()) 
-					&& golsDoJogoTimaB.equals(getGolsTimeB())) {
-				incrementarPontuacao(jogo.getFase().getPontuacaoAcertarVencedorEQtdGols());
-				setRegraPontuacao("Acertou vencedor com gols");
+				setRegraPontuacao("Acertou o vencedor e gols de um dos times");
 				return;
 			}
 			
-			//acertar apenas vencedor
+			if( (golsDoJogoTimaB > golsDoJogoTimaA && getGolsTimeB() > getGolsTimeA()) 
+					&& (golsDoJogoTimaA.equals(getGolsTimeA()) || golsDoJogoTimaB.equals(getGolsTimeB()) )) {
+				incrementarPontuacao(jogo.getFase().getPontuacaoAcertarVencedorEQtdGols());
+				setRegraPontuacao("Acertou vencedor e gols de um dos times");
+				return;
+			}
+			
+			//acertar empate 30 pontos 
+			if (golsTimeA.equals(golsTimeB) 
+					&& golsDoJogoTimaA.equals(golsDoJogoTimaB)) {
+				incrementarPontuacao(jogo.getFase().getAcertarEmpate());
+				setRegraPontuacao("Acertou empate");
+				return;
+			}
+			
+			//acertar apenas vencedor 30 pontos 
 			if ( (golsDoJogoTimaA > golsDoJogoTimaB && getGolsTimeA() > getGolsTimeB())
 					|| (golsDoJogoTimaB > golsDoJogoTimaA && getGolsTimeB() > getGolsTimeA()) ) {
 				incrementarPontuacao(jogo.getFase().getPontuacaoAcertarVencedor());
@@ -162,14 +169,13 @@ public class Palpite {
 				return;
 			}
 			
-			//acertar gols de um time (perdedor)
-			if (!golsDoJogoTimaA.equals(golsDoJogoTimaB)) {
-				if (golsDoJogoTimaA.equals(getGolsTimeA()) || golsDoJogoTimaB.equals(getGolsTimeB())) {
-					incrementarPontuacao(jogo.getFase().getAcertarQtdGolsPerdedor());
-					setRegraPontuacao("Acertou os gols do perdedor");
-					return;
-				}
+			//acertar gols de um time 
+			if (golsDoJogoTimaA.equals(getGolsTimeA()) || golsDoJogoTimaB.equals(getGolsTimeB())) {
+				incrementarPontuacao(jogo.getFase().getAcertarQtdGolsPerdedor());
+				setRegraPontuacao("Acertou os gols de um time");
+				return;
 			}
+			
 		}	
 	}
 	
@@ -298,14 +304,14 @@ public class Palpite {
 		this.regraPontuacao = regraPontuacao;
 	}
 
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) throws IOException {
+
 		Fase fase = new Fase();
+		fase.setPontuacaoAcertarPlacar(90.0);
+		fase.setPontuacaoAcertarVencedorEQtdGols(45.0);
+		fase.setPontuacaoAcertarVencedor(30.0);
 		fase.setAcertarEmpate(30.0);
 		fase.setAcertarQtdGolsPerdedor(10.0);
-		fase.setPontuacaoAcertarPlacar(45.0);
-		fase.setPontuacaoAcertarVencedor(31.0);
-		fase.setPontuacaoAcertarVencedorEQtdGols(95.0);
 		
 		Jogo jogo = new Jogo();
 		jogo.setFase(fase);
@@ -326,20 +332,35 @@ public class Palpite {
 		alemanha.setTime(b);
 		
 		
-		
 		Palpite palpite = new Palpite();
 		palpite.setJogo(jogo);
 		palpite.setTimeA(a);
 		palpite.setTimeB(b);
 		
-		brasil.setGols(7);
-		alemanha.setGols(2);
+		
+		for (int i = 0; i <= 3; i++ ) {
+			for (int y = 0; y <= 3; y++ ) {
+				for (int x = 0; x <= 3; x++ ) {
+					for (int z = 0; z <= 3; z++ ) {
+						brasil.setGols(i);
+						alemanha.setGols(y);
+						palpite.setGolsTimeA(x);
+						palpite.setGolsTimeB(z);
+						palpite.processarPontuacao();
+						System.out.println("Jogo: A "+i+" x "+y+" B  Palp: A "+x+" x "+z+" B  : "+palpite.regraPontuacao+": "+palpite.pontuacaoAtingida);
+					}
+				}
+			}
+		}
+		
+		brasil.setGols(5);
+		alemanha.setGols(0);
 		
 		palpite.setGolsTimeA(1);
-		palpite.setGolsTimeB(2);
+		palpite.setGolsTimeB(0);
 
 		palpite.processarPontuacao();
-		System.out.println(palpite.pontuacaoAtingida);
+		System.out.println(palpite.getRegraPontuacao() + ": " + palpite.pontuacaoAtingida);
 		
 	}
 	

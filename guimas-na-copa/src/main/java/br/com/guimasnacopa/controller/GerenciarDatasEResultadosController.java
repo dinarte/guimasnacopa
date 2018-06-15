@@ -77,12 +77,12 @@ public class GerenciarDatasEResultadosController {
 				if(palpite.getGolsTimeA() != null && palpite.getGolsTimeB() != null) {
 					palpite.processarPontuacao();
 					palpiteRepo.updatePontuacao(palpite.getPontuacaoAtingida(), palpite.getRegraPontuacao(), palpite.getId());;
-					System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + palpite.getPontuacaoAtingida());
 				}
 			});
 		});
 		
 		participanteRepo.updatePontuacao();
+		participanteRepo.updateClassificacao();
 		
 		return "redirect:/jogos/gerenciar";
 	}

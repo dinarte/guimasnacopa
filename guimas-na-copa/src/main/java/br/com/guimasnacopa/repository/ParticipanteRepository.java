@@ -25,9 +25,9 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 	@Query("select count(*) from Participante where pg is true and bolao =:bolao")
 	public Long countPgByBolao(@Param("bolao") Bolao b);
 	
-	public List<Participante> findAllByBolaoOrderByClassificacaoDesc(Bolao b);
+	public List<Participante> findAllByBolaoOrderByClassificacaoAsc(Bolao b);
 	
-	public List<Participante> findTop10ByBolaoOrderByClassificacaoDesc(Bolao b);
+	public List<Participante> findTop10ByBolaoOrderByClassificacaoAsc(Bolao b);
 	
 	@Modifying(clearAutomatically = true)
 	@Query(value = " update participante set pontuacao = t.pts "
@@ -39,7 +39,23 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 					+"		) as t "
 					+" where t.participante_id = participante.id "
 			, nativeQuery = true)
-	public void updatePontuacao();	
+	public void updatePontuacao();
+
+	
+	@Modifying(clearAutomatically = true)
+	@Query(value = " update participante set classificacao = classi_calc " 
+					+"	from "
+					+"	( "
+					+"	    select pontuacao as pts, row_number() OVER (PARTITION by 0) as classi_calc "
+					+"	    from( "
+					+"	    select distinct pontuacao " 
+					+"	    from participante "
+					+"	    order by pontuacao desc "
+					+"	    ) as t    "
+					+"	 ) as t2 "
+					+"	 where pontuacao = t2.pts "
+			, nativeQuery = true)
+	public void updateClassificacao();	
 	
 	
 	

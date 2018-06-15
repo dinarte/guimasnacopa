@@ -91,7 +91,7 @@ public class HomeController {
 				m.addAttribute("premioEstimado", totalValor - ((totalValor * bolao.getTaxaAdministrativa()) / 100) );
 			
 			//seta o quadro de top10 do rannking
-			List<Participante> top10 = participanteRepo.findTop10ByBolaoOrderByClassificacaoDesc(bolao); 
+			List<Participante> top10 = participanteRepo.findTop10ByBolaoOrderByClassificacaoAsc(bolao); 
 			m.addAttribute("top10",top10.stream().filter(p -> p.getPg()).collect(Collectors.toList()) );
 			
 			//seta o quadro com os prpoximos jogos
