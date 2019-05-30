@@ -33,16 +33,27 @@ public class Jogo {
 	@OneToMany(mappedBy="jogo") 
 	List<TimeNoJogo> timesNoJogo;
 	
+	private Boolean liberarCriacaoPalpites;
+	
 	@ManyToOne
 	private Fase fase;
 	
 	@Transient
+	private Time timeA;
+
+	@Transient
+	private Time timeB;
+	
+	@Transient
 	public String getTimesDescricao() {
-		String desc = "";
-		for (TimeNoJogo timeNoJogo : timesNoJogo) {
-			desc = desc.concat(timeNoJogo .getTime().getNome()).concat("  ");
-		}
-		return desc.replaceFirst(" ", " x ");
+		String timeA = timesNoJogo.get(0).getTime().getNome();
+		String timeB = timesNoJogo.get(1).getTime().getNome();
+		
+		
+		return timeA.concat(timesNoJogo.get(0).getTime().getFlag())
+				.concat(" vs ")
+				.concat(timesNoJogo.get(1).getTime().getFlag())
+				.concat(timeB);
 	}
 	
 	@Transient
@@ -98,7 +109,29 @@ public class Jogo {
 		this.limiteAposta = limiteAposta;
 	}
 
-		
-	
+	public Time getTimeA() {
+		return timeA;
+	}
+
+	public void setTimeA(Time timeA) {
+		this.timeA = timeA;
+	}
+
+	public Time getTimeB() {
+		return timeB;
+	}
+
+	public void setTimeB(Time timeB) {
+		this.timeB = timeB;
+	}
+
+	public Boolean getLiberarCriacaoPalpites() {
+		return liberarCriacaoPalpites;
+	}
+
+	public void setLiberarCriacaoPalpites(Boolean liberarCriacaoPalpites) {
+		this.liberarCriacaoPalpites = liberarCriacaoPalpites;
+	}
+
 	
 }

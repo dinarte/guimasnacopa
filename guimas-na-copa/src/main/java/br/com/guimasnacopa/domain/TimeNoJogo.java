@@ -1,6 +1,7 @@
 package br.com.guimasnacopa.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +22,7 @@ public class TimeNoJogo {
 	@ManyToOne
 	private Jogo jogo;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	private  Time time;
 	
 	private Integer gols;

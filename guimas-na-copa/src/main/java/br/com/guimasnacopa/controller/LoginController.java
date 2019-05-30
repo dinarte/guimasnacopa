@@ -1,6 +1,7 @@
 package br.com.guimasnacopa.controller;
 
 import javax.security.auth.login.LoginException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +28,6 @@ public class LoginController {
 	@Autowired
 	AppMessages appMessages;
 	
-	
 		
 	@PostMapping("/login")
 	public String login( Usuario usuario, Model model) throws LoginException {
@@ -50,7 +50,7 @@ public class LoginController {
 	
 	@GetMapping("/logout")
 	public String logout(Model model) {
-		String msg = autenticacao.getUsuario().getName().split("")[0] + ", "
+		String msg = autenticacao.getUsuario().getName().split(" ")[0] + ", "
 				+ "Foi muinto bom ver vc poraqui e esperamos vê-lo novamente em breve...";
 		appMessages.getSuccessList().add(msg);
 		model.addAttribute(appMessages);

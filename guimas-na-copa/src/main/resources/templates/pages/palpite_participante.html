@@ -26,6 +26,15 @@
                 </div>
             </div>
             
+            <div class="panel panel-default">
+               <div class="panel-heading">
+                   <i class="fa fa-bar-chart-o fa-fw"></i> Pontuação por dia
+               </div>
+               <div class="panel-body">
+                   <div id="morris-area-chart"></div>
+               </div>
+            </div>
+            
             <div th:replace="fragments/game_cards :: cards"></div>
         
         </div>
@@ -36,6 +45,26 @@
 
     <srcript th:replace="fragments/main :: scrptsblock" />
     
+	<script>
+    
+    	$(function() {
+			  $.ajax({
+			    type:"GET", 
+			    url: "/chart/desempenho/[[${participanteConsultado.id}]]", 
+			    success: function(data) {
+			    
+			    		data.xLabelFormat = function(x){return formatDate(x)};
+			    		data.dateFormat = function(x){return formatDate(new Date(x))};
+			    
+			    		Morris.Line(data);
+			        }, 
+			    error: function(jqXHR, textStatus, errorThrown) {
+			            alert(jqXHR.status);
+			        },
+			   dataType: "json"
+			});
+		});	
+    </script>
 
 </body>
 

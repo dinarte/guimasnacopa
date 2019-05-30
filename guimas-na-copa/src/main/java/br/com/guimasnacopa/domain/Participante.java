@@ -26,6 +26,8 @@ public class Participante {
 	
 	private Integer classificacao;
 	
+	private Boolean exibirClassificacaoNoRanking;
+	
 	private Integer aproveitamento;
 	
 	@Transient
@@ -99,6 +101,14 @@ public class Participante {
 
 	public void setPorcentagemPalpites(Double porcentagemPalpites) {
 		this.porcentagemPalpites = porcentagemPalpites;
+	}
+
+	public Boolean getExibirClassificacaoNoRanking() {
+		return exibirClassificacaoNoRanking;
+	}
+
+	public void setExibirClassificacaoNoRanking(Boolean exibirClassificacaoNoRanking) {
+		this.exibirClassificacaoNoRanking = exibirClassificacaoNoRanking;
 	}
 
 	

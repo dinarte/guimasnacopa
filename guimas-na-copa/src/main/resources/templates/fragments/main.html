@@ -75,7 +75,6 @@
     <!-- Morris Charts JavaScript -->
     <script src="/vendor/raphael/raphael.min.js"></script>
     <script src="/vendor/morrisjs/morris.min.js"></script>
-    <script src="/data/morris-data.js"></script>
 
     <!-- Custom Theme JavaScript -->
     <script src="/dist/js/sb-admin-2.js"></script>
@@ -84,5 +83,21 @@
     $(function () {
 	  $('[data-toggle="tooltip"]').tooltip()
 	})
+	
+	function formatDate(d) {
+    		//alert(d);
+		    var weekdays = new Array(7);
+		    weekdays[0] = "Dom";
+		    weekdays[1] = "Seg";
+		    weekdays[2] = "Ter";
+		    weekdays[3] = "Qua";
+		    weekdays[4] = "Qui";
+		    weekdays[5] = "Sex";
+		    weekdays[6] = "Sab";
+		
+		    return weekdays[d.getDay()] + ' ' + 
+		           ("0" + (d.getMonth() + 1)).slice(-2) + '/' + 
+		           ("0" + (d.getDate())).slice(-2);
+	}
     </script>
  </scriptblock>   

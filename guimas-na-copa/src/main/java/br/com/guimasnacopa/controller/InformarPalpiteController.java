@@ -40,8 +40,7 @@ public class InformarPalpiteController {
 	@GetMapping("/palpite/editar")
 	public String editarPalpite(Model model){
 		List<Palpite> palpites = palpiteRepo.findAllByParticipante(autenticacao.getParticipante());
-		if (palpites == null || palpites.size() == 0)
-			palpites = palpiteService.criarPalpites(autenticacao.getParticipante());
+		palpites = palpiteService.criarPalpites(autenticacao.getParticipante());
 		model.addAttribute("times", timeRepositpry.findAllByBolao(autenticacao.getBolao()));
 		model.addAttribute(autenticacao);
 		model.addAttribute("palpites",palpites);
