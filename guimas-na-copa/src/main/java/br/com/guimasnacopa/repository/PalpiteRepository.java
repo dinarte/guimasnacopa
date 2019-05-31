@@ -37,7 +37,9 @@ public interface PalpiteRepository  extends CrudRepository<Palpite, Integer>{
 	public List<Palpite> findByParticipanteOrderByData( @Param("participante") Participante participante, 
 			@Param("data") LocalDateTime data, Pageable page);
 	
-	@Query("from Palpite p where p.participante =:participante order by p.jogo.fase desc")
+	@Query("select p from Palpite p "
+			+ "left join p.jogo j "
+			+ "where p.participante =:participante order by j.fase desc")
 	public List<Palpite> findAllByParticipanteOrderByGrupoAndLimiteAposta( @Param("participante") Participante p);
 
 	@Query("from Palpite p "
