@@ -28,8 +28,7 @@ public class Autenticacao{
 	}
 	
 	public void checkAdminAthorization() throws LoginException {
-		if (!isAutenticado())
-			throw new LoginException("Você precisa estar autenticado para acessar esta operação");
+		checkAthorization();
 		if (getUsuario().getAdmin()!= true)
 			throw new LoginException("Você precisa ser admin para acessar esta operação");
 	}
@@ -37,6 +36,12 @@ public class Autenticacao{
 	public void checkAdminAthorization(Model model) throws LoginException {
 		checkAdminAthorization();
 		model.addAttribute(this);
+	}
+	
+	public void checkAthorization() throws LoginException {
+		if (!isAutenticado())
+			throw new LoginException("Você precisa estar autenticado para acessar esta operação, "
+					+ "você não éfetuou login ou seu tempo de conexão expirou");
 	}
 	
 

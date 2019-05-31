@@ -32,45 +32,48 @@ public class PalpiteService {
 	
 	
 	public List<Palpite> criarPalpites(Participante p) {
-		List<Jogo> jogos = jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(p.getBolao());
-		List<Palpite> novosPalpites = new ArrayList<>();
-		jogos.forEach(jogo -> {
+		List<Jogo> jogos = jogoRepo.findAllByBolaoAndPrticipanteAndNotExistsPalpiteOrderByFaseGrupoData(p.getBolao(),p);
+		if (jogos != null && jogos.size() > 0) {
 			
-			Palpite palpite = new Palpite();
-			palpite.setJogo(jogo);
-			palpite.setParticipante(p);
-			palpite.setTipo(Palpite.RESULTADO);
+			List<Palpite> novosPalpites = new ArrayList<>();
+			jogos.forEach(jogo -> {
+				
+				Palpite palpite = new Palpite();
+				palpite.setJogo(jogo);
+				palpite.setParticipante(p);
+				palpite.setTipo(Palpite.RESULTADO);
+				
+				Map<Integer, TimeNoJogo> times = new HashMap<>();
+				int i = 1;
+				List<TimeNoJogo> timesNojogo = timesNoJogoRepo.findAllByJogo(jogo);
+				for (TimeNoJogo timeNoJogo : timesNojogo) {
+					times.put(i, timeNoJogo);
+					i++;
+				}
+				
+				palpite.setTimeA(times.get(1).getTime());
+				palpite.setTimeB(times.get(2).getTime());
+				palpite.setLimiteAposta(jogo.getLimiteAposta());
+				palpiteRepo.save(palpite);
+				novosPalpites.add(palpite);
+			});
 			
-			Map<Integer, TimeNoJogo> times = new HashMap<>();
-			int i = 1;
-			List<TimeNoJogo> timesNojogo = timesNoJogoRepo.findAllByJogo(jogo);
-			for (TimeNoJogo timeNoJogo : timesNojogo) {
-				times.put(i, timeNoJogo);
-				i++;
-			}
 			
-			palpite.setTimeA(times.get(1).getTime());
-			palpite.setTimeB(times.get(2).getTime());
-			palpite.setLimiteAposta(jogo.getLimiteAposta());
-			palpiteRepo.save(palpite);
-			novosPalpites.add(palpite);
-		});
-		
-		Palpite pfinal = new Palpite();
-		pfinal.setParticipante(p);
-		pfinal.setTipo(Palpite.ACERTAR_TIMES);
-		pfinal.setLimiteAposta(jogos.get(0).getLimiteAposta());
-		palpiteRepo.save(pfinal);
-		novosPalpites.add(pfinal);
-		
-		Palpite campeao = new Palpite();
-		campeao.setParticipante(p);
-		campeao.setTipo(Palpite.ACERTAR_CAMPEAO);
-		campeao.setLimiteAposta(jogos.get(0).getLimiteAposta());
-		palpiteRepo.save(campeao);
-		novosPalpites.add(campeao);
-		
-		return novosPalpites;
-
+			Palpite pfinal = new Palpite();
+			pfinal.setParticipante(p);
+			pfinal.setTipo(Palpite.ACERTAR_TIMES);
+			pfinal.setLimiteAposta(jogos.get(0).getLimiteAposta());
+			palpiteRepo.save(pfinal);
+			novosPalpites.add(pfinal);
+			
+			Palpite campeao = new Palpite();
+			campeao.setParticipante(p);
+			campeao.setTipo(Palpite.ACERTAR_CAMPEAO);
+			campeao.setLimiteAposta(jogos.get(0).getLimiteAposta());
+			palpiteRepo.save(campeao);
+			novosPalpites.add(campeao);
+			
+		}
+		return palpiteRepo.findAllByParticipanteOrderByGrupoAndLimiteAposta(p);
 	}
 }

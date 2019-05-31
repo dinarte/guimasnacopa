@@ -11,22 +11,35 @@
 
         <div id="page-wrapper">
             
-            <div class="row">
-                <div class="col-lg-12">
-                	<div class="text-align: center"></div>
-                	<a href="/palpite/editar">
-	                    <div class="progress">
-						  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40"
-						  aria-valuemin="0" aria-valuemax="100" 
-						  th:style="${'width:' + #numbers.formatDecimal(autenticacao.participante.porcentagemPalpites,2,0) + '%'}" 
-						  th:text="${#numbers.formatDecimal(autenticacao.participante.porcentagemPalpites,2,1,'COMMA') + '% dos palpites preenchidos'}">
-						    40% 
-						  </div>
-					  </a>
+           		<div th:replace="fragments/main :: messages" />
+           
+	            <div class="row" >
+	                <div class="col-lg-12">
+	                <th:block th:if="${jogosPendentes == 0}">
+	                	<a href="/palpite/editar">
+		                    <div class="progress">
+							  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40"
+							  aria-valuemin="0" aria-valuemax="100" 
+							  th:style="${'width:' + #numbers.formatDecimal(autenticacao.participante.porcentagemPalpites,2,0) + '%'}" 
+							  th:text="${#numbers.formatDecimal(autenticacao.participante.porcentagemPalpites,2,1,'COMMA') + '% dos palpites preenchidos'}">
+							    40% 
+							  </div>
+						  </a>
+					</th:block>  
+					<th:block th:if="${jogosPendentes > 0}">
+						<div class="panel panel-danger">
+		            		<div class="panel-heading">
+		            		[[${autenticacao.usuario.name}]], existem [[${jogosPendentes}]] novo(s) jogo(s) pendentes para criação de palpites.
+		            		</div>
+		            		<div class="panel-body text-center">
+		            		<a class="btn btn-danger" href="/palpite/editar">Editar palpites Agora!</a> 
+		            		</div>
+		            	</div>
+					</th:block>
 					</div>
-                </div>
-            </div>
-  
+               </div>
+          
+            
              
             <!-- /.row -->
             <div class="row">
@@ -43,7 +56,7 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="/russia2018/participantes">
+                        <a href="/copaAmerica2019/participantes">
                             <div class="panel-footer">
                                 <span class="pull-left">Veja quem são!</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -65,7 +78,7 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="/russia2018/regulamento">
+                        <a href="/copaAmerica2019/regulamento">
                             <div class="panel-footer">
                                 <span class="pull-left">Saiba mais</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -87,7 +100,7 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="/russia2018/ranking">
+                        <a href="/copaAmerica2019/ranking">
                             <div class="panel-footer">
                                 <span class="pull-left">Ranking completo</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -109,7 +122,7 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="/russia2018/regulamento">
+                        <a href="/copaAmerica2019/regulamento">
                             <div class="panel-footer">
                                 <span class="pull-left">Leia agora</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -120,6 +133,18 @@
                 </div>
             </div>
             <!-- /.row -->
+            
+            
+            <div class="panel panel-default">
+               <div class="panel-heading">
+                   <i class="fa fa-bar-chart-o fa-fw"></i> Pontuação por dia
+               </div>
+               <div class="panel-body">
+                   <div id="morris-area-chart"></div>
+               </div>
+            </div>
+             
+            
             <div class="row">
                 <div class="col-lg-8">
                     <div class="panel panel-default">
@@ -156,6 +181,11 @@
                             <i class="fa fa-tachometer fa-fw"></i> TOP 10
                         </div>
                         <!-- /.panel-heading -->
+                        <style>
+			        	.participante td{
+			        		background-color: #eee;
+			        	}
+			        	</style>
                         <table class="table">
                         	<thead>
                         		<tr>
@@ -167,9 +197,9 @@
                         	</thead>
                         	<tbody>
                         		<th:block th:each="participante : ${top10}">
-	                        		<tr>
-	                        			<td><span th:text="${participante.classificacao}">1</span>º</td>
-	                        			<td><a th:href="${'/palpite/'+participante.id+'/consultar'}" th:text="${participante.usuario.name}">Dnarte</a></td>
+	                        		<tr th:class="${participante.id == autenticacao.participante.id ? 'participante' : ''}">
+	                        			<td><bage th:if="${participante.exibirClassificacaoNoRanking}" th:text="${participante.classificacao + 'ª'}">1</bage></td>
+	                        			<td th:id="${participante.id}" ><a th:href="${'/palpite/'+participante.id+'/consultar'}" th:text="${participante.usuario.name}">Dnarte</a></td>
 	                        			<td th:text="${participante.pontuacao}">180</td>
 	                        			<td><span th:text="${participante.aproveitamento}">100</span>%</td>
 	                        		</tr>
@@ -179,7 +209,7 @@
                         	<tfoot>
                         		<tr>
                         			<td colspan="4">
-                        				<a href="/russia2018/ranking" class="btn btn-default btn-block">Ver Ranking completo</a>
+                        				<a href="/copaAmerica2019/ranking" class="btn btn-default btn-block">Ver Ranking completo</a>
                         			</td>
                         		</tr>
                         	</tfoot>
@@ -201,6 +231,27 @@
     <!-- /#wrapper -->
 
     <srcript th:replace="fragments/main :: scrptsblock" />
+    
+    <script>
+    
+    	$(function() {
+			  $.ajax({
+			    type:"GET", 
+			    url: "/chart/desempenho/[[${autenticacao.participante.id}]]", 
+			    success: function(data) {
+			    
+			    		data.xLabelFormat = function(x){return formatDate(x)};
+			    		data.dateFormat = function(x){return formatDate(new Date(x))};
+			    
+			    		Morris.Line(data);
+			        }, 
+			    error: function(jqXHR, textStatus, errorThrown) {
+			            alert(jqXHR.status);
+			        },
+			   dataType: "json"
+			});
+		});	
+    </script>
     
 
 </body>

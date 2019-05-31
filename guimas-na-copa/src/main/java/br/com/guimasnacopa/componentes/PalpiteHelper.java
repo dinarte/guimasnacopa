@@ -54,7 +54,8 @@ public class PalpiteHelper {
 
 	private void preparModel(Model model, List<Palpite> palpites) {
 		model.addAttribute(autenticacao);
-		model.addAttribute("participanteConsultado",palpites.get(0).getParticipante());
+		if (palpites != null && palpites.size() > 0)
+			model.addAttribute("participanteConsultado",palpites.get(0).getParticipante());
 		model.addAttribute("palpites",palpites);
 	}
 

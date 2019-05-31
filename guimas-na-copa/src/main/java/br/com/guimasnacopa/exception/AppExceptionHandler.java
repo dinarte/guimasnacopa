@@ -1,6 +1,7 @@
 package br.com.guimasnacopa.exception;
 
 import javax.security.auth.login.LoginException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;

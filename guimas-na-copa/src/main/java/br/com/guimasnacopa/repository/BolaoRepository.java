@@ -10,4 +10,6 @@ import br.com.guimasnacopa.domain.Bolao;
 public interface BolaoRepository  extends CrudRepository<Bolao, Integer>{
 
 	public Bolao findOneByPermalink(String permalink);
+
+
 }

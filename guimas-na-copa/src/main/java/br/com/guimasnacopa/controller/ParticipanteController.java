@@ -44,14 +44,25 @@ public class ParticipanteController {
 		return participantes(p.getBolao().getPermalink(), model);
 	}
 	
+	
+	@GetMapping("/participantes")
+	public String participantes( Model model) throws AppException, LoginException {
+		autenticacao.checkAthorization();
+		participanteHelper.prepareAllParticipantes(autenticacao.getBolao().getPermalink(), model);
+		return "pages/participantes";
+	}
+	
+	
 	@GetMapping("/{linkBolao}/participantes")
-	public String participantes( @PathVariable("linkBolao") String linkBolao, Model model) throws AppException {
+	public String participantes( @PathVariable("linkBolao") String linkBolao, Model model) throws AppException, LoginException {
+		autenticacao.checkAthorization();
 		participanteHelper.prepareAllParticipantes(linkBolao, model);
 		return "pages/participantes";
 	}
 	
 	@GetMapping("/{linkBolao}/ranking")
-	public String ranking( @PathVariable("linkBolao") String linkBolao, Model model) throws AppException {
+	public String ranking( @PathVariable("linkBolao") String linkBolao, Model model) throws AppException, LoginException {
+		autenticacao.checkAthorization();
 		participanteHelper.prepareRankingParticipantes(linkBolao, model);
 		return "pages/ranking";
 	}
