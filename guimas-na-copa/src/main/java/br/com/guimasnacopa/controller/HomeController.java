@@ -84,6 +84,9 @@ public class HomeController {
 		if (! autenticacao.getUsuario().getAdmin()) {
 			//seta o card de participante
 			Participante participante = participanteRepo.findOneByBolaoAndUsuario(bolao, autenticacao.getUsuario());
+			
+			participante = criaParticipanteCasoNecessario(participante);
+			
 			participanteHelper.popularPorcentagemDePreenchimentoDoParticipante(participante);
 			autenticacao.setParticipante(participante);
 			m.addAttribute(autenticacao);
@@ -115,6 +118,16 @@ public class HomeController {
 		}	
 	}
 
+	private Participante criaParticipanteCasoNecessario(Participante participante) {
+		if (participante == null) {
+			participante = new Participante();
+			participante.setBolao(autenticacao.getBolao());
+			participante.setUsuario(autenticacao.getUsuario());
+			participanteRepo.save(participante);
+		}
+		return participante;
+	}
+
 	
 	@GetMapping("/{linkBolao}/regulamento")
 	public String regulamento( @PathVariable("linkBolao") String linkBolao, Model model) throws AppException {
@@ -136,7 +149,7 @@ public class HomeController {
 			if (autenticacao.getUsuario().getAdmin() != true)
 				return "pages/home";
 			else {
-				participanteHelper.prepareAllParticipantes("russia2018", m);
+				participanteHelper.prepareAllParticipantes(autenticacao.getBolao().getPermalink(), m);
 				return "pages/participantes";
 			}
 			

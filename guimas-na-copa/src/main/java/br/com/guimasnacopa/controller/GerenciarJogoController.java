@@ -63,7 +63,7 @@ public class GerenciarJogoController {
 		Jogo jogo = jogoRepo.findById(id).get();
 		jogo.setTimeA(jogo.getTimesNoJogo().get(0).getTime());
 		jogo.setTimeB(jogo.getTimesNoJogo().get(1).getTime());
-		model.addAttribute("faseList", faseRepo.findAll());
+		model.addAttribute("faseList", faseRepo.findAllByBolao(autenticacao.getBolao()));
 		model.addAttribute("timeList", timeRepo.findAll());
 		model.addAttribute(jogo);
 		return "/jogo/form";
@@ -73,7 +73,7 @@ public class GerenciarJogoController {
 	@GetMapping("/jogo/novo")
 	public String novo(Model model) throws LoginException {
 		autenticacao.checkAdminAthorization(model);
-		model.addAttribute("faseList", faseRepo.findAll());
+		model.addAttribute("faseList", faseRepo.findAllByBolao(autenticacao.getBolao()));
 		model.addAttribute("timeList", timeRepo.findAll());
 		Jogo jogo = new Jogo();
 		model.addAttribute(jogo);
