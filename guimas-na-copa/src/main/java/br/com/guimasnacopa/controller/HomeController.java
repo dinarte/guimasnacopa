@@ -1,9 +1,11 @@
 package br.com.guimasnacopa.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import br.com.guimasnacopa.domain.Participante;
 import br.com.guimasnacopa.domain.Usuario;
 import br.com.guimasnacopa.exception.AppException;
 import br.com.guimasnacopa.exception.LoginException;
+import br.com.guimasnacopa.repository.JogoRepository;
 import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.ParticipanteRepository;
 import br.com.guimasnacopa.repository.UserRepository;
@@ -52,6 +55,8 @@ public class HomeController {
 	
 	@Autowired PalpiteRepository palpiteRepo;
 	
+	@Autowired JogoRepository jogoRepo;
+	
 	@RequestMapping("/")
 	public String home(Model m) throws AppException {
 		criarUsuarioAdminCasoNecessario();
@@ -72,11 +77,16 @@ public class HomeController {
 		}
 			
 	}
+	
+	
 
 	private void populaHomoDoParticipante(Model m, Bolao bolao) {
 		if (! autenticacao.getUsuario().getAdmin()) {
 			//seta o card de participante
 			Participante participante = participanteRepo.findOneByBolaoAndUsuario(bolao, autenticacao.getUsuario());
+			
+			participante = criaParticipanteCasoNecessario(participante);
+			
 			participanteHelper.popularPorcentagemDePreenchimentoDoParticipante(participante);
 			autenticacao.setParticipante(participante);
 			m.addAttribute(autenticacao);
@@ -91,14 +101,31 @@ public class HomeController {
 				m.addAttribute("premioEstimado", totalValor - ((totalValor * bolao.getTaxaAdministrativa()) / 100) );
 			
 			//seta o quadro de top10 do rannking
-			List<Participante> top10 = participanteRepo.findTop10ByBolaoOrderByClassificacaoAsc(bolao); 
+			List<Participante> top10 = participanteRepo.findTop10ByBolaoOrderByClassificacaoAscExibirClassificacaoNoRankingDesc(bolao); 
 			m.addAttribute("top10",top10.stream().filter(p -> p.getPg()).collect(Collectors.toList()) );
 			
 			//seta o quadro com os prpoximos jogos
-			palpiteHelper.processarConsultaDePalpiteRelacionandoApenasComResultadosDosJogos(participante, m, palpiteRepo.findTop6ByParticipanteOrderByJogo_Data(participante));
+			LocalDateTime  hoje = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+			palpiteHelper.processarConsultaDePalpiteRelacionandoApenasComResultadosDosJogos(participante, m, 
+					palpiteRepo.findByParticipanteOrderByData(participante, hoje, new PageRequest(0, 10)));
 			m.addAttribute("colunasCards",6);
 			m.addAttribute("meuPalpite",true);
+			
+			//verifica se existe jogos pendentes de informacao de palpite
+			m.addAttribute("jogosPendentes",jogoRepo.countJogosComPalpitesPendentesByBolaoAndParticipante(bolao, 
+					autenticacao.getParticipante()));
+			
 		}	
+	}
+
+	private Participante criaParticipanteCasoNecessario(Participante participante) {
+		if (participante == null) {
+			participante = new Participante();
+			participante.setBolao(autenticacao.getBolao());
+			participante.setUsuario(autenticacao.getUsuario());
+			participanteRepo.save(participante);
+		}
+		return participante;
 	}
 
 	
@@ -122,7 +149,7 @@ public class HomeController {
 			if (autenticacao.getUsuario().getAdmin() != true)
 				return "pages/home";
 			else {
-				participanteHelper.prepareAllParticipantes("russia2018", m);
+				participanteHelper.prepareAllParticipantes(autenticacao.getBolao().getPermalink(), m);
 				return "pages/participantes";
 			}
 			

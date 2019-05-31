@@ -61,7 +61,7 @@ public class NovoUsuarioController {
 			throw new ValidacaoException(erros);
 		}
 		
-		singUpService.criarUsuarioEParticipante(usuario, "russia2018");
+		singUpService.criarUsuarioEParticipante(usuario, "copaAmerica2019");
 		
 		appMessages.getWarningList().add("Você se cadastrou com sucesso! Efetue login.");
 		model.addAttribute(appMessages);

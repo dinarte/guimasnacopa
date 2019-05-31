@@ -2,6 +2,7 @@ package br.com.guimasnacopa.repository;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -25,9 +26,11 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 	@Query("select count(*) from Participante where pg is true and bolao =:bolao")
 	public Long countPgByBolao(@Param("bolao") Bolao b);
 	
-	public List<Participante> findAllByBolaoOrderByClassificacaoAsc(Bolao b);
+	public List<Participante> findAllByBolaoOrderByPontuacaoDesc(Bolao b);
 	
-	public List<Participante> findTop10ByBolaoOrderByClassificacaoAsc(Bolao b);
+	public List<Participante> findAllByBolaoOrderByClassificacaoAscExibirClassificacaoNoRankingDesc(Bolao b);
+	
+	public List<Participante> findTop10ByBolaoOrderByClassificacaoAscExibirClassificacaoNoRankingDesc(Bolao b);
 	
 	@Modifying(clearAutomatically = true)
 	@Query(value = " update participante set pontuacao = t.pts "
@@ -55,7 +58,36 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 					+"	 ) as t2 "
 					+"	 where pontuacao = t2.pts "
 			, nativeQuery = true)
-	public void updateClassificacao();	
+	public void updateClassificacao();
+
+	
+	@Modifying(clearAutomatically = true)
+	@Query(value = ""
+			+ " update participante set aproveitamento =  aprov "
+			+ "from (  "
+			+ "select id, " + 
+			"pontuacao, " + 
+			"(pontuacao * 100) / ((select count(*) from jogo " + 
+			"                       where not exists (select * " + 
+			"                                           from time_no_jogo " + 
+			"                                          where jogo_id = jogo.id " + 
+			"                                            and gols is null)) * 90) aprov " + 
+			"from  participante p ) t "
+			+ "where participante.id = t.id"
+			, nativeQuery = true)
+	public void updateAproveitamento();	
+	
+	
+	@Query(value="select to_char(jogo.data, 'yyyy-mm-dd') as dia, coalesce(sum(pontuacao_atingida),0) as pontuacao \r\n" + 
+			"from palpite pal\r\n" + 
+			"join participante par on (par.id = pal.participante_id)\r\n" + 
+			"join usuario u on u.id = par.usuario_id\r\n" + 
+			"join jogo on jogo.id = pal.jogo_id\r\n" + 
+			"where  par.id = :participanteId \r\n" + 
+			"and to_char(jogo.data, 'yymmdd') <= to_char(now(), 'yymmdd')\r\n" + 
+			"group by to_char(jogo.data, 'yyyy-mm-dd')\r\n" + 
+			"order by 1" , nativeQuery = true)
+	public List<Map<String, Object>> findAproveitameto(@Param("participanteId") Integer participanteId);
 	
 	
 	

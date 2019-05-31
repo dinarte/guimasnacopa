@@ -16,6 +16,7 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import br.com.guimasnacopa.domain.Jogo;
 import br.com.guimasnacopa.domain.Palpite;
+import br.com.guimasnacopa.domain.Participante;
 import br.com.guimasnacopa.repository.JogoRepository;
 import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.ParticipanteRepository;
@@ -55,7 +56,10 @@ public class GerenciarDatasEResultadosController {
 	public String salvar(HttpServletRequest reuqest, Model m) throws LoginException {
 		autenticacao.checkAdminAthorization();
 		List<Jogo> jogos = jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
+		
+		//comupta jogo a jogo
 		jogos.forEach(j -> {
+			System.out.println("jogo: "+j.getId()+"-"+j.getGrupo());
 			String value = reuqest.getParameter(j.getId().toString());
 			
 			//salva as datas
@@ -67,24 +71,53 @@ public class GerenciarDatasEResultadosController {
 			//salva os gols
 			j.getTimesNoJogo().forEach(tnj ->{
 				String gols = reuqest.getParameter("timeNoJogo_"+tnj.getId().toString());
-				if (gols != null && !gols.equals(""))
+				if (gols != null && !gols.equals("")) {
+					System.out.println("jogo:" + tnj.getTime().getNome());
 					timeNoJogoRepo.updateGols(Integer.parseInt(gols),tnj.getId());
-				
+				}
 			});
 			//processa o ranking
-			Iterable<Palpite> palpites = palpiteRepo.findAllByJogo(j);
+			Iterable<Palpite> palpites = palpiteRepo.findAllByJogo(j) ;
 			palpites.forEach(palpite ->{
+				System.out.println("..."+palpite.getGolsTimeA()+" x "+palpite.getGolsTimeB());
 				if(palpite.getGolsTimeA() != null && palpite.getGolsTimeB() != null) {
 					palpite.processarPontuacao();
-					palpiteRepo.updatePontuacao(palpite.getPontuacaoAtingida(), palpite.getRegraPontuacao(), palpite.getId());;
+					palpiteRepo.updatePontuacao(palpite.getPontuacaoAtingida(), palpite.getRegraPontuacao(), palpite.getId());
+				}
+				if(palpite.getTipo().equals(Palpite.ACERTAR_TIMES)) {
+					palpite.processarPontuacaoAcertarTimes();
+					palpiteRepo.updatePontuacao(palpite.getPontuacaoAtingida(), palpite.getRegraPontuacao(), palpite.getId());
 				}
 			});
 		});
 		
 		participanteRepo.updatePontuacao();
-		participanteRepo.updateClassificacao();
 		
+		List<Participante> participantes = participanteRepo
+				.findAllByBolaoOrderByPontuacaoDesc(autenticacao.getBolao());
+		int count = 1;
+		int classificacaoAnterior = 0;
+		Double pontuacaoAnterior = -0.1;
+		for (Participante p : participantes) {
+			System.out.println("particiantes>>>>");
+			p.setExibirClassificacaoNoRanking(true);
+			if (!p.getPontuacao().equals(pontuacaoAnterior)) {
+				classificacaoAnterior = count;
+				p.setClassificacao(classificacaoAnterior);
+			}else{
+				p.setClassificacao(classificacaoAnterior);
+				p.setExibirClassificacaoNoRanking(false);
+			}
+			count++;
+			pontuacaoAnterior = p.getPontuacao();
+			participanteRepo.save(p);
+		}
+		
+		participanteRepo.updateAproveitamento();
 		return "redirect:/jogos/gerenciar";
 	}
+	
+	
+	
 	
 }

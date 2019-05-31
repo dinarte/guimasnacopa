@@ -9,6 +9,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,12 +37,12 @@ public class Palpite {
 	@ManyToOne
 	private Jogo jogo;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	private Time timeA;
 	
 	private Integer golsTimeA;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	private Time timeB;
 	
 	private Integer golsTimeB;
@@ -82,7 +83,7 @@ public class Palpite {
 	@Transient
 	public String getDescricaoDaFase() {
 		
-		if (jogo != null) 
+		if (isResultado()) 
 			return jogo.getFase().getNome() + " - " +(jogo.getGrupo() != null ? jogo.getGrupo() : "");
 		if (isAcertarTimes()) 
 			return "Acertar a Final";
@@ -119,6 +120,21 @@ public class Palpite {
 			if (getTimeB().getId().equals( tmj.getTime().getId() )){
 				setGolsDoJogoTimaB(tmj.getGols());
 			} 
+		});
+	}
+	
+	public void processarPontuacaoAcertarTimes() {
+		setPontuacaoAtingida(0.0);
+		setRegraPontuacao("Acertou nada");
+		getJogo().getTimesNoJogo().forEach(tmj -> {
+			if(tmj.getTime().getId().equals(timeA.getId()) ||
+					tmj.getTime().getId().equals(timeB.getId())	){
+				regraPontuacao = "Acertou um finalista";
+				
+				pontuacaoAtingida = pontuacaoAtingida.equals(0.0) 
+						? jogo.getFase().getAcertarUmTime() 
+								: jogo.getFase().getAcertarTimes();
+			}
 		});
 	}
 	
