@@ -68,7 +68,9 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 			+ "select id, " + 
 			"pontuacao, " + 
 			"(pontuacao * 100) / ((select count(*) from jogo " + 
-			"                       where not exists (select * " + 
+			"						join fase on fase.id = jogo.fase_id " + 
+			"			            where fase.bolao_id = p.bolao_id  " + 
+			"                       and not exists (select * " + 
 			"                                           from time_no_jogo " + 
 			"                                          where jogo_id = jogo.id " + 
 			"                                            and gols is null)) * 90) aprov " + 

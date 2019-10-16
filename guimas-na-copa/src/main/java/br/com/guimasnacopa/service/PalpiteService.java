@@ -58,7 +58,7 @@ public class PalpiteService {
 				novosPalpites.add(palpite);
 			});
 			
-			
+			/*
 			Palpite pfinal = new Palpite();
 			pfinal.setParticipante(p);
 			pfinal.setTipo(Palpite.ACERTAR_TIMES);
@@ -72,7 +72,7 @@ public class PalpiteService {
 			campeao.setLimiteAposta(jogos.get(0).getLimiteAposta());
 			palpiteRepo.save(campeao);
 			novosPalpites.add(campeao);
-			
+			*/
 		}
 		return palpiteRepo.findAllByParticipanteOrderByGrupoAndLimiteAposta(p);
 	}
