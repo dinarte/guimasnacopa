@@ -125,7 +125,7 @@ public class Palpite {
 	
 	public void processarPontuacaoAcertarTimes() {
 		setPontuacaoAtingida(0.0);
-		setRegraPontuacao("Acertou nada");
+		setRegraPontuacao("Para fora! não acertou nada");
 		getJogo().getTimesNoJogo().forEach(tmj -> {
 			if(tmj.getTime().getId().equals(timeA.getId()) ||
 					tmj.getTime().getId().equals(timeB.getId())	){
@@ -142,19 +142,19 @@ public class Palpite {
 		popularGolsDoJogo();
 		if (golsDoJogoTimaA != null && golsDoJogoTimaB != null) {
 			setPontuacaoAtingida(0.0);
-			setRegraPontuacao("Acertou nada");
+			setRegraPontuacao("Para fora! não acertou nada");
 			
 			
-			//acertar placar 90 pontos e para
+			//acertar placar exato
 			if (golsDoJogoTimaA.equals(getGolsTimeA())
 					&& golsDoJogoTimaB.equals(getGolsTimeB())) {
 				incrementarPontuacao(jogo.getFase().getPontuacaoAcertarPlacar());
-				setRegraPontuacao("Acertou placar");
+				setRegraPontuacao("Golaço! Acertou placar exato");
 				return;
 			}
+			//--
 			
-			
-			//acertar vencedor com gols 45 
+			//acertar vencedor com gols  
 			if ( (golsDoJogoTimaA > golsDoJogoTimaB && getGolsTimeA() > getGolsTimeB()) 
 					&& (golsDoJogoTimaA.equals(getGolsTimeA()) || golsDoJogoTimaB.equals(getGolsTimeB()) )) {
 				incrementarPontuacao(jogo.getFase().getPontuacaoAcertarVencedorEQtdGols());
@@ -168,29 +168,41 @@ public class Palpite {
 				setRegraPontuacao("Acertou vencedor e gols de um dos times");
 				return;
 			}
+			//---
 			
-			//acertar empate 30 pontos 
+			//acertar empate  
 			if (golsTimeA.equals(golsTimeB) 
 					&& golsDoJogoTimaA.equals(golsDoJogoTimaB)) {
 				incrementarPontuacao(jogo.getFase().getAcertarEmpate());
 				setRegraPontuacao("Acertou empate");
 				return;
 			}
+			//--
 			
-			//acertar apenas vencedor 30 pontos 
+			//acertar apenas vencedor  
 			if ( (golsDoJogoTimaA > golsDoJogoTimaB && getGolsTimeA() > getGolsTimeB())
 					|| (golsDoJogoTimaB > golsDoJogoTimaA && getGolsTimeB() > getGolsTimeA()) ) {
-				incrementarPontuacao(jogo.getFase().getPontuacaoAcertarVencedor());
-				setRegraPontuacao("Acertou o vencedor");
+				
+				if ( (golsDoJogoTimaA > golsDoJogoTimaB && getGolsTimeA() >= 4) 
+						|| golsDoJogoTimaB > golsDoJogoTimaA && getGolsTimeB() >= 4) {
+					incrementarPontuacao(jogo.getFase().getPontuacaoAcertarPlacar());
+					setRegraPontuacao("Acertou o vencedor com bonus de placar alto");
+				} else {
+					incrementarPontuacao(jogo.getFase().getPontuacaoAcertarVencedor());
+					setRegraPontuacao("Acertou o vencedor");
+				}	
+				
 				return;
 			}
+			//--
 			
 			//acertar gols de um time 
 			if (golsDoJogoTimaA.equals(getGolsTimeA()) || golsDoJogoTimaB.equals(getGolsTimeB())) {
 				incrementarPontuacao(jogo.getFase().getAcertarQtdGolsPerdedor());
-				setRegraPontuacao("Acertou os gols de um time");
+				setRegraPontuacao("Acertou os gols de um dos times");
 				return;
 			}
+			//----
 			
 		}	
 	}

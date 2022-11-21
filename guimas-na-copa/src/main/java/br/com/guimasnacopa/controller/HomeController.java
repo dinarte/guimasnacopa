@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,6 +58,9 @@ public class HomeController {
 	
 	@Autowired JogoRepository jogoRepo;
 	
+	@Value("${guimasnacopa.config.bolaoAtivo}")
+	String bolaoAtivo;
+	
 	@RequestMapping("/")
 	public String home(Model m) throws AppException {
 		criarUsuarioAdminCasoNecessario();
@@ -69,7 +73,7 @@ public class HomeController {
 		if (autenticacao.isAutenticado()) {
 			Bolao bolao = bolaoHelper.getBolaoByPermaLink(linkBolao);
 			autenticacao.setBolao(bolao);
-			populaHomoDoParticipante(m, bolao);
+			populaHomDoParticipante(m, bolao);
 			criarUsuarioAdminCasoNecessario();
 			return redirecionaDeAcordoComAutenticacao(m,linkBolao);
 		}else {
@@ -80,7 +84,7 @@ public class HomeController {
 	
 	
 
-	private void populaHomoDoParticipante(Model m, Bolao bolao) {
+	private void populaHomDoParticipante(Model m, Bolao bolao) {
 		if (! autenticacao.getUsuario().getAdmin()) {
 			//seta o card de participante
 			Participante participante = participanteRepo.findOneByBolaoAndUsuario(bolao, autenticacao.getUsuario());
@@ -114,6 +118,8 @@ public class HomeController {
 			//verifica se existe jogos pendentes de informacao de palpite
 			m.addAttribute("jogosPendentes",jogoRepo.countJogosComPalpitesPendentesByBolaoAndParticipante(bolao, 
 					autenticacao.getParticipante()));
+			
+			m.addAttribute("bolaoAtivo", bolaoAtivo);
 			
 		}	
 	}
