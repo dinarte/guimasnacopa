@@ -7,6 +7,11 @@ buildscript {
     }
 }
 
+plugins {
+    id("org.hidetake.ssh").version("2.9.0")
+}
+
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
@@ -27,10 +32,37 @@ repositories {
 
 task createWar(type : War){
     destinationDir = file("$buildDir")
-    baseName = "bolao"
-    version = "1.1.18"
+    baseName = buildBaseName
+    version = buildVersion
     caseSensitive = true
     from "src"
+}
+
+ssh.settings {
+	knownHosts = allowAnyHosts
+}
+
+remotes {
+  ContaigeClaud {
+    host = 'ag-br1-17.conteige.cloud' 
+    port = 28626
+    user = 'application'
+    identity = file("${System.properties['user.home']}/.ssh/guimas_rsa_id") 
+  }
+}  
+
+task deploy {
+  doLast {
+    ssh.run {
+      session(remotes.ContaigeClaud) {
+        put from: "$buildDir/${buildBaseName}-${buildVersion}.war", into: 'appserver/webapps/ROOT.war'
+      }
+    }
+  }
+}
+
+task createWarAndDeploy(dependsOn: ['createWar', 'deploy']) {
+    // empty task body, dependsOn already handles the dependencies
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -47,6 +79,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
    //compile("org.flywaydb:flyway-core:5.0.7")
-    implementation group: 'org.postgresql', name: 'postgresql', version: '9.4.1212.jre7'
+    implementation("org.postgresql:postgresql")
+    implementation("com.mashape.unirest:unirest-java:1.4.9")
+	implementation("com.google.api-client:google-api-client:1.32.1")
+	
+    
     testImplementation("junit:junit")
 }

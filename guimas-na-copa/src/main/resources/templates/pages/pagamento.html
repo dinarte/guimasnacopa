@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header" th:text="${bolao.nome}">Descriçao do Bolão</h1>
+                    <h3>Instruções para pagamento</h3>
+                </div>
+            </div>
+        
+        
+        		   <div class="panel panel-info">
+                        <div class="panel-heading">
+                        	<div class="block text-right">
+                             <a class="btn btn-default" th:href="${'/' + bolao.permalink + '/regulamento'}">Regulamento</a> <span class="btn btn-primary">Pagamento</span>
+                            </div>  
+                        </div>
+                        <div class="panel-body">
+                            <p th:utext="${bolao.instrucoesPagamento}" th:remove="tag">
+					            
+					            Aqui serão as regras do bolão
+					            
+					        </p>
+                        </div>
+                      
+                    </div>
+        
+        
+            
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>

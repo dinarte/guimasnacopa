@@ -53,8 +53,14 @@ public class StartUpService {
 		u.setName("Administrador do Bolão");
 		u.setEmail("admin@admin");
 		u.setPass("admin");
+		u.setUrlFoto("/img/apito.JPG");
 		uRepo.save(u);
-	
+		
+		//criarBolaoTeste();
+		
+	}
+
+	private void criarBolaoTeste() {
 		Bolao bolao = new Bolao();
 		bolao.setNome("Guimas na Copa da Russia 2018");
 		bolao.setPermalink("russia2018");
@@ -122,8 +128,6 @@ public class StartUpService {
 								criarJogo(times, i, y, grupos, grupo, jogoCriado);
 			
 		});
-		
-		
 	}
 
 	private void criarJogo(List<Time> times, int i, int y, Fase fase, String grupo, List<String> jogoCriado) {
@@ -194,6 +198,11 @@ public class StartUpService {
 
 		
 		
+	}
+		
+	public static void main(String[] args) {
+		StartUpService s = new StartUpService();
+		System.out.println(s.getRegra());
 	}
 	
 }

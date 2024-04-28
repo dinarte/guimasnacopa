@@ -1,0 +1,16 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "GUIMAS-LOCAL",
+            "group": "GUIMASBET",
+            "database": "guimas-2024",
+            "username": "postgres"
+        }
+    ]
+}

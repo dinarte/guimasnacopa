@@ -27,6 +27,8 @@ public class NovoUsuarioController {
 	UserRepository userRepo;
 	@Autowired
 	AppMessages appMessages;
+	@Autowired
+	LoginController loginComtroller;
 	
 	@GetMapping("singup")
 	public String singUp() {	
@@ -69,7 +71,7 @@ public class NovoUsuarioController {
 		
 		appMessages.getWarningList().add("Você se cadastrou com sucesso! Efetue login.");
 		model.addAttribute(appMessages);
-		return "pages/login";
+		return loginComtroller.login(model);
 	}
 	
 	

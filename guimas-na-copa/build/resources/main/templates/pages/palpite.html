@@ -10,15 +10,30 @@
         <nav th:replace="fragments/navigation :: navbar"  />
 
         <div id="page-wrapper">
+  
  
             <div th:replace="fragments/main :: messages"></div>
         
         	<div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header" th:text="${session.autenticacao.bolao.nome}">Descrição do Bolão</h1>
+                    <h1 class="page-header" th:utext="${session.autenticacao.bolao.nome}">Descrição do Bolão</h1>
                     <h3>Editar meus palpites</h3>
                 </div>
             </div>
+            
+            <div th:if="${!autenticacao.participante.pg}" class="alert alert-danger">
+        		
+        		Sua participação neste bolão ainda não foi confirmada, portanto, mesmo que você informe seus palpites, sua pontuação não será contabilizada. Isso pode ocorrer quando:
+				<ul><li>Você ainda não pagou sua cota ou ainda não enviou o comprovante.</li></ul>
+                Caso você já tenha enviado seu comprovante, aguarde a liberação ou entre em contato com o administrador. <br />
+                
+                <div class="text-center pt-8">
+                	<a th:href="${'/' + autenticacao.bolao.permalink + '/pagamento'}" class="btn btn-primary d-inline-flex align-items-center"> 
+                		INSTRUÇÕES PARA PAGAMENTO
+                	</a>
+                </div>
+        	
+        	</div>
             
             <div class="alert alert-warning" role="alert">
 		 	 <strong>ATENÇÃO:</strong> O ranking levará em consideração apenas gols marcados dentro do tempo regulamentar! Não será levado em consideração gols marcados em prorrogações ou disputa por penálti
@@ -26,95 +41,134 @@
             
             
             <form role="form" action="/#" th:action="@{/palpite/save}"  method="post">
-            <table class="table">
-                        	<thead>
-                        		<tr>
-                        			<th>Fase</th>
-                        			<th>Grupo</th>
-                        			<th style="text-align: right;">Data</th>
-                        			<th colspan="5"><center>Jogo</center></th>
-                        		</tr>
-                        	</thead>
-                        	<tbody>
-                        		<th:block th:each="palpite : ${palpites}">
-	                        		<th:block th:if="${palpite.resultado}">
-		                        		<tr>
-		                        			<td th:text="${palpite.jogo.fase.nome}">Fase do Jogo</td>
-		                        			<td th:text="${palpite.jogo.grupo}">Grupo</td>
-		                        			<td th:text=" ${ #temporals.format(palpite.jogo.data, 'dd MMM hh:mm')}" style="text-align: right;" >
-					             			   X/XX/XXXX XX:XX
-					             			</td> 
-		                        			<td th:text="${palpite.timeA.nome}" style="text-align: right;">Time A</td>
-		                        			<td width="20px" style="text-align: right;">
-		                        				<input th:if="${palpite.apostaAberta}" th:name="${palpite.keyGolsTimeA}" th:value="${palpite.golsTimeA}" type="number" min="0" max="99" maxlength="2" />	
-		                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.golsTimeA}"></span>
-		                        			</td>
-		                        			<td width="3px">x</td>
-		                        			<td width="20px">
-		                        				<input th:if="${palpite.apostaAberta}" th:name="${palpite.keyGolsTimeB}" th:value="${palpite.golsTimeB}" type="number" min="0" max="99" maxlength="2" />
-		                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.golsTimeB}"></span>
-		                        			</td>
-		                        			<td th:text="${palpite.timeB.nome}" style="text-align: left;">Time B</td>
-		                        		</tr>
-		                        	</th:block>
-		                        	  <th:block th:if="${palpite.acertarTimes}">
-		                        		<tr>
-		                        			<td> Final </td>
-		                        			<td> Acerte os finalistas! </td>
-		                        			<td>  </td>
-		                        			<td  style="text-align: right;">Time A</td>
-		                        			<td width="20px">
-		                        			
-			                        			<select th:if="${palpite.apostaAberta}"  th:name="${palpite.keyGolsTimeA}" >
-			                        				<option  th:each="time : ${times}" th:value="${time.id}" th:selected="${palpite.timeA == null || palpite.timeA.id==time.id}">[[${time.nome}]]</option>
-			                        			</select>
-			                       				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.timeA.nome}"></span>
-			                        			
-			                        		
-		                        			</td>
-		                        			
-		                        			<td width="3px">x</td>
-		                        			
-		                        			<td width="20px">
-											
-												<select th:if="${palpite.apostaAberta}" th:name="${palpite.keyGolsTimeB}" >
-			                        				<option  th:each="time : ${times}" th:value="${time.id}" th:selected="${palpite.timeB ==null || palpite.timeB.id==time.id}">[[${time.nome}]]</option>
-			                        			</select>			
-												<span th:if="${!palpite.apostaAberta}" th:text="${palpite.timeB.nome}"></span>
-			                        			
-		                        			</td>
-		                        			<td>Time B</td>
-		                        		</tr>
-		                        	</th:block>
-		                        	<th:block th:if="${palpite.acertarCampeao}">
-		                        		<tr>
-		                        			<td> Final </td>
-		                        			<td> Acerte o Campeão</td>
-		                        			<td>  </td>
-		                        			<td  style="text-align: right;">Selecionar Campeão</td>
-		                        			<td width="20px" colspan="7">
-		                        			
-			                        			<select th:if="${palpite.apostaAberta}" th:name="${palpite.keyGolsTimeA}" >
-			                        				<option  th:each="time : ${times}" th:value="${time.id}" th:selected="${palpite.timeA == null || palpite.timeA.id==time.id}">[[${time.nome}]]</option>
-			                        			</select>
-		                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.timeA.nome}"></span>
-			                        			
-		                        			
-		                        			</td>
-		                        			
-		                        		</tr>
-		                        	</th:block>
-                        		</th:block>
-                        		
-                        	</tbody>
-                        	<tfoot>
-                        		<tr>
-                        			<td colspan="9">
-                        				<button class="btn btn-info btn-block">Salvar meus palpites</button>
-                        			</td>
-                        		</tr>
-                        	</tfoot>
-                        </table>
+            
+            
+            
+            <div class="row">
+         
+         	 <div th:each="group : ${palpitesNodes}">
+         
+         	 <div class="text-center" th:with="competicao=${group.node}">
+         	 		<img th:src="${competicao.logoUrl}" width="100px" />
+         	 		<br />
+         	 		<br />
+	         </div>
+         
+         
+	         <div class="panel panel-default" th:each="group : ${group.children}">
+	             
+	             <div class="panel-heading" th:with="grupo=${group.node}">
+	                <span th:text="${grupo}">GRUPO A</span>
+	             </div>
+	             
+	             <div class="panel-body">
+	             
+	             	<br />
+	             
+		             <th:block th:each="palpite : ${group.children}" th:with="times=${timesMap[palpite.bolaoCompeticao.competicao.id]}">
+			         	<div class="col-lg-4 col-md-6  col-sm-12 minheight" >
+						  <div th:class="${'panel panel-default grupo ' + palpite.colorClass}" >
+						  	<div class="panel-heading text-center " >
+						  		<span th:utext="${palpite.bolaoCompeticao.competicao.nome} ">Copa do Mundo</span> <br />
+						  		<span th:utext="${palpite.descricaoDaFase} ">Eliminatórias - Grupo A</span> 
+						  	</div>
+						    <div class="panel-body">
+						    	<table class="tab-jogo">
+							    	<tr>
+							    		<th></th>
+							    		<th></th>
+							    		<th class="dsc-p"></th>
+							    		<th class="dsc-p"></th>
+						    		</tr>
+						    		
+						    		
+						    		<th:block th:if="${palpite.acertarCampeao}" th:with="meuPalpite=${true}">
+							    		<tr>
+							    			<td colspan="4" class="campeao">
+							    					<select class="form-control" th:if="${palpite.apostaAberta}" th:name="${palpite.keyGolsTimeA}" >
+				                        				<option  th:each="time : ${times}" th:value="${time.id}" th:selected="${palpite.timeA == null || palpite.timeA.id==time.id}">[[${time?.nome}]]</option>
+				                        				<option value="" th:selected="${palpite.timeA == null}? 'selected' : ''"> --Selecione um Time--</option>
+				                        			</select>
+			                        				<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.timeA.nome}"></span>
+							    			</td>
+							    		</tr>
+						    		</th:block>
+						    		
+						    		
+						    		<th:block th:if="${palpite.acertarTimes}" th:with="meuPalpite=${true}">
+							    		<tr>
+							    			<td colspan="1" class="campeao">
+							    					<select class="form-control" th:if="${palpite.apostaAberta}"  th:name="${palpite.keyGolsTimeA}" >
+				                        				<option  th:each="time : ${times}" th:value="${time.id}" th:selected="${palpite.timeA == null || palpite.timeA.id==time.id}">[[${time?.nome}]]</option>
+				                        				<option value="" th:selected="${palpite.timeA == null}? 'selected' : ''"> --Selecione um Time--</option>
+				                        			</select>
+				                       				<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.timeA.nome}"></span>
+							    			</td>
+							    			<td colspan="1" style="text-align: cent;"> VS </td>
+							    			<td colspan="2" class="campeao">
+							    					<select class="form-control" th:if="${palpite.apostaAberta}"  th:name="${palpite.keyGolsTimeB}" >
+				                        				<option  th:each="time : ${times}" th:value="${time.id}" th:selected="${palpite.timeB == null || palpite.timeB.id==time.id}">[[${time?.nome}]]</option>
+				                        				<option value="" th:selected="${palpite.timeA == null}? 'selected' : ''"> --Selecione um Time--</option>
+				                        			</select>
+				                       				<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.timeB.nome}"></span>
+							    			</td>
+							    		</tr>
+						    		</th:block>
+			
+			
+						    		<th:block th:if="${palpite.resultado}" >
+						    		
+							    		<tr>
+							    			<td rowspan="3" class="vs">
+							    				 VS
+							    			</td>
+							    		</tr>
+							    		<tr>
+							    			<td class="time" th:utext="${palpite.timeA.flag + ' ' + palpite.timeA?.nome  }">Brasil</td>
+							    			<td class="p-valor">
+								    			<input class="form-control" th:if="${palpite.apostaAberta}" th:name="${palpite.keyGolsTimeA}" th:value="${palpite.golsTimeA}" type="number" min="0" max="99" maxlength="2" />	
+					                        	<span class="form-control" th:if="${!palpite.apostaAberta}" th:utext="${palpite.golsTimeA}"></span>
+							    			</td>
+							    			
+							    		</tr>
+							    		<tr>
+							    			<td class="time" th:utext="${palpite.timeB.flag + ' ' + palpite.timeB?.nome  }">Espanha mud</td>
+							    			<td class="p-valor" >
+							    				<input class="form-control" th:if="${palpite.apostaAberta}" th:name="${palpite.keyGolsTimeB}" th:value="${palpite.golsTimeB}" type="number" min="0" max="99" maxlength="2" />	
+					                        	<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.golsTimeB}"></span>
+							    			</td>
+							    		</tr>
+							    	
+							    	
+						    		</th:block>
+						    		
+						    	</table>
+						    </div>
+						  </div>
+						 </div>
+					</th:block> 
+	                 
+	             </div>
+	             
+	  
+	         </div>
+         
+    
+         </div>
+        
+	         	
+			</div>
+			
+			<div class="">
+			
+				<button class="btn btn-info btn-block">Salvar meus palpites</button>
+				<br />
+				<br />
+			
+			</div>
+            
+            
+         
                </form>         
         
         
@@ -125,6 +179,13 @@
     <!-- /#wrapper -->
 
     <srcript th:replace="fragments/main :: scrptsblock" />
+    
+    <style>
+        /* Regras CSS personalizadas, se necess�rio */
+        .minheight {
+            height: 150px; /* Defina a altura m�nima desejada */
+        }
+    </style>
     
 
 </body>

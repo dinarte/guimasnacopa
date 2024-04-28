@@ -10,6 +10,18 @@
     <style>
     	.alert{
     	margin: 12px}
+    	
+    	body {
+			/* background-image: URL('/img/campo_de_futebol.jpg'); */
+		}
+		
+		.logo{
+			margin-top: 8px;
+			border: 1px solid #ccc;
+			border-radius: 20%;
+			padding: 3px;
+			
+		}
     </style>
 
 </head>
@@ -17,16 +29,25 @@
 <body>
 
     <div class="container">
-    
-    
-        <div class="row">
+       
+    	<div class="row"> 
             
             <div class="col-md-6 col-md-offset-3">
+            	
             
                 <div class="login-panel panel panel-default">
+                
                     <div class="panel-heading">
+                    
+                    	<div>
+	            		<span class="title">GUIMAS.BET. </span>
+			               <span class="title" th:text="${bolao?.nome}">Título do Bolao</span>
+		            	</div>
+	                    
+                    
                         <h3 class="panel-title">Identifique-se Jogador!</h3>
                     </div>
+                    
                     
              
                     <div th:if="${appMessages} != null">
@@ -55,32 +76,173 @@
                      	 </div>
                     </div>       
                     
-                    
+
                     
                     <div class="panel-body">
-                        <form role="form" action="/#" th:action="@{/login}"  method="post">
-                            <fieldset>
-                                <div class="form-group">
-                                    <input class="form-control" placeholder="E-mail"  name="email" type="email" autofocus>
-                                </div>
-                                <div class="form-group">
-                                    <input class="form-control" placeholder="Password" name="pass" type="password" value="">
-                                </div>
-                                
-                                <!-- Change this to a button or input when using this as a form -->
-                                <button type="submit" class="btn btn-lg btn-info btn-block">Login</button>
-                            </fieldset>
-                        </form>
-                        
-                        
-                        <center><strong>OU</strong></center>
-                        
-                        <a href="singup" class="btn btn-lg btn-success btn-block">Cadastre-se agora!</a>
+                    	<div class="col-12" >
+	                    	<div class="col-md-6" >
+	                    		<div class="text-center" ><img width="100" class="logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgnnMpKHsGZK03_pXuA9qK_VAl8ttCBGY9rbK-_lu9hHdrvfonJWY4Ysd0xHflOaER0vNXinMERlUmezBpw2JQrXU4NZOqkqpxV_yN5nIqVHvLB9OjqloTyMy2rfLn1_5CzIag7XrjL-BY4NJPVChrW5JiocRugKBE1o6tDFNTwyzBv3UH4ptUcJBS_tcs4/s1600/the-new-copa-america-2024-logo%20%284%29.jpg" /></div>
+    							<div class="text-center" ><img width="100" class="logo" src="https://www.fifplay.com/img/public/euro-2024-logo.png"></div>
+	                    	</div>
+                    		<div class="col-md-6" >
+		                        <form role="form" action="/#" th:action="@{/login}"  method="post">
+		                            <fieldset>
+		                                <div class="form-group">
+		                                    <input class="form-control" placeholder="E-mail"  name="email" type="email" autofocus>
+		                                </div>
+		                                <div class="form-group">
+		                                    <input class="form-control" placeholder="Password" name="pass" type="password" value="">
+		                                </div>
+		                                
+		                                <!-- Change this to a button or input when using this as a form -->
+		                                <button type="submit" class="btn btn-lg btn-info btn-block">Login</button>
+		                            </fieldset>
+		                        </form>
+		                        
+		                        <center><strong>OU</strong></center>
+		
+		                          <div id="g_id_onload"
+							         data-client_id="86772213551-45mifv9tgjgk5tqu1rtdtf08e6a6ms8k.apps.googleusercontent.com"
+							         data-login_uri="https://vsvkdo.conteige.cloud/google-oauth"
+							         data-locale="pt"
+							      	 data-ux_mode="redirect"
+							         data-auto_prompt="false"> 
+							      </div>
+							      <div class="g_id_signin"
+							         data-type="standard"
+							         data-size="large"
+							         data-theme="filled_blue"
+							         data-text="sign_in_with"
+							         data-shape="rectangular" 
+							         data-callback="OnSuccess"
+							         data-logo_alignment="left">
+							      </div>
+		                        
+		                        <center><strong>OU</strong></center>
+		                        
+		                        <a href="/singup" class="btn btn-lg btn-success btn-block">Cadastre-se agora!</a>
+	                        </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    
+    
+        <!-- cards-->
+        <div class="row">
+            <div class="col-lg-12 col-lg-offset-1">
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-users fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge" th:text="${qtdParticipantes}">38</div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/' + bolao.permalink + '/participantes'}" href="/participantes">
+                            <div class="panel-footer">
+                                <span class="pull-left">Participantes.</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-usd fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge" th:text="${premioEstimado}">R$ 1.500,00</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/' + bolao.permalink + '/regulamento'}" href="/regulamento">
+                            <div class="panel-footer">
+                                <span class="pull-left">Prêmio Estimado!</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-yellow">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-trophy fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/' + bolao.permalink + '/ranking'}" href="/ranking">
+                            <div class="panel-footer">
+                                <span class="pull-left">Ranking completo</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-gray">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa  fa-bar-chart-o fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/palpite/consultar'}" href="/ranking">
+                            <div class="panel-footer">
+                                <span class="pull-left">Análise de Desempenho</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div> 
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-book fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge"></div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/' + bolao.permalink + '/regulamento'}" href="/regulamento">
+                            <div class="panel-footer">
+                                <span class="pull-left">Regulamento</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- cards end -->
+	</div>
 
     <!-- jQuery -->
     <script src="../vendor/jquery/jquery.min.js"></script>

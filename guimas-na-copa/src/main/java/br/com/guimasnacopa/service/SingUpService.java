@@ -45,7 +45,7 @@ public class SingUpService {
 		p.setClassificacao(1);
 		participanteRepo.save(p);
 		
-		palpiteService.criarPalpites(p);
+		//palpiteService.criarPalpites(p);
 		
 	}
 

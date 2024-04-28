@@ -1,2 +1,12 @@
 eclipse.preferences.version=1
+encoding//src/main/resources/templates/bolao/form.html=UTF-8
+encoding//src/main/resources/templates/fragments/game_cards.html=UTF-8
+encoding//src/main/resources/templates/fragments/main.html=UTF-8
+encoding//src/main/resources/templates/pages/home.html=UTF-8
+encoding//src/main/resources/templates/pages/login.html=UTF-8
+encoding//src/main/resources/templates/pages/pagamento.html=UTF-8
+encoding//src/main/resources/templates/pages/palpite.html=UTF-8
+encoding//src/main/resources/templates/pages/palpite_participante_tabela.html=UTF-8
+encoding//src/main/resources/templates/pages/participantes.html=UTF-8
+encoding//src/main/resources/templates/pages/regulamento.html=UTF-8
 encoding/<project>=UTF-8

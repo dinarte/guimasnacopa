@@ -14,19 +14,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.annotation.RequestScope;
 
-import br.com.guimasnacopa.componentes.BolaoHelper;
 import br.com.guimasnacopa.componentes.PalpiteHelper;
 import br.com.guimasnacopa.componentes.ParticipanteHelper;
 import br.com.guimasnacopa.domain.Bolao;
 import br.com.guimasnacopa.domain.Participante;
-import br.com.guimasnacopa.domain.Usuario;
 import br.com.guimasnacopa.exception.AppException;
 import br.com.guimasnacopa.exception.LoginException;
+import br.com.guimasnacopa.messages.AppMessages;
 import br.com.guimasnacopa.repository.JogoRepository;
 import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.ParticipanteRepository;
 import br.com.guimasnacopa.repository.UserRepository;
 import br.com.guimasnacopa.security.Autenticacao;
+import br.com.guimasnacopa.service.BolaoService;
 import br.com.guimasnacopa.service.StartUpService;
 
 @Controller
@@ -46,7 +46,7 @@ public class HomeController {
 	ParticipanteRepository participanteRepo;
 
 	@Autowired 
-	private BolaoHelper bolaoHelper;
+	private BolaoService bolaoHelper;
 	
 	@Autowired
 	private ParticipanteHelper participanteHelper;
@@ -57,6 +57,11 @@ public class HomeController {
 	@Autowired PalpiteRepository palpiteRepo;
 	
 	@Autowired JogoRepository jogoRepo;
+	
+	@Autowired
+	AppMessages appMessages;
+	
+	@Autowired LoginController LoginController;
 	
 	@Value("${guimasnacopa.config.bolaoAtivo}")
 	String bolaoAtivo;
@@ -71,21 +76,20 @@ public class HomeController {
 	@RequestMapping("/{linkBolao}")
 	public String home(@PathVariable("linkBolao") String linkBolao, Model m) throws AppException, LoginException {
 		if (autenticacao.isAutenticado()) {
+			criarUsuarioAdminCasoNecessario();
 			Bolao bolao = bolaoHelper.getBolaoByPermaLink(linkBolao);
 			autenticacao.setBolao(bolao);
 			populaHomDoParticipante(m, bolao);
-			criarUsuarioAdminCasoNecessario();
-			return redirecionaDeAcordoComAutenticacao(m,linkBolao);
+			//return redirecionaDeAcordoComAutenticacao(m,linkBolao);
+			return "pages/home";
 		}else {
-			return redirecionaDeAcordoComAutenticacao(m);
+			return redirecionaDeAcordoComAutenticacao(m, linkBolao);
 		}
 			
 	}
-	
-	
 
 	private void populaHomDoParticipante(Model m, Bolao bolao) {
-		if (! autenticacao.getUsuario().getAdmin()) {
+
 			//seta o card de participante
 			Participante participante = participanteRepo.findOneByBolaoAndUsuario(bolao, autenticacao.getUsuario());
 			
@@ -119,9 +123,8 @@ public class HomeController {
 			m.addAttribute("jogosPendentes",jogoRepo.countJogosComPalpitesPendentesByBolaoAndParticipante(bolao, 
 					autenticacao.getParticipante()));
 			
-			m.addAttribute("bolaoAtivo", bolaoAtivo);
+			m.addAttribute("bolao", bolao);
 			
-		}	
 	}
 
 	private Participante criaParticipanteCasoNecessario(Participante participante) {
@@ -129,6 +132,7 @@ public class HomeController {
 			participante = new Participante();
 			participante.setBolao(autenticacao.getBolao());
 			participante.setUsuario(autenticacao.getUsuario());
+			participante.setAdmin(false);
 			participanteRepo.save(participante);
 		}
 		return participante;
@@ -142,27 +146,27 @@ public class HomeController {
 		model.addAttribute(bolao);
 		return "pages/regulamento";
 	}
-
-
 	
-	private String redirecionaDeAcordoComAutenticacao(Model m) throws AppException {
-		return redirecionaDeAcordoComAutenticacao(m,null);
+	
+	@GetMapping("/{linkBolao}/pagamento")
+	public String pagamento( @PathVariable("linkBolao") String linkBolao, Model model) throws AppException {
+		Bolao bolao = bolaoHelper.getBolaoByPermaLink(linkBolao);
+		model.addAttribute(autenticacao);
+		model.addAttribute(bolao);
+		return "pages/pagamento";
 	}
 
-	private String redirecionaDeAcordoComAutenticacao(Model m, String redirectToBolao) throws AppException {
+
+	private String redirecionaDeAcordoComAutenticacao(Model m) throws AppException {
+		return redirecionaDeAcordoComAutenticacao(m, bolaoAtivo);
+	}
+
+	private String redirecionaDeAcordoComAutenticacao(Model model, String redirectToBolao) throws AppException {
 		if (autenticacao.isAutenticado()) {
-			m.addAttribute(autenticacao);
-			if (autenticacao.getUsuario().getAdmin() != true)
-				return "pages/home";
-			else {
-				participanteHelper.prepareAllParticipantes(autenticacao.getBolao().getPermalink(), m);
-				return "pages/participantes";
-			}
-			
+			return "pages/participantes";
 		}
 		else {
-			m.addAttribute("usuario", new Usuario());
-			return "pages/login";
+			return LoginController.login(redirectToBolao, model);
 		}
 	}
 

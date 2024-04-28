@@ -23,7 +23,7 @@
 					  <a th:href="${'/palpite/'+participanteConsultado.id+'/consultar'}" class="btn btn-primary active">Cards</a>
 					  <a th:href="${'/palpite/'+participanteConsultado.id+'/consultar/tab'}" class="btn btn-primary">Tabela</a>
 					</div>
-                </div>
+                </div> 
             </div>
             
             <div class="panel panel-default">
@@ -31,7 +31,7 @@
                    <i class="fa fa-bar-chart-o fa-fw"></i> Pontuação por dia
                </div>
                <div class="panel-body">
-                   <div id="morris-area-chart"></div>
+                   <div id="morris-area-chart" class="text-danger text-center"></div>
                </div>
             </div>
             
@@ -45,18 +45,23 @@
 
     <srcript th:replace="fragments/main :: scrptsblock" />
     
-	<script>
+    <script>
     
     	$(function() {
 			  $.ajax({
 			    type:"GET", 
-			    url: "/chart/desempenho/[[${participanteConsultado.id}]]", 
+			    url: "/chart/desempenho/[[${autenticacao.participante.id}]]", 
 			    success: function(data) {
-			    
+
 			    		data.xLabelFormat = function(x){return formatDate(x)};
 			    		data.dateFormat = function(x){return formatDate(new Date(x))};
 			    
-			    		Morris.Line(data);
+			    		
+			    		if (data.length > 0)
+			    			Morris.Line(data);
+			    		else 
+		    				$("#morris-area-chart").text("Ainda sem dados o suficiente para analisar seu desempenho.");
+			    	
 			        }, 
 			    error: function(jqXHR, textStatus, errorThrown) {
 			            alert(jqXHR.status);

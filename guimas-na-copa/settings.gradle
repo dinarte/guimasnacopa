@@ -15,4 +15,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'ms-cobranca'
+rootProject.name = 'guimas-na-copa'

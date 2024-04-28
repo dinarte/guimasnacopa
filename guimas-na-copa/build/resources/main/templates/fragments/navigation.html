@@ -7,36 +7,42 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">Guimas na Copa</a>
+                
+                <div class="title_warpper">
+                <!--  a class="navbar-brand" th:href="${'/' + autenticacao.bolao.permalink}" href="/" th:text="${ autenticacao.bolao.nome}">Guimas na Copa</a -->
+                <img width="50px" src="/img/logo-guimas-bet.png" style="z-index: 99"/> <span class="title">GUIMAS.BET. </span>
+                <span class="title" th:text="${autenticacao?.bolao?.nome}">Título do Bolao</span>
+                </div>
             </div>
             <!-- /.navbar-header -->
 
+            <!-- 
             <ul class="nav navbar-top-links navbar-right">
-                <li th:text="${autenticacao.usuario.name}">NOME DO PARTICIPANTE</li>
+                
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-user">
-                       <!--  
+                        
                         
                         <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                         </li>
                         <li class="divider"></li>
-                        -->
+                       
                         <li><a href="#"><i class="fa fa-user fa-fw"></i> Perfil</a>
                         </li>
                         <li><a href="/logout"><i class="fa fa-sign-out fa-fw"></i> Sair</a>
                         </li>
                     </ul>
-                    <!-- /.dropdown-user -->
+                    
                 </li>
-                <!-- /.dropdown -->
+                
             </ul>
+             -->
             <!-- /.navbar-top-links -->
 
-            <div th:if="${session.autenticacao.autenticado && session.autenticacao.usuario.admin == true}" 
-            	th:replace="fragments/menu  :: ${autenticacao.usuario.admin ? 'menu_admin' : 'menu_jogador'}" />
+           <div th:replace="fragments/menu::menu_principal" />
             
         </nav>
         

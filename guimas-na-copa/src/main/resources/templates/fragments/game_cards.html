@@ -1,104 +1,21 @@
 <div th:fragment="cards">
-<style>
-           
-            .panel-body{
-            
-            padding: 4px
-            }
-            
-            .panel-heading {
-             	text-align: center;
-            }
-            
-            
-            .tab-jogo{
-            	width: 100%;
-            	
-            }
-            
-            .tab-jogo .desc-p{
-  	          text-align: center;
-            }
-            .tab-jogo .vs{
-            	width: 20%;
-            	text-align: center;
-            	vertical-align: middle;
-            }
-            .tab-time .vs{
-            	width: 20%;
-            }
-            
-            .data_h{
-            	text-align: center;
-            	color: #ccc;
-            	font-weight: bold;
-            }
-            
-            .p-valor{
-            	width:5%;
-            	text-align: center;
-            }
-            
-            .p-compara{
-            	width:5%;
-            	text-align: center;
-            	color: #ccc;
-            	font-weight: bolder;
-            }
-            
-            .p-result{
-            	color: #1E90FF;
-            	font-weight: bolder;
-            }
-            .campeao{
-            	text-align: center;
-            }
-            
-            .grupo .panel-heading{color: #fff}
-            .grupoa{border: 1px solid #87CEEB}
-            .grupoa .panel-heading{
-            	background-color: #87CEEB;
-            }
-            .grupob{border: 1px solid  #DC143C}
-            .grupob .panel-heading{
-            	background-color:  #DC143C;
-            }
-            .grupoc{border: 1px solid #48D1CC}
-            .grupoc .panel-heading{
-            	background-color: #48D1CC;
-            }
-            .grupod{border: 1px solid #FFA500}
-            .grupod .panel-heading{
-            	background-color: #FFA500;
-            }
-            .grupoe{border: 1px solid #66CDAA}
-            .grupoe .panel-heading{
-            	background-color: #66CDAA;
-            }
-            .grupof{border: 1px solid #B0E0E6}
-            .grupof .panel-heading{
-            	background-color: #B0E0E6;
-            }
-            .grupog{border: 1px solid #DB7093}
-            .grupog .panel-heading{
-            	background-color: #DB7093;
-            }
-            .grupoh{border: 1px solid #DA70D6}
-            .grupoh .panel-heading{
-            	background-color: #DA70D6;
-            }
-            
-            </style>
-         
-         	 
+                 	 
          	<div class="row">
          
          	
 	         	<th:block th:each="palpite : ${palpites}">
-		         	<div th:class="${'col-lg-'+ colunasCards }">
+		         	<div th:class="${'col-lg-'+ colunasCards + ' minheight' }"> 
 					  <div th:class="${'panel panel-info grupo ' + palpite.colorClass}" >
 					  	<div class="panel-heading" >
-					  		<span th:text="${palpite.descricaoDaFase} ">Eliminatórias - Grupo A</span> 
+					  		<div class="row">
+						  		<div class="col-sm-2 col-md-2 col-lg-2">
+						  			<img height="40" th:src="${palpite.bolaoCompeticao.competicao.logoUrl}">
+						  		</div>
+						  		<div class="col-sm-10 col-md-10 col-lg-10">
+							  		<span th:text="${palpite.bolaoCompeticao.competicao.nome} ">Copa do Mundo</span><br />
+							  		<span th:text="${palpite.descricaoDaFase} ">Eliminatórias - Grupo A</span> 
+						  		</div>
+					  		</div>
 					  	</div>
 					    <div class="panel-body">
 					    	<table class="tab-jogo">
@@ -121,7 +38,7 @@
 					    		<th:block th:if="${palpite.acertarCampeao}" >
 						    		<tr>
 						    			<td colspan="4" class="campeao">
-						    					<span th:text="${ palpite.apostaAberta ? '?' : palpite.timeA.flag + ' ' + palpite.timeA?.nome}">Brasil</span>
+						    					<span th:utext="${ palpite.apostaAberta ? '?' : palpite.timeA.flag + ' ' + palpite.timeA?.nome}">Brasil</span>
 						    					<br />
 						    					<span th:if="${!meuPalpite}" style="color: #ccc" th:text="${palpite.palpiteComparado.timeA?.nome}">Uruguai</span>
 						    			</td>
@@ -132,13 +49,13 @@
 					    		<th:block th:if="${palpite.acertarTimes}" >
 						    		<tr>
 						    			<td colspan="1" class="campeao">
-						    					<span th:text="${ palpite.apostaAberta ? '?' :  palpite.timeA?.flag + ' ' + palpite.timeA?.nome}">Brasil</span>
+						    					<span th:utext="${ palpite.apostaAberta ? '?' :  palpite.timeA?.flag + ' ' + palpite.timeA?.nome}">Brasil</span>
 						    					<br />
 						    					<span th:if="${!meuPalpite}" style="color: #ccc" th:text="${palpite.palpiteComparado.timeA?.nome}">Uruguai</span>
 						    			</td>
 						    			<td colspan="1" style="text-align: cent;"> VS </td>
 						    			<td colspan="2" class="campeao">
-						    					<span th:text="${ palpite.apostaAberta ? '?' :  palpite.timeB?.flag + ' ' + palpite.timeB?.nome}">Brasil</span>
+						    					<span th:utext="${ palpite.apostaAberta ? '?' :  palpite.timeB?.flag + ' ' + palpite.timeB?.nome}">Brasil</span>
 						    					<br />
 						    					<span th:if="${!meuPalpite}" style="color: #ccc" th:text="${palpite.palpiteComparado?.timeB?.nome}">Uruguai</span>
 						    			</td>
@@ -154,7 +71,7 @@
 						    			</td>
 						    		</tr>
 						    		<tr>
-						    			<td class="time" th:text="${palpite.timeA.flag + ' ' + palpite.timeA?.nome  }">Brasil</td>
+						    			<td class="time" th:utext="${palpite.timeA.flag + ' ' + palpite.timeA?.nome  }">Brasil</td>
 						    			<td class="p-valor">
 						    				<span th:if="${palpite.apostaAberta && !meuPalpite}"> ? </span>
 						    				<span th:if="${!palpite.apostaAberta || meuPalpite}"  th:text="${palpite.golsTimeA}" > 1 </span>
@@ -167,7 +84,7 @@
 						    			</td>
 						    		</tr>
 						    		<tr>
-						    			<td class="time" th:text="${ palpite.timeB.flag + ' ' + palpite.timeB?.nome}">Espanha</td>
+						    			<td class="time" th:utext="${ palpite.timeB.flag + ' ' + palpite.timeB?.nome}">Espanha</td>
 						    			<td class="p-valor">
 						    				<span th:if="${palpite.apostaAberta && !meuPalpite}" > 
 						    					?
@@ -195,4 +112,12 @@
 					 </div>
 				</th:block> 
 			</div>
+			
+	<style>
+        /* Regras CSS personalizadas, se necess�rio */
+        .minheight {
+            height: 180px; /* Defina a altura m�nima desejada */
+        }
+    </style>
 </div>			
+

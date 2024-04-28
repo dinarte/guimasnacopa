@@ -1,10 +1,9 @@
 package br.com.guimasnacopa.domain;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,7 +18,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Jogo {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
@@ -30,13 +29,15 @@ public class Jogo {
 	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private LocalDateTime limiteAposta;
 	
-	@OneToMany(mappedBy="jogo") 
+	@OneToMany(mappedBy="jogo", cascade = CascadeType.PERSIST) 
 	List<TimeNoJogo> timesNoJogo;
 	
 	private Boolean liberarCriacaoPalpites;
 	
 	@ManyToOne
 	private Fase fase;
+	
+	private Long idApi;
 	
 	@Transient
 	private Time timeA;
@@ -49,8 +50,8 @@ public class Jogo {
 		String timeA = timesNoJogo.get(0).getTime().getNome();
 		String timeB = timesNoJogo.get(1).getTime().getNome();
 		
-		
-		return timeA.concat(timesNoJogo.get(0).getTime().getFlag())
+		return timeA
+				.concat(timesNoJogo.get(0).getTime().getFlag())
 				.concat(" vs ")
 				.concat(timesNoJogo.get(1).getTime().getFlag())
 				.concat(timeB);
@@ -132,6 +133,16 @@ public class Jogo {
 	public void setLiberarCriacaoPalpites(Boolean liberarCriacaoPalpites) {
 		this.liberarCriacaoPalpites = liberarCriacaoPalpites;
 	}
+
+	public Long getIdApi() {
+		return idApi;
+	}
+
+	public void setIdApi(Long idApi) {
+		this.idApi = idApi;
+	}
+	
+	
 
 	
 }

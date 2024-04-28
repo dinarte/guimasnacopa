@@ -16,7 +16,7 @@ public class TimeNoJogo {
 	public final static  String INDIFERENTE = "-";
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	@ManyToOne

@@ -47,7 +47,8 @@ public class ParticipanteController {
 	
 	@GetMapping("/participantes")
 	public String participantes( Model model) throws AppException, LoginException {
-		autenticacao.checkAthorization();
+		autenticacao.checkAdminAthorization(model);
+		autenticacao.checkBolaoNaoSelecionado();
 		participanteHelper.prepareAllParticipantes(autenticacao.getBolao().getPermalink(), model);
 		return "pages/participantes";
 	}
@@ -55,7 +56,6 @@ public class ParticipanteController {
 	
 	@GetMapping("/{linkBolao}/participantes")
 	public String participantes( @PathVariable("linkBolao") String linkBolao, Model model) throws AppException, LoginException {
-		autenticacao.checkAthorization();
 		participanteHelper.prepareAllParticipantes(linkBolao, model);
 		return "pages/participantes";
 	}

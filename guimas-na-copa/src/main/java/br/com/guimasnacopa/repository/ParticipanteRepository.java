@@ -19,7 +19,7 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 
 	public Participante findOneByBolaoAndUsuario(Bolao b, Usuario u);
 	
-	public List<Participante> findAllByBolaoOrderByUsuario_nameAsc(Bolao b);
+	public List<Participante> findAllByBolaoOrderByAdminDescUsuario_nameAsc(Bolao b);
 	
 	public Long countByBolao(Bolao b);
 	

@@ -11,7 +11,7 @@ import javax.persistence.Transient;
 public class Participante {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	@ManyToOne
@@ -21,6 +21,8 @@ public class Participante {
 	private Usuario usuario;
 	
 	private Boolean pg = false;
+	
+	private Boolean admin = false;
 	
 	private Double pontuacao;
 	
@@ -38,6 +40,32 @@ public class Participante {
 	
 	@Transient
 	private Double porcentagemPalpites;
+	
+	
+
+	public Boolean getAdmin() {
+		return admin == null ? false : admin;
+	}
+
+	public void setAdmin(Boolean admin) {
+		this.admin = admin;
+	}
+
+	public int getPalpitesParaInformar() {
+		return palpitesParaInformar;
+	}
+
+	public void setPalpitesParaInformar(int palpitesParaInformar) {
+		this.palpitesParaInformar = palpitesParaInformar;
+	}
+
+	public int getPalpitesInformados() {
+		return palpitesInformados;
+	}
+
+	public void setPalpitesInformados(int palpitesInformados) {
+		this.palpitesInformados = palpitesInformados;
+	}
 
 	public Integer getId() {
 		return id;

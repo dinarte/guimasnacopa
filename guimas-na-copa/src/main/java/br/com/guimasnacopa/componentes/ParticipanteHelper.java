@@ -15,13 +15,14 @@ import br.com.guimasnacopa.exception.AppException;
 import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.ParticipanteRepository;
 import br.com.guimasnacopa.security.Autenticacao;
+import br.com.guimasnacopa.service.BolaoService;
 
 @Component
 @RequestScope
 public class ParticipanteHelper {
 
 	@Autowired 
-	private BolaoHelper bolaoHelper;
+	private BolaoService bolaoHelper;
 	
 	@Autowired
 	private ParticipanteRepository participanteRepo;
@@ -34,7 +35,7 @@ public class ParticipanteHelper {
 	
 	public void prepareAllParticipantes(String linkBolao, Model model) throws AppException {
 		Bolao bolao = prepareModel(linkBolao, model);
-		List<Participante> participantes = participanteRepo.findAllByBolaoOrderByUsuario_nameAsc((bolao));
+		List<Participante> participantes = participanteRepo.findAllByBolaoOrderByAdminDescUsuario_nameAsc((bolao));
 
 		participantes.forEach(p -> {
 			popularPorcentagemDePreenchimentoDoParticipante(p);

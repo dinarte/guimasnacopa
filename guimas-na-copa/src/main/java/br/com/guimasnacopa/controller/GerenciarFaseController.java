@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.annotation.RequestScope;
 
 import br.com.guimasnacopa.domain.Fase;
+import br.com.guimasnacopa.exception.BolaoNaoSelecionadoException;
 import br.com.guimasnacopa.messages.AppMessages;
+import br.com.guimasnacopa.repository.CompeticaoRepository;
 import br.com.guimasnacopa.repository.FaseRepository;
 import br.com.guimasnacopa.security.Autenticacao;
 
@@ -31,10 +33,14 @@ public class GerenciarFaseController {
 	@Autowired
 	FaseRepository faseRepo;
 	
+	@Autowired
+	CompeticaoRepository competicaoRepo;
+	
 	
 	@GetMapping("/fase/listar")
-	public String listar(Model model) throws LoginException{
+	public String listar(Model model) throws LoginException, BolaoNaoSelecionadoException{
 		autenticacao.checkAdminAthorization(model);
+		autenticacao.checkBolaoNaoSelecionado();
 		List<Fase> faseList = (List<Fase>) faseRepo.findAllByBolao(autenticacao.getBolao());
 		model.addAttribute("faseList", faseList);
 		return "/fase/listar";
@@ -45,6 +51,7 @@ public class GerenciarFaseController {
 		autenticacao.checkAdminAthorization(model);
 		Fase fase = faseRepo.findById(id).get();
 		model.addAttribute("falseList", faseRepo.findAll());
+		model.addAttribute("competicaoList", competicaoRepo.findAll());
 		model.addAttribute(fase);
 		return "/fase/form";
 	}
@@ -73,7 +80,7 @@ public class GerenciarFaseController {
 	
 	@GetMapping("/fase/{id}/remover")
 	@Transactional
-	public String remover(@PathVariable("id") Integer id, Model model) throws LoginException {
+	public String remover(@PathVariable("id") Integer id, Model model) throws LoginException, BolaoNaoSelecionadoException {
 		autenticacao.checkAdminAthorization(model);
 		Fase fase = faseRepo.findById(id).get();
 		faseRepo.delete(fase);

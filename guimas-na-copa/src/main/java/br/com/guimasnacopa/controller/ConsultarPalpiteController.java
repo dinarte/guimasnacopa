@@ -2,12 +2,9 @@
 
 package br.com.guimasnacopa.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.security.auth.login.LoginException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +16,6 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import br.com.guimasnacopa.componentes.PalpiteHelper;
 import br.com.guimasnacopa.domain.Palpite;
-import br.com.guimasnacopa.domain.PalpiteResumoVo;
 import br.com.guimasnacopa.domain.Participante;
 import br.com.guimasnacopa.exception.AppException;
 import br.com.guimasnacopa.messages.AppMessages;
@@ -50,7 +46,7 @@ public class ConsultarPalpiteController {
 	public String consultarPalpitesDoParticipante(@PathVariable("participante") Participante participante, Model model) throws LoginException{
 		autenticacao.checkAthorization();
 		palpiteHelper.processarConsultaDePalpite(participante, model, palpiteRepo.findAllByParticipante(participante));
-		model.addAttribute("colunasCards",4);
+		model.addAttribute("colunasCards",3);
 		model.addAttribute("meuPalpite",false);
 		return "pages/palpite_participante";
 	}
@@ -70,7 +66,7 @@ public class ConsultarPalpiteController {
 		palpiteHelper.processarConsultaDePalpiteRelacionandoApenasComResultadosDosJogos(autenticacao.getParticipante()
 							, m
 							, palpiteRepo.findAllByParticipante(autenticacao.getParticipante()));
-		m.addAttribute("colunasCards",4);
+		m.addAttribute("colunasCards",3);
 		m.addAttribute("meuPalpite",true);
 		return "pages/palpite_participante";
 	
@@ -83,7 +79,7 @@ public class ConsultarPalpiteController {
 		palpite = palpiteRepo.findById(palpite.getId()).get();
 		
 		if (palpite.isApostaAberta()){
-			appMessages.getWarningList().add("Calma atacente, você está impedido!!! Este jogo ainda está com o período de palpites aberto e nesse período não é permitido acessas os detalhes dos palpites, volte aqui depois!");
+			appMessages.getWarningList().add("Calma atacente, você está impedido!!! Este jogo ainda está com o período de palpites aberto e nesse período não é permitido acessar os detalhes dos palpites, volte aqui depois!");
 			m.addAttribute(appMessages);
 			return home.home(autenticacao.getBolao().getPermalink(), m);
 		}

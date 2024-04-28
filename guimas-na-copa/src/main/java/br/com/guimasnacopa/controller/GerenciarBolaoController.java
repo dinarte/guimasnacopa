@@ -16,6 +16,7 @@ import br.com.guimasnacopa.domain.Bolao;
 import br.com.guimasnacopa.messages.AppMessages;
 import br.com.guimasnacopa.repository.BolaoRepository;
 import br.com.guimasnacopa.security.Autenticacao;
+import br.com.guimasnacopa.service.ApiService;
 
 @Controller
 @RequestScope
@@ -26,6 +27,9 @@ public class GerenciarBolaoController{
 	
 	@Autowired 
 	Autenticacao autenticacao;
+	
+	@Autowired
+	ApiService apiService;
 	
 	@Autowired
 	AppMessages appMessages;
@@ -48,7 +52,7 @@ public class GerenciarBolaoController{
 	
 	
 	@GetMapping("/bolao/novo")
-	public String novo(@PathVariable("id") Integer id, Model model) throws LoginException {
+	public String novo(Model model) throws LoginException {
 		autenticacao.checkAdminAthorization(model);
 		Bolao bolao = new Bolao();
 		model.addAttribute(bolao);
@@ -74,5 +78,24 @@ public class GerenciarBolaoController{
 		appMessages.getSuccessList().add("Registro removido com sucesso.");
 		return listar(model);
 	}
+	
+	
+	@GetMapping("/bolao/erro")
+	public String erro(Model model) throws LoginException{
+		autenticacao.checkAdminAthorization(model);
+		return "/bolao/erro";
+	}
+	
+	
+	@GetMapping("/bolao/{id}/associar-competicoes")
+	public String associarCompeticoes(Integer id, Model model) throws LoginException {
+		autenticacao.checkAdminAthorization(model);
+		Bolao bolao = bolaoRepo.findById(id).get();
+		apiService.gerarDadosDoBolao(bolao);
+		model.addAttribute(bolao);
+		appMessages.getSuccessList().add("Operação realizada com sucesso: O Bolão foi associado as competiçoes disponíveis");
+		return listar(model);
+	}
+	
 	
 }

@@ -1,7 +1,6 @@
 package br.com.guimasnacopa.repository;
 
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.guimasnacopa.domain.Jogo;
 import br.com.guimasnacopa.domain.Palpite;
-import br.com.guimasnacopa.domain.PalpiteResumoVo;
 import br.com.guimasnacopa.domain.Participante;
 
 @Repository
@@ -27,7 +25,7 @@ public interface PalpiteRepository  extends CrudRepository<Palpite, Integer>{
 			+ "left join p.timeA "
 			+ "left join p.timeB "
 			+ "where p.participante = :participante "
-			+ "order by p.jogo.fase.nome, p.jogo.grupo, p.jogo.data, p.jogo.id")
+			+ "order by p.jogo.fase.competicao, p.jogo.grupo, p.jogo.fase.nome ASC")
 	public List<Palpite> findAllByParticipante(@Param("participante") Participante participante);
 	
 	@Query("select p from Palpite p "

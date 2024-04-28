@@ -22,7 +22,7 @@
             <table class="table">
                         	<thead>
                         		<tr>
-                        			<th>Jogador</th>
+                        			<th colspan="2">Jogador</th>
                         			<th>Email</th>
                         			<th>Situação</th>
                         			<th>Preenchimento</th>
@@ -31,16 +31,29 @@
                         	<tbody>
                         		<th:block th:each="participante : ${participantes}">
 	                        		<tr>
-	                        			<td th:text="${participante.usuario.name}">Dinarte filho</td>
+	                        			<td><img th:src="${participante.usuario.urlFoto}" class="img-perfil-peq" /></td>
+	                        			<td>  
+	                        				<span th:text="${participante.usuario.name}"> Dinarte filho </span> <br />
+	                        				<span th:if="${participante.usuario.admin}" class="badge badge-info">Sys Adm</span>
+	                        				<span th:if="${participante.admin}" class="badge badge-info">Adm do Bolão</span>
+	                        			</td>
 	                        			<td th:text="${participante.usuario.email}">email@servidor.com</td>
 	                        			<td>
-	                        				<a th:class="${participante.pg == true ? 'btn btn-primary' : 'btn btn-danger'}" th:if="${autenticacao.usuario.admin}" th:href="${'/participante/'+ participante.id +'/alterarpagamento' }"  th:text="${participante.pg == true ? 'Confirmado' : 'Pendente'}">
-	                        					Confirmado
-	                        				</a>
-	                        				
-	                        				<span th:class="${participante.pg == true ? 'badge badge-primary' : 'badge badge-danger'}" th:if="${!autenticacao.usuario.admin}" th:text="${participante.pg == true ? 'Confirmado' : 'Pendente'}">
-	                        					Confirmado
-	                        				</span>
+	                        			
+	                        				<div th:if="${autenticacao.adminDoBolao}">
+		                        				<a  
+		                        					th:class="${participante.pg == true ? 'btn btn-primary' : 'btn btn-danger'}"  
+		                        					th:href="${'/participante/'+ participante.id +'/alterarpagamento' }"  
+		                        					th:text="${participante.pg == true ? 'Confirmado' : 'Pendente'}">
+		                        					Confirmado
+		                        				</a>
+	                        				</div>
+	                        				<div th:if="${!autenticacao.adminDoBolao}">
+		                        				<span 	th:class="${participante.pg == true ? 'badge badge-primary' : 'badge badge-danger'}"  
+		                        						th:text="${participante.pg == true ? 'Confirmado' : 'Pendente'}">
+		                        					Confirmado
+		                        				</span>
+	                        				</div>
 	                        			</td>
 	                        			<td> 
 	                        			

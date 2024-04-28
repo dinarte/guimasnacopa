@@ -7,8 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Autentique-se no bolão Guimas na Copa, o mais divertido de tdos!">
     <meta name="author" content="Dinarte">
+    <link rel="shortcut icon" href="/favicon.ico" />
 
-    <title>Guimas na Copa</title>
+    <title>GuimasBet</title>
+    
+    <!-- Goggle SingIn Button -->
+    <script src="https://accounts.google.com/gsi/client" async></script>
 
     <!-- Bootstrap Core CSS -->
     <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -24,6 +28,12 @@
 
     <!-- Custom Fonts -->
     <link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    
+    <!-- Custom Bolão CSS -->
+    <link href="/bolao/css/custom.css" rel="stylesheet">
+    
+    <!-- Rich text component -->
+    <link rel="stylesheet" href="/external/trumbowyg/dist/ui/trumbowyg.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -79,10 +89,38 @@
     <!-- Custom Theme JavaScript -->
     <script src="/dist/js/sb-admin-2.js"></script>
     
+   
+    <!-- Import Trumbowyg (Richtext)-->
+	<script src="/external/trumbowyg/dist/trumbowyg.min.js"></script>
+    
     <script>
-    $(function () {
+    $(function () { 	
 	  $('[data-toggle="tooltip"]').tooltip()
+	  
+	  //inicialisa editor de texto
+	  if ($('#editor').length) {
+	  	$('#editor').trumbowyg();
+	  }
+	  
+	  if ($('#editor_pagamento').length) {
+	  	$('#editor_pagamento').trumbowyg();
+	  }
 	})
+	
+	const copyButton = null;
+	const copyButton = null;
+	if ($('#textToCopy').length) {			
+	      copyButton = document.getElementById('copy');
+	      textToCopy = document.getElementById('textToCopy');
+	}
+    copyButton.addEventListener('click', () => {
+      textToCopy.select();
+      document.execCommand('copy');
+      alert('Código copiado com sucesso!');
+    });
+				
+				  
+				            
 	
 	function formatDate(d) {
     		//alert(d);

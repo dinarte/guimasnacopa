@@ -1,53 +1,75 @@
-			<div th:fragment="menu_admin" class="navbar-default sidebar" role="navigation">
+
+                     
+            <div th:fragment="menu_principal" class="navbar-default sidebar" role="navigation" th:with="'bolao'=${autenticacao.bolao != null ? autenticacao.bolao : bolao}" >
+            	
                 <div class="sidebar-nav navbar-collapse">
+               
+                <div th:if="${autenticacao.autenticado}" class="text-center">
+                
+	                <img th:src="${autenticacao.usuario.urlFoto}" class="img-perfil" />
+	                <br />
+					<span style="font-weight: bolder;" th:text="${autenticacao.usuario.name}">NOME DO PARTICIPANTE</span>
+					<a href="/logout"><i class="fa fa-sign-out fa-fw"></i> Sair</a>
+            	
+            	</div>
+            	
+            	
+            	<div th:if="${!autenticacao.autenticado}" class="text-center mt-10">
+                <br />
+                <br />
+                <br />
+	                <a th:href="${'/' + bolao.permalink }" type="button" class="btn btn-primary btn-lg">ENTRAR AGORA</a>
+				<br />
+				<br />
+				<br />	
+            	</div>
+            	
                     <ul class="nav" id="side-menu">
-                        
-                        <li>
-                            <a href="/bolao/listar"><i class="fa fa-book fa-fw"></i> Gerenciar Bolão </a>
-                        </li>
-                        
-                        <li>
-                            <a href="/fase/listar"><i class="fa fa-book fa-fw"></i> Gerenciar Fase </a>
-                        </li>
-                        
-                        <li>
-                            <a href="/jogo/listar"><i class="fa fa-book fa-fw"></i> Gerenciar Jogo </a>
-                        </li>
-                        
-                        <li>
-                            <a href="/jogos/gerenciar"><i class="fa fa-book fa-fw"></i> Gerenciar Datas e Resultados</a>
-                        </li>
-              
-                        <li>
-                            <a href="/participantes"><i class="fa fa-user fa-fw"></i> Gerenciar Participantes </a>
-                        </li>
-                      
-                    </ul>
-                </div>
-                <!-- /.sidebar-collapse -->
-            </div>
-            <!-- /.navbar-static-side -->
-            
-            
-            
-            <div th:fragment="menu_jogador" class="navbar-default sidebar" role="navigation">
-                <div class="sidebar-nav navbar-collapse">
-                    <ul class="nav" id="side-menu">
-                        <li>
+                        <li th:if="${autenticacao.bolao}">
                             <a th:href="${'/' + autenticacao.bolao.permalink}" href="/"><i class="fa fa-home fa-fw"></i> Principal </a>
                         </li>
-                        <li>
+                        <li th:if="${autenticacao.participanteDoBolao}">
                             <a href="/palpite/editar"><i class="fa fa-plus-circle fa-fw"></i> Informar Palpites </a>
                         </li>
-                        <li>
-                            <a th:href="${'/' + autenticacao.bolao.permalink + '/participantes'}" href="/participantes"><i class="fa fa-user fa-fw"></i> Participantes </a>
+                        <li th:if="${autenticacao.participanteDoBolao}">
+                            <a href="/simulador"><i class="fa fa-eye fa-fw"></i> Simulador </a>
                         </li>
                         <li>
-                            <a th:href="${'/' + autenticacao.bolao.permalink + '/regulamento'}" href="/regulamento"><i class="fa fa-user fa-fw"></i> Regulamento </a>
+                            <a th:href="${'/' + bolao.permalink + '/participantes'}" href="/participantes"><i class="fa fa-users fa-fw"></i> Participantes </a>
+                        </li>
+                        <li>
+                            <a th:href="${'/' + bolao.permalink + '/regulamento'}" href="/regulamento"><i class="fa fa-book fa-fw"></i> Regulamento </a>
                         </li>
                         
+                        <li th:if="${session.autenticacao.adminDoBolao}">
+                            <a href="#"><i class="fa fa-gears fa-fw"></i> Gerenciar <span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+		                            <a href="/bolao/listar"><i class="fa fa-gear fa-fw"></i> Bolão </a>
+		                        </li>
+		                        
+		                        <li>
+		                            <a href="/fase/listar"><i class="fa fa-gear fa-fw"></i> Fases </a>
+		                        </li>
+		                        
+		                        <li>
+		                            <a href="/jogo/listar"><i class="fa fa-gear fa-fw"></i> Jogos </a>
+		                        </li>
+		                        
+		                        <li>
+		                            <a href="/jogos/gerenciar"><i class="fa fa-gear fa-fw"></i> Datas e Resultados</a>
+		                        </li>
+		              
+		                        <li>
+		                            <a href="/participantes"><i class="fa fa-gear fa-fw"></i> Participantes </a>
+		                        </li>
+		                            </ul>
+		                            <!-- /.nav-second-level -->
+		                        </li>
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
+
+                
             </div>
             <!-- /.navbar-static-side -->

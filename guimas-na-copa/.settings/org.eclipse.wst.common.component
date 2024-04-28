@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-modules id="moduleCoreId" project-version="1.5.0">
-	<wb-module deploy-name="ms-cobranca">
-		<property name="context-root" value="ms-cobranca"/>
+	<wb-module deploy-name="guimas-na-copa">
+		<property name="context-root" value="guimas-na-copa"/>
 		<wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/resources"/>
 		<wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/java"/>
 	</wb-module>

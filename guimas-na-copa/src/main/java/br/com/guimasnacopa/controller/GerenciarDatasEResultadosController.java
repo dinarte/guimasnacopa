@@ -17,6 +17,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import br.com.guimasnacopa.domain.Jogo;
 import br.com.guimasnacopa.domain.Palpite;
 import br.com.guimasnacopa.domain.Participante;
+import br.com.guimasnacopa.exception.BolaoNaoSelecionadoException;
 import br.com.guimasnacopa.repository.JogoRepository;
 import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.ParticipanteRepository;
@@ -43,8 +44,9 @@ public class GerenciarDatasEResultadosController {
 	ParticipanteRepository participanteRepo;
 	
 	@GetMapping("/jogos/gerenciar")
-	public String gerenciar(Model m) throws LoginException {
+	public String gerenciar(Model m) throws LoginException, BolaoNaoSelecionadoException {
 		autenticacao.checkAdminAthorization();
+		autenticacao.checkBolaoNaoSelecionado();
 		List<Jogo> jogos = jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
 		m.addAttribute("jogos",jogos);
 		m.addAttribute(autenticacao);

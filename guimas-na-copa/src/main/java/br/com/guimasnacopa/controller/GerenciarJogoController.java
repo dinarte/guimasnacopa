@@ -16,6 +16,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import br.com.guimasnacopa.domain.Jogo;
 import br.com.guimasnacopa.domain.Palpite;
 import br.com.guimasnacopa.domain.TimeNoJogo;
+import br.com.guimasnacopa.exception.BolaoNaoSelecionadoException;
 import br.com.guimasnacopa.messages.AppMessages;
 import br.com.guimasnacopa.repository.FaseRepository;
 import br.com.guimasnacopa.repository.JogoRepository;
@@ -50,8 +51,9 @@ public class GerenciarJogoController {
 	private TimeNoJogoRepository tmjRepo;
 	
 	@GetMapping("/jogo/listar")
-	public String listar(Model model) throws LoginException{
+	public String listar(Model model) throws LoginException, BolaoNaoSelecionadoException{
 		autenticacao.checkAdminAthorization(model);
+		autenticacao.checkBolaoNaoSelecionado();
 		List<Jogo> jogoList = (List<Jogo>) jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
 		model.addAttribute("jogoList", jogoList);
 		return "/jogo/listar";
@@ -119,7 +121,7 @@ public class GerenciarJogoController {
 	
 	
 	@GetMapping("/jogo/{id}/remover")
-	public String remover(@PathVariable("id") Integer id, Model model) throws LoginException {
+	public String remover(@PathVariable("id") Integer id, Model model) throws LoginException, BolaoNaoSelecionadoException {
 		autenticacao.checkAdminAthorization(model);
 		Jogo jogo = jogoRepo.findById(id).get();
 		jogoRepo.delete(jogo);
