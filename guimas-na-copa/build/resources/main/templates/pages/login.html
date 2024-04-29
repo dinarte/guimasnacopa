@@ -101,9 +101,11 @@
 		                        
 		                        <center><strong>OU</strong></center>
 		
+									
+		
 		                          <div id="g_id_onload"
-							         data-client_id="86772213551-45mifv9tgjgk5tqu1rtdtf08e6a6ms8k.apps.googleusercontent.com"
-							         data-login_uri="https://vsvkdo.conteige.cloud/google-oauth"
+							         th:data-client_id="${googleOHauthClientId}"
+							         th:data-login_uri="${googleOHauthLoginUri}"
 							         data-locale="pt"
 							      	 data-ux_mode="redirect"
 							         data-auto_prompt="false"> 
@@ -242,6 +244,9 @@
             </div>
         </div>
         <!-- cards end -->
+        <div class="row text-center">
+            	[[${domain}]]:[[${appVersion}]]
+            </div>
 	</div>
 
     <!-- jQuery -->

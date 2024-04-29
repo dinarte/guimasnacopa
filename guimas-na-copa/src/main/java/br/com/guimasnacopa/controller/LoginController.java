@@ -5,6 +5,7 @@ import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.Cookie;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -73,6 +76,15 @@ public class LoginController {
 	@Value("${guimasnacopa.config.bolaoAtivo}")
 	String bolaoAtivo;
 	
+	@Autowired
+	HttpServletRequest request;
+	
+	@Autowired
+	Environment env;
+	
+	@Autowired
+	ResourceLoader versionResource;
+	
 		
 	@PostMapping("/login")
 	public String login( Usuario usuario, Model model) throws LoginException {
@@ -128,9 +140,14 @@ public class LoginController {
 		//if (!gCsrfCookie.equals(gCsrfToken)) 
 			//throw new LoginException("Falha no login do Gogle: Failed to verify double submit cookie.");
 		
+		String domain = request.getServerName();
+		model.addAttribute("domain", domain);
+		
+		String googleOHauthClientId =  env.getProperty("google."+request.getServerName()+".oauth.client_id");
+	
 		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier
 				.Builder(new NetHttpTransport(), new GsonFactory())
-			    .setAudience(Collections.singletonList("86772213551-45mifv9tgjgk5tqu1rtdtf08e6a6ms8k.apps.googleusercontent.com"))
+			    .setAudience(Collections.singletonList(googleOHauthClientId))
 			    .build();
 
 		GoogleIdToken idToken;
@@ -184,6 +201,16 @@ public class LoginController {
 		model.addAttribute(appMessages);
 		model.addAttribute("usuario", new Usuario());
 		
+		String domain = request.getServerName();
+		model.addAttribute("domain", domain);
+		
+		String googleOHauthClientId =  env.getProperty("google."+request.getServerName()+".oauth.client_id");
+		String googleOHauthLoginUri = env.getProperty("google."+request.getServerName()+".oauth.login_uri");
+		
+		model.addAttribute("googleOHauthClientId", googleOHauthClientId);
+		model.addAttribute("googleOHauthLoginUri", googleOHauthLoginUri);
+		
+		model.addAttribute("appVersion", getVersion());
 		
 		//seta o card de total de participantes
 		Long totalParticipaantesAtivos = participanteRepo.countPgByBolao(bolao);
@@ -212,6 +239,15 @@ public class LoginController {
 	}
 	
 	
-	
+	private String getVersion()  {
+        Properties props = new Properties();
+        try {
+			props.load(versionResource.getResource("classpath:version.properties").getInputStream());
+		} catch (IOException e) {
+			System.err.println("Unable to load version.properties");
+			e.printStackTrace();
+		}
+        return props.getProperty("version");
+    }
 	
 }

@@ -94,6 +94,22 @@
 	<script src="/external/trumbowyg/dist/trumbowyg.min.js"></script>
     
     <script>
+    
+    $(window).on('load', function () {
+	      $(".loader").fadeOut("fast"); //retire o delay quando for copiar!
+	  //  $("#wrapper").toggle("fast");
+	});
+    
+    $( '[data-loading="loader"]' ).click(function(obj) {
+  		//alert($(obj).attr('href'));
+	  $(".loader").fadeIn("fast");
+	});
+    
+    $( 'form' ).submit(function(obj) {
+  		//alert($(obj).attr('href'));
+	  $(".loader").fadeIn("fast");
+	});
+    
     $(function () { 	
 	  $('[data-toggle="tooltip"]').tooltip()
 	  
@@ -107,7 +123,6 @@
 	  }
 	})
 	
-	const copyButton = null;
 	const copyButton = null;
 	if ($('#textToCopy').length) {			
 	      copyButton = document.getElementById('copy');

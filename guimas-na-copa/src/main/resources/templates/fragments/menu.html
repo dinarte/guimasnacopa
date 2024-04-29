@@ -26,42 +26,42 @@
             	
                     <ul class="nav" id="side-menu">
                         <li th:if="${autenticacao.bolao}">
-                            <a th:href="${'/' + autenticacao.bolao.permalink}" href="/"><i class="fa fa-home fa-fw"></i> Principal </a>
+                            <a data-loading="loader" th:href="${'/' + autenticacao.bolao.permalink}" href="/"><i class="fa fa-home fa-fw"></i> Principal </a>
+                        </li>
+                        <li data-loading="loader" th:if="${autenticacao.participanteDoBolao}">
+                            <a data-loading="loader" href="/palpite/editar"><i class="fa fa-plus-circle fa-fw"></i> Informar Palpites </a>
                         </li>
                         <li th:if="${autenticacao.participanteDoBolao}">
-                            <a href="/palpite/editar"><i class="fa fa-plus-circle fa-fw"></i> Informar Palpites </a>
-                        </li>
-                        <li th:if="${autenticacao.participanteDoBolao}">
-                            <a href="/simulador"><i class="fa fa-eye fa-fw"></i> Simulador </a>
+                            <a data-loading="loader" href="/simulador"><i class="fa fa-eye fa-fw"></i> Simulador </a>
                         </li>
                         <li>
-                            <a th:href="${'/' + bolao.permalink + '/participantes'}" href="/participantes"><i class="fa fa-users fa-fw"></i> Participantes </a>
+                            <a data-loading="loader" th:href="${'/' + bolao.permalink + '/participantes'}" href="/participantes"><i class="fa fa-users fa-fw"></i> Participantes </a>
                         </li>
                         <li>
-                            <a th:href="${'/' + bolao.permalink + '/regulamento'}" href="/regulamento"><i class="fa fa-book fa-fw"></i> Regulamento </a>
+                            <a data-loading="loader" th:href="${'/' + bolao.permalink + '/regulamento'}" href="/regulamento"><i class="fa fa-book fa-fw"></i> Regulamento </a>
                         </li>
                         
                         <li th:if="${session.autenticacao.adminDoBolao}">
                             <a href="#"><i class="fa fa-gears fa-fw"></i> Gerenciar <span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-		                            <a href="/bolao/listar"><i class="fa fa-gear fa-fw"></i> Bolão </a>
+		                            <a data-loading="loader" href="/bolao/listar"><i class="fa fa-gear fa-fw"></i> Bolão </a>
 		                        </li>
 		                        
 		                        <li>
-		                            <a href="/fase/listar"><i class="fa fa-gear fa-fw"></i> Fases </a>
+		                            <a data-loading="loader" href="/fase/listar"><i class="fa fa-gear fa-fw"></i> Fases </a>
 		                        </li>
 		                        
 		                        <li>
-		                            <a href="/jogo/listar"><i class="fa fa-gear fa-fw"></i> Jogos </a>
+		                            <a data-loading="loader" href="/jogo/listar"><i class="fa fa-gear fa-fw"></i> Jogos </a>
 		                        </li>
 		                        
 		                        <li>
-		                            <a href="/jogos/gerenciar"><i class="fa fa-gear fa-fw"></i> Datas e Resultados</a>
+		                            <a data-loading="loader" href="/jogos/gerenciar"><i class="fa fa-gear fa-fw"></i> Datas e Resultados</a>
 		                        </li>
 		              
 		                        <li>
-		                            <a href="/participantes"><i class="fa fa-gear fa-fw"></i> Participantes </a>
+		                            <a data-loading="loader" href="/participantes"><i class="fa fa-gear fa-fw"></i> Participantes </a>
 		                        </li>
 		                            </ul>
 		                            <!-- /.nav-second-level -->

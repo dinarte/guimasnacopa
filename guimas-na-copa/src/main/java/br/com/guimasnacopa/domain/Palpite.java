@@ -502,20 +502,20 @@ public class Palpite implements Comparable<Palpite> {
 		palpite.setTimeB(b);
 		
 		
-		testarEmLote(brasil, alemanha, palpite);
+		//testarEmLote(brasil, alemanha, palpite);
 		
-		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		//System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		
-		//testarIndividual(brasil, alemanha, palpite);
+		testarIndividual(brasil, alemanha, palpite);
 		
 	}
 
 	private static void testarIndividual(TimeNoJogo brasil, TimeNoJogo alemanha, Palpite palpite) {
 		
-		brasil.setGols(0);
-		alemanha.setGols(0);
-		palpite.setGolsTimeA(0);
-		palpite.setGolsTimeB(0);
+		brasil.setGols(5);
+		alemanha.setGols(5);
+		palpite.setGolsTimeA(4);
+		palpite.setGolsTimeB(4);
 		palpite.processarPontuacaoAcumulativa();
 		escreverResultado(palpite, brasil, alemanha);
 		
