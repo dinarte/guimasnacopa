@@ -1,31 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-
-
-    <head th:replace="fragments/main :: head" />
-    
-    
-    <style>
-    	.alert{
-    	margin: 12px}
-    	
-    	body {
-			/* background-image: URL('/img/campo_de_futebol.jpg'); */
-		}
-		
-		.logo{
-			margin-top: 8px;
-			border: 1px solid #ccc;
-			border-radius: 20%;
-			padding: 3px;
-			
-		}
-    </style>
-
-</head>
-
+<head th:replace="fragments/main :: head" />
+   
 <body>
 
     <div class="container">
@@ -81,8 +58,8 @@
                     <div class="panel-body">
                     	<div class="col-12" >
 	                    	<div class="col-md-6" >
-	                    		<div class="text-center" ><img width="100" class="logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgnnMpKHsGZK03_pXuA9qK_VAl8ttCBGY9rbK-_lu9hHdrvfonJWY4Ysd0xHflOaER0vNXinMERlUmezBpw2JQrXU4NZOqkqpxV_yN5nIqVHvLB9OjqloTyMy2rfLn1_5CzIag7XrjL-BY4NJPVChrW5JiocRugKBE1o6tDFNTwyzBv3UH4ptUcJBS_tcs4/s1600/the-new-copa-america-2024-logo%20%284%29.jpg" /></div>
-    							<div class="text-center" ><img width="100" class="logo" src="https://www.fifplay.com/img/public/euro-2024-logo.png"></div>
+	                    		<div class="text-center" ><img width="100" class="logo" src="/img/the-new-copa-america-2024-logo.jpg" /></div>
+    							<div class="text-center" ><img width="100" class="logo" src="/img/euro-2024-logo.png"></div>
 	                    	</div>
                     		<div class="col-md-6" >
 		                        <form role="form" action="/#" th:action="@{/login}"  method="post">
@@ -95,7 +72,7 @@
 		                                </div>
 		                                
 		                                <!-- Change this to a button or input when using this as a form -->
-		                                <button type="submit" class="btn btn-lg btn-info btn-block">Login</button>
+		                                <button type="submit" class="btn btn-lg btn-info btn-block" data-loading="loader">Login</button>
 		                            </fieldset>
 		                        </form>
 		                        
@@ -132,7 +109,7 @@
     
     
         <!-- cards-->
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-lg-12 col-lg-offset-1">
                 <div class="col-lg-2 col-md-6">
                     <div class="panel panel-primary">
@@ -242,24 +219,30 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <!-- cards end -->
         <div class="row text-center">
             	[[${domain}]]:[[${appVersion}]]
+        </div>
+        
+        
+          <!-- Popup app -->
+        <div class="popup-overlay"></div>
+        <div class="app-popup">
+            <div class="app-popup-detail">
+                <h6>GuimasBET App</h6>
+                <p>Isntale o app do Guimas bet e fique ligado no seu bolão com mais facilidade.</p>
+                <div class="btn-group">
+                    <button class="ki-btn-1" id="install_btn">Instalar</button>
+                    <!--<button class="ki-btn-1" class="ki-btn-1 m-l-5 close-popup">Skip</button> -->
+                </div>
             </div>
+        </div>   
 	</div>
 
-    <!-- jQuery -->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
-
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="../dist/js/sb-admin-2.js"></script>
+    <script th:replace="fragments/main :: scrptsblock" />
+    
+    <script src="/js/service.js"></script>
 
 </body>
 

@@ -158,7 +158,104 @@ img.img-perfil-peq {
 		height: 100%;
 		z-index: 9999;
 		background-size: 5px;
-		background: url('/img/loading.gif') 50% 50% no-repeat rgba(255,255,255,0.9);
+		opacity: 60%;
+		background: url('/img/loading.gif') 50% 50% no-repeat #ECECEC;
 	}            
 
+.alert{
+    	margin: 12px}
+    	
+    	body {
+			/* background-image: URL('/img/campo_de_futebol.jpg'); */
+		}
+		
+		.logo{
+			margin-top: 8px;
+			border: 1px solid #ccc;
+			border-radius: 20%;
+			padding: 3px;
+			
+		}
+		
+/*===== App Popup css =====*/
+.popup-overlay {
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  display: none;
+}
+
+.app-popup {
+  max-width: 500px;
+  margin: auto;
+  padding: 80px 30px 30px 30px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  display: none;
+  text-align: center;
+  -webkit-clip-path: polygon(50% 0%, 100% 20%, 100% 100%, 0 100%, 0% 20%);
+          clip-path: polygon(50% 0%, 100% 20%, 100% 100%, 0 100%, 0% 20%);
+}
+.app-popup .app-popup-detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.app-popup .app-popup-detail img {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 30px;
+}
+.app-popup .app-popup-detail h6 {
+  font-size: 18px;
+  color: #fff;
+  font-weight: 600;
+  line-height: 28px;
+}
+.app-popup .app-popup-detail p {
+  margin-bottom: 30px;
+  font-size: 13px;
+  color: #fff;
+  line-height: 22px;
+}
+.app-popup .app-popup-detail .btn-group {
+  display: flex;
+  flex-direction: row;
+}
+.app-popup .app-popup-detail .btn-group button {
+  margin-right: 5px;
+}
+
+
+.ki-btn, .ki-btn-1 {
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  padding: 8px 20px;
+  border: none;
+  background: #2d76e1;
+  color: #fff;
+  overflow: hidden;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 30px;
+}
+.ki-btn:hover, .ki-btn-1:hover {
+  opacity: 0.7;
+  text-decoration: none;
+  color: #fff;
+}		
             

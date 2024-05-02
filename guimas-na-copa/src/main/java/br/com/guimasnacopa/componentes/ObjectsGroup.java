@@ -87,8 +87,6 @@ public class ObjectsGroup {
 		
 		public  List<Object> convertToNodes(Object itens) {
 			
-			System.out.println("Processando Nivel " + level);
-			
 			List<Object> nodeList = new ArrayList<>();
 			if (itens instanceof HashMap<?, ?>) {
 				Map<?, ?> elements = (Map<?, ?>) itens;

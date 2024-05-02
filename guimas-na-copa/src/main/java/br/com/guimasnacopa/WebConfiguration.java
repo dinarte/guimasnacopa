@@ -20,6 +20,12 @@ public class WebConfiguration implements WebMvcConfigurer{
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		//registry
         //.addResourceHandler("/resources/**")
+
+		try {
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
         //.addResourceLocations("/resources/");     
 		}
 }

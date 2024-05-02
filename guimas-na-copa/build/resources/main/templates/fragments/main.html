@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Autentique-se no bolão Guimas na Copa, o mais divertido de tdos!">
     <meta name="author" content="Dinarte">
+    <link rel="manifest" href="/js/manifest.json">
     <link rel="shortcut icon" href="/favicon.ico" />
 
     <title>GuimasBet</title>
@@ -89,13 +90,26 @@
     <!-- Custom Theme JavaScript -->
     <script src="/dist/js/sb-admin-2.js"></script>
     
+    <!-- JavaScript Console for mobile -->
+    <script src="/js/eruda.js"></script>
+    <script>eruda.init();</script>
    
     <!-- Import Trumbowyg (Richtext)-->
 	<script src="/external/trumbowyg/dist/trumbowyg.min.js"></script>
     
     <script>
     
+    let el = document.createElement('div');
+	document.body.appendChild(el);
+
+	eruda.init({
+	    container: el,
+	    tool: ['console', 'elements']
+	});
+    
+    
     $(window).on('load', function () {
+    	
 	      $(".loader").fadeOut("fast"); //retire o delay quando for copiar!
 	  //  $("#wrapper").toggle("fast");
 	});
@@ -127,12 +141,14 @@
 	if ($('#textToCopy').length) {			
 	      copyButton = document.getElementById('copy');
 	      textToCopy = document.getElementById('textToCopy');
+	      
+	      copyButton.addEventListener('click', () => {
+	          textToCopy.select();
+	          document.execCommand('copy');
+	          alert('Código copiado com sucesso!');
+	        });
 	}
-    copyButton.addEventListener('click', () => {
-      textToCopy.select();
-      document.execCommand('copy');
-      alert('Código copiado com sucesso!');
-    });
+    
 				
 				  
 				            

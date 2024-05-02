@@ -138,12 +138,15 @@
 					                        	<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.golsTimeB}"></span>
 							    			</td>
 							    		</tr>
-							    	
-							    	
+							    
 						    		</th:block>
 						    		
 						    	</table>
 						    </div>
+						    <div class="panel-footer text-center">
+						    	Palpite até: <span  th:text="${#temporals.format(palpite.limiteAposta, 'dd MMM hh:mm')}"> 12:20</span>
+					    				
+					    	</div>			
 						  </div>
 						 </div>
 					</th:block> 
@@ -183,7 +186,7 @@
     <style>
         /* Regras CSS personalizadas, se necess�rio */
         .minheight {
-            height: 150px; /* Defina a altura m�nima desejada */
+            height: 200px; /* Defina a altura m�nima desejada */
         }
     </style>
     

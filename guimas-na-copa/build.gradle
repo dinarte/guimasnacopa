@@ -1,4 +1,4 @@
-import java.util.regex.Matcher
+import java.text.SimpleDateFormat
 
 buildscript {
     repositories {
@@ -9,9 +9,9 @@ buildscript {
     }
 }
 
+
 plugins {
     id("org.hidetake.ssh").version("2.9.0")
-    id("net.researchgate.release").version("2.8.1")
 }
 
 
@@ -26,17 +26,9 @@ repositories {
     mavenCentral()
 }
 
-release {
-	git.requireBranch = null
-    versionPatterns = [
-        (/\d+\.\d+\.\d+-SNAPSHOT/): { Matcher m, Project p ->
-            def parts = m.group(0).split(/\./)
-            def major = parts[0].toInteger()
-            def minor = parts[1].toInteger()
-            def patch = parts[2].split("-")[0].toInteger() + 1
-            return "${major}.${minor}.${patch}-SNAPSHOT"
-        }
-    ]
+ext {
+    // Define a variável global no contexto do Gradle
+    appVersion = ''
 }
 
 bootJar {
@@ -45,11 +37,23 @@ bootJar {
 }
 
 
-task upVersion(dependsOn: ['release']) {
+
+
+task setAppVersion {
     doLast {
-        println "Versão atual: ${project.version}"
+        // Obtém a data e hora atual
+        def date = new Date()
+        // Define o formato desejado para a string da data
+        def dateFormat = new SimpleDateFormat("yyyyMMdd-HH:mm:ss")
+        // Formata a data no formato especificado
+        appVersion = 'v2.0.' + dateFormat.format(date) + '-SNAPSHOT'
+        
+        // Imprime a versão para verificação
+        println "Version set to: $appVersion"
+        
+         println "Versão atual: ${project.version}"
         def propsFile = file('src/main/resources/version.properties')
-        propsFile.text = "version=${project.version}"
+        propsFile.text = "version=${appVersion}"
     }
 }
 
@@ -84,7 +88,7 @@ task deploy {
   }
 }
 
-task createWarAndDeploy(dependsOn: ['createWar', 'deploy']) {
+task createWarAndDeploy(dependsOn: ['setAppVersion', 'createWar', 'deploy']) {
     // empty task body, dependsOn already handles the dependencies
 }
 

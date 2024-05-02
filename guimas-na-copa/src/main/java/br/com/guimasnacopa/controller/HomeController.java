@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.annotation.RequestScope;
 
 import br.com.guimasnacopa.componentes.PalpiteHelper;
@@ -68,8 +69,7 @@ public class HomeController {
 	
 	@RequestMapping("/")
 	public String home(Model m) throws AppException {
-		criarUsuarioAdminCasoNecessario();
-		return redirecionaDeAcordoComAutenticacao(m);
+		return "redirect:/" + bolaoAtivo;
 		
 	}
 	
@@ -173,6 +173,12 @@ public class HomeController {
 	private void criarUsuarioAdminCasoNecessario() {
 		if (userRepo.count() == 0)	
 			startUp.startupSistema();
+	}
+	
+	@ResponseBody()
+	@GetMapping("/app/instaled")
+	private String appInstaled() {
+		return "true";
 	}
 	
 }
