@@ -41,7 +41,7 @@ public class GerenciarFaseController {
 	public String listar(Model model) throws LoginException, BolaoNaoSelecionadoException{
 		autenticacao.checkAdminAthorization(model);
 		autenticacao.checkBolaoNaoSelecionado();
-		List<Fase> faseList = (List<Fase>) faseRepo.findAllByBolao(autenticacao.getBolao());
+		List<Fase> faseList = (List<Fase>) faseRepo.findAllByBolaoOrderByCompeticao_nomeAsc(autenticacao.getBolao());
 		model.addAttribute("faseList", faseList);
 		return "/fase/listar";
 	}
@@ -58,10 +58,11 @@ public class GerenciarFaseController {
 	
 	
 	@GetMapping("/fase/novo")
-	public String novo(@PathVariable("id") Integer id, Model model) throws LoginException {
+	public String novo(Model model) throws LoginException {
 		autenticacao.checkAdminAthorization(model);
 		Fase fase = new Fase();
 		model.addAttribute(fase);
+		model.addAttribute("competicaoList", competicaoRepo.findAll());
 		return "/fase/form";
 	}
 	

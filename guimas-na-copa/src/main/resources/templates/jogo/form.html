@@ -28,7 +28,7 @@
         		 <select th:field="*{fase}" class="form-control">
 				  	<option th:each="f : ${faseList}" 
 				          th:value="${f.id}" 
-				          th:text="${f.nome}">Wireframe</option>
+				          th:text="${f.competicao.nome +' - '+ f.nome}">Wireframe</option>
 				 </select>
 				 </div>
 				 

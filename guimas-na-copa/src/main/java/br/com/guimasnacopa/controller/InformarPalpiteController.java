@@ -1,16 +1,13 @@
 package br.com.guimasnacopa.controller;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collector;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.hibernate.annotations.Cascade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,10 +45,29 @@ public class InformarPalpiteController {
 	public String editarPalpite(Model model) throws LoginException{
 		autenticacao.checkAthorization();
 		
-		palpiteService.criarPalpites(autenticacao.getParticipante());
+		palpiteService.criarPalpitesCasoNecessario(autenticacao.getParticipante());
 		
 		List<Palpite> palpites = palpiteRepo.findAllByParticipante(autenticacao.getParticipante());
 	
+		Map<Object, List<Object>> timesMap = agruparTimesEPegarMapa(palpites);
+		
+		
+		
+		List<GroupNode> palpitesEmAbertoNodes = filtarEAgruparPalpites(palpites, Palpite::isApostaAberta);
+		List<GroupNode> palpitesFechadosNodes = filtarEAgruparPalpites(palpites, Palpite::isApostaFechada);
+		 
+		model.addAttribute("timesMap",timesMap);
+		model.addAttribute(autenticacao);
+		model.addAttribute("palpitesEmAbertoNodes", palpitesEmAbertoNodes);
+		model.addAttribute("palpitesFechadosNodes", palpitesFechadosNodes);
+		return "pages/palpite";
+		
+	}
+
+
+
+
+	private Map<Object, List<Object>> agruparTimesEPegarMapa(List<Palpite> palpites) {
 		List<GroupNode> timesGroup = ObjectsGroup 
 				  .from(palpites
 						  .stream()
@@ -63,21 +79,19 @@ public class InformarPalpiteController {
 				  .getNodes();
 		
 		Map<Object, List<Object>> timesMap = timesGroup.stream().collect(Collectors.toMap(GroupNode::getNode, GroupNode::getChildrenAsLastLevel));
-		
-		
-		 
-		
-		List<GroupNode> palpitesNodes = ObjectsGroup
-				 .from(palpites) 
+		return timesMap;
+	}
+
+
+
+
+	private List<GroupNode> filtarEAgruparPalpites(List<Palpite> palpites, Predicate<? super Palpite> predicate) {
+		List<GroupNode> palpitesEmAbertoNodes = ObjectsGroup
+				 .from(palpites.stream().filter(predicate).collect(Collectors.toList())) 
 				 .groupBy(( p -> ((Palpite) p).getBolaoCompeticao().getCompeticao())) 
 				 .groupBy(( p -> ((Palpite) p).getDescricaoGrupo()))
 				 .getNodes();
-		 
-		model.addAttribute("timesMap",timesMap);
-		model.addAttribute(autenticacao);
-		model.addAttribute("palpitesNodes", palpitesNodes);
-		return "pages/palpite";
-		
+		return palpitesEmAbertoNodes;
 	}
 	
 

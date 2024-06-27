@@ -12,7 +12,9 @@ import br.com.guimasnacopa.domain.Fase;
 @Repository
 public interface FaseRepository  extends CrudRepository<Fase, Integer>{
 
-	public List<Fase> findAllByBolao(Bolao bolao);
+	public List<Fase> findAllByBolaoOrderByCompeticao_nomeAsc(Bolao bolao);
+	
+	public List<Fase> findAllByBolaoOrderByCompeticao_nomeAscNomeAsc(Bolao bolao);
 
 	
 }

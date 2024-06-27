@@ -40,7 +40,7 @@ public class PalpiteService {
 	@Autowired
 	EntityManager entityManager;
 	
-	public List<Palpite> criarPalpites(Participante p) {
+	public List<Palpite> criarPalpitesCasoNecessario(Participante p) {
 		List<Jogo> jogos = jogoRepo.findAllByBolaoAndPrticipanteAndNotExistsPalpiteOrderByFaseGrupoData(p.getBolao(),p);
 		List<BolaoCompeticao> bolaoCompeticaoList = bolaoCompeticaoRepo.findAllByBolao(p.getBolao()); 
 		if (jogos != null && jogos.size() > 0) {
@@ -71,33 +71,31 @@ public class PalpiteService {
 				novosPalpites.add(palpite);
 			});
 			
-			bolaoCompeticaoList.forEach( bc -> {
-				
-				Palpite pfinal = new Palpite();
-				pfinal.setBolaoCompeticao(bc);
-				pfinal.setParticipante(p);
-				pfinal.setTipo(Palpite.ACERTAR_TIMES);
-				pfinal.setLimiteAposta(jogos.get(0).getLimiteAposta());
-				palpiteRepo.save(pfinal);
-				novosPalpites.add(pfinal);
-				
-				System.out.println("Palpite " + Palpite.ACERTAR_TIMES + "Criado para " + bc.getCompeticao().getNome());
-				
-				entityManager.flush();
-				
-				Palpite campeao = new Palpite();
-				campeao.setBolaoCompeticao(bc);
-				campeao.setParticipante(p);
-				campeao.setTipo(Palpite.ACERTAR_CAMPEAO);
-				campeao.setLimiteAposta(jogos.get(0).getLimiteAposta());
-				palpiteRepo.save(campeao);
-				novosPalpites.add(campeao);
-				
-				System.out.println("Palpite " + Palpite.ACERTAR_CAMPEAO + "Criado para " + bc.getCompeticao().getNome());
-				
-				entityManager.flush();
-				
-			});
+			/*
+			 * bolaoCompeticaoList.forEach( bc -> {
+			 * 
+			 * Palpite pfinal = new Palpite(); pfinal.setBolaoCompeticao(bc);
+			 * pfinal.setParticipante(p); pfinal.setTipo(Palpite.ACERTAR_TIMES);
+			 * pfinal.setLimiteAposta(jogos.get(0).getLimiteAposta());
+			 * palpiteRepo.save(pfinal); novosPalpites.add(pfinal);
+			 * 
+			 * System.out.println("Palpite " + Palpite.ACERTAR_TIMES + "Criado para " +
+			 * bc.getCompeticao().getNome());
+			 * 
+			 * entityManager.flush();
+			 * 
+			 * Palpite campeao = new Palpite(); campeao.setBolaoCompeticao(bc);
+			 * campeao.setParticipante(p); campeao.setTipo(Palpite.ACERTAR_CAMPEAO);
+			 * campeao.setLimiteAposta(jogos.get(0).getLimiteAposta());
+			 * palpiteRepo.save(campeao); novosPalpites.add(campeao);
+			 * 
+			 * System.out.println("Palpite " + Palpite.ACERTAR_CAMPEAO + "Criado para " +
+			 * bc.getCompeticao().getNome());
+			 * 
+			 * entityManager.flush();
+			 * 
+			 * });
+			 */
 		
 		}
 		return palpiteRepo.findAllByParticipante(p);

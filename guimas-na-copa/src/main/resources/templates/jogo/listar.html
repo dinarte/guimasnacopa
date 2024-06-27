@@ -24,6 +24,7 @@
 	            <table class="table">
 	            	<thead>
 	            		<tr>
+	            			<th colspan="2">Competição</th>
 	            			<th>Fase</th>
 	            			<th>Grupo</th>
 	            			<th style="text-align: center"> Jogo </th>
@@ -35,6 +36,8 @@
 	            	<tbody>
 	            		<th:block th:each="jogo : ${jogoList}">
 	             		<tr>
+	             			<td><img th:src="${jogo.fase.competicao.logoUrl}" height="30px" /></td>
+	             			<td th:text="${jogo.fase.competicao.nome}">Competição</td>
 	             			<td th:text="${jogo.fase.nome}">Fase</td>
 	             			<td th:text="${jogo.grupo}">Grupo A</td>
 	             			<td th:utext="${jogo.timesDescricao}" style="text-align: center">

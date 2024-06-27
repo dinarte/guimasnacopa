@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.context.annotation.RequestScope;
 
+import br.com.guimasnacopa.domain.BolaoCompeticao;
 import br.com.guimasnacopa.domain.Jogo;
 import br.com.guimasnacopa.domain.Palpite;
 import br.com.guimasnacopa.domain.TimeNoJogo;
 import br.com.guimasnacopa.exception.BolaoNaoSelecionadoException;
 import br.com.guimasnacopa.messages.AppMessages;
+import br.com.guimasnacopa.repository.BolaoCompeticaoRepository;
 import br.com.guimasnacopa.repository.FaseRepository;
 import br.com.guimasnacopa.repository.JogoRepository;
 import br.com.guimasnacopa.repository.PalpiteRepository;
@@ -59,6 +61,9 @@ public class GerenciarJogoController {
 	@Autowired
 	private TimeNoJogoService tmjService;
 	
+	@Autowired
+	private BolaoCompeticaoRepository bolaoCompeticaoRepo;
+	
 	@GetMapping("/jogo/listar")
 	public String listar(Model model) throws LoginException, BolaoNaoSelecionadoException{
 		autenticacao.checkAdminAthorization(model);
@@ -74,7 +79,7 @@ public class GerenciarJogoController {
 		Jogo jogo = jogoRepo.findById(id).get();
 		jogo.setTimeA(jogo.getTimesNoJogo().get(0).getTime());
 		jogo.setTimeB(jogo.getTimesNoJogo().get(1).getTime());
-		model.addAttribute("faseList", faseRepo.findAllByBolao(autenticacao.getBolao()));
+		model.addAttribute("faseList", faseRepo.findAllByBolaoOrderByCompeticao_nomeAscNomeAsc(autenticacao.getBolao()));
 		model.addAttribute("timeList", timeRepo.findAll());
 		model.addAttribute(jogo);
 		return "/jogo/form";
@@ -84,7 +89,7 @@ public class GerenciarJogoController {
 	@GetMapping("/jogo/novo")
 	public String novo(Model model) throws LoginException {
 		autenticacao.checkAdminAthorization(model);
-		model.addAttribute("faseList", faseRepo.findAllByBolao(autenticacao.getBolao()));
+		model.addAttribute("faseList", faseRepo.findAllByBolaoOrderByCompeticao_nomeAscNomeAsc(autenticacao.getBolao()));
 		model.addAttribute("timeList", timeRepo.findAll());
 		Jogo jogo = new Jogo();
 		model.addAttribute(jogo);
@@ -98,16 +103,18 @@ public class GerenciarJogoController {
 		boolean newState = jogo.getId() == null ? true : false;
 		jogoRepo.save(jogo);
 		
-		//caso esteja atualizando atualiza o limite dos palpites
+		//caso esteja dando update atualiza o limite dos palpites
 		if (!newState) {
 		
 			List<Palpite> palpites = palpiteRepo.findAllByJogoAndTipo(jogo,Palpite.RESULTADO);
 			palpites.forEach(p -> {
+				List<BolaoCompeticao>  bolaoCompeticao = bolaoCompeticaoRepo.findAllByBolaoAndCompeticao(jogo.getFase().getBolao(), jogo.getFase().getCompeticao());
 				p.setLimiteAposta(jogo.getLimiteAposta());
+				p.setBolaoCompeticao(bolaoCompeticao.get(0));
 				palpiteRepo.save(p);
 			});
-			
 		}
+		
 		//caso esteja criando cria os times dentro do jogo	
 		else{
 			TimeNoJogo tmjA = new TimeNoJogo();

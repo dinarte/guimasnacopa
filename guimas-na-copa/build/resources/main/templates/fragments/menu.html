@@ -28,21 +28,6 @@
                         <li th:if="${autenticacao.bolao}">
                             <a data-loading="loader" th:href="${'/' + autenticacao.bolao.permalink}" href="/"><i class="fa fa-home fa-fw"></i> Principal </a>
                         </li>
-                        <li data-loading="loader" th:if="${autenticacao.participanteDoBolao}">
-                            <a data-loading="loader" href="/palpite/editar"><i class="fa fa-plus-circle fa-fw"></i> Informar Palpites </a>
-                        </li>
-                        <!-- 
-                        <li th:if="${autenticacao.participanteDoBolao}">
-                            <a data-loading="loader" href="/simulador"><i class="fa fa-eye fa-fw"></i> Simulador </a>
-                        </li>
-                         -->
-                        <li>
-                            <a data-loading="loader" th:href="${'/' + bolao.permalink + '/participantes'}" href="/participantes"><i class="fa fa-users fa-fw"></i> Participantes </a>
-                        </li>
-                        <li>
-                            <a data-loading="loader" th:href="${'/' + bolao.permalink + '/regulamento'}" href="/regulamento"><i class="fa fa-book fa-fw"></i> Regulamento </a>
-                        </li>
-                        
                         <li th:if="${session.autenticacao.adminDoBolao}">
                             <a href="#"><i class="fa fa-gears fa-fw"></i> Gerenciar <span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
@@ -65,9 +50,25 @@
 		                        <li>
 		                            <a data-loading="loader" href="/participantes"><i class="fa fa-gear fa-fw"></i> Participantes </a>
 		                        </li>
-		                            </ul>
-		                            <!-- /.nav-second-level -->
-		                        </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+		                </li>
+                        <li data-loading="loader" th:if="${autenticacao.participanteDoBolao}">
+                            <a data-loading="loader" href="/palpite/editar"><i class="fa fa-plus-circle fa-fw"></i> Informar Palpites </a>
+                        </li>
+                        <!-- 
+                        <li th:if="${autenticacao.participanteDoBolao}">
+                            <a data-loading="loader" href="/simulador"><i class="fa fa-eye fa-fw"></i> Simulador </a>
+                        </li>
+                         -->
+                        <li>
+                            <a data-loading="loader" th:href="${'/' + bolao.permalink + '/participantes'}" href="/participantes"><i class="fa fa-users fa-fw"></i> Participantes </a>
+                        </li>
+                        <li>
+                            <a data-loading="loader" th:href="${'/' + bolao.permalink + '/regulamento'}" href="/regulamento"><i class="fa fa-book fa-fw"></i> Regulamento </a>
+                        </li>
+                        
+                        
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
