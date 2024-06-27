@@ -15,8 +15,8 @@
         
         	<div class="row">
                 <div class="col-lg-8">
-                    <h1 class="page-header" th:text="${session.autenticacao.bolao.nome}">Descrição do Bolão</h1>
-                    <h3>Ver os palpites de <span th:text="${participanteConsultado.usuario.name}"></span></h3>
+                    <h1 class="page-header" th:utext="${session.autenticacao.bolao.nome}">Descrição do Bolão</h1>
+                    <h3>Ver os palpites de <span th:utext="${participanteConsultado.usuario.name}"></span></h3>
                 </div>
                 <div class="col-lg-4" style="vertical-align: middle; text-align: center; padding: 8px;" >
 	                <div class="btn-group">
@@ -29,8 +29,9 @@
             <table class="table">
                         	<thead>
                         		<tr>
+                        			<th>Competição</th>
                         			<th>Fase</th>
-                        			<th>Grupo</th>
+                        			<th width="100px">Grupo</th>
                         			<th style="text-align: right;">Data</th>
                         			<th colspan="5"><center>Jogo</center></th>
                         		</tr>
@@ -39,24 +40,25 @@
                         		<th:block th:each="palpite : ${palpites}">
 	                        		<th:block th:if="${palpite.resultado}">
 		                        		<tr>
-		                        			<td th:text="${palpite.jogo.fase.nome}">Fase do Jogo</td>
-		                        			<td th:text="${palpite.jogo.grupo}">Grupo</td>
-		                        			<td th:text=" ${ #temporals.format(palpite.jogo.data, 'dd MMM hh:mm')}" style="text-align: right;" >
-					             			   X/XX/XXXX XX:XX
+		                        			<td th:utext="${palpite.bolaoCompeticao.competicao.nome}"><img height="40" th:src="${palpite.bolaoCompeticao.competicao.logoUrl}"> Competição</td>
+		                        			<td th:utext="${palpite.jogo.fase.nome}">Fase do Jogo</td>
+		                        			<td th:utext="${palpite.jogo.grupo}">Grupo</td>
+		                        			<td th:utext=" ${ #temporals.format(palpite.jogo.data, 'dd MMM HH:mm')}" style="text-align: right;" >
+					             			   X/XX/XXXX XX:XX 
 					             			</td> 
-		                        			<td th:text="${palpite.timeA.nome}" style="text-align: right;">Time A</td>
+		                        			<td th:utext="${palpite.timeA.nome}" style="text-align: right;">Time A</td>
 		                        			<td width="20px" style="text-align: right;">
 												<span th:if="${palpite.apostaAberta}" > ? </span>
-		                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.golsTimeA}"></span>
-		                        				<span style="color:#ccc"  th:text="${palpite.palpiteComparado.golsTimeA}"></span>
+		                        				<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.golsTimeA}"></span>
+		                        				<span style="color:#ccc"  th:utext="${palpite.palpiteComparado.golsTimeA}"></span>
 		                        			</td>
-		                        			<td width="3px">x</td>
-		                        			<td width="20px">
-		                        				<span style="color:#ccc"  th:text="${palpite.palpiteComparado.golsTimeB}"></span>
+		                        			<td class="text-center">x</td>
+		                        			<td>
+		                        				<span style="color:#ccc"  th:utext="${palpite.palpiteComparado.golsTimeB}"></span>
 		                        				<span th:if="${palpite.apostaAberta}" > ? </span>
-		                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.golsTimeB}"></span>
+		                        				<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.golsTimeB}"></span>
 		                        			</td>
-		                        			<td th:text="${palpite.timeB.nome}" style="text-align: left;">Time B</td>
+		                        			<td th:utext="${palpite.timeB.nome}" style="text-align: left;">Time B</td>
 		                        		</tr>
 		                        	</th:block>
 		                        	  <th:block th:if="${palpite.acertarTimes}">
@@ -65,22 +67,22 @@
 		                        			<td> Acerte os finalistas! </td>
 		                        			<td>  </td>
 		                        			<td  style="text-align: right;">Time A</td>
-		                        			<td width="20px">
+		                        			<td>
 		                        			
 			                        			<span th:if="${palpite.apostaAberta}" > ? </span>
-			                       				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.timeA.nome}"></span>
-			                       				<span style="color: #ccc" th:text="${palpite.palpiteComparado.timeA.nome}"></span>
+			                       				<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.timeA.nome + ' ' + palpite.timeA.flag}"></span>
+			                       				<span style="color: #ccc" th:utext="${palpite.palpiteComparado?.timeA.nome + ' ' + palpite.palpiteComparado?.timeA.flag}"></span>
 			                        			
 			                        		
 		                        			</td>
 		                        			
-		                        			<td width="3px">x</td>
+		                        			<td> x </td>
 		                        			
-		                        			<td width="20px">
+		                        			<td>
 											
 												<span th:if="${palpite.apostaAberta}" > ? </span>			
-												<span th:if="${!palpite.apostaAberta}" th:text="${palpite.timeB.nome}"></span>
-												<span style="color: #ccc" th:text="${palpite.palpiteComparado.timeB.nome}"></span>
+												<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.timeB.nome}"></span>
+												<span style="color: #ccc" th:utext="${palpite.palpiteComparado?.timeB?.flag + ' ' + palpite.palpiteComparado?.timeB?.nome}"></span>
 			                        			
 		                        			</td>
 		                        			<td>Time B</td>
@@ -91,12 +93,12 @@
 		                        			<td> Final </td>
 		                        			<td> Acerte o Campeão</td>
 		                        			<td>  </td>
-		                        			<td  style="text-align: right;">Selecionar Campeão</td>
-		                        			<td width="20px" colspan="7">
+		                        			<td  style="text-align: right;">Time Campeão</td>
+		                        			<td colspan="7">
 		                        			
 			                        			<span th:if="${palpite.apostaAberta}" > ? </span>
-		                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.timeA.nome}"></span>
-			                        			<span style="color: #ccc" th:text="${palpite.palpiteComparado.timeA.nome}"></span>
+		                        				<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.timeA.nome + ' ' + palpite.timeA.flag}"></span>
+			                        			<span style="color: #ccc" th:utext="${palpite.palpiteComparado?.timeA?.nome}"></span>
 		                        			
 		                        			</td>
 		                        			

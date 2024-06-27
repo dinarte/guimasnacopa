@@ -14,16 +14,29 @@
         	<div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header" th:text="${bolao.nome}">Descriçao do Bolão</h1>
-                    <h3>Regulamento</h3>
+                    <h3>Instruções para pagamento</h3>
                 </div>
             </div>
         
         
-            <p th:utext="${bolao.regras}" th:remove="tag">
+        		   <div class="panel panel-info">
+                        <div class="panel-heading">
+                        	 <div class="block text-right">
+                             <span class="btn btn-primary">Regulamento</span> <a class="btn btn-default" th:href="${'/' + bolao.permalink + '/pagamento'}">Pagamento</a>
+                             </div>  
+                        </div>
+                        <div class="panel-body">
+                            <p th:utext="${bolao.regras}" th:remove="tag">
+					            
+					            Aqui serão as regras do bolão
+					            
+					        </p>
+                        </div>
+                      
+                    </div>
+        
+        
             
-            Aqui serão as regras do bolão
-            
-            </p>
         </div>
         <!-- /#page-wrapper -->
 

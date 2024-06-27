@@ -10,13 +10,16 @@ import javax.persistence.Id;
 public class Bolao {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	private String nome;
 	
-	@Column(length=5000 )
+	@Column(columnDefinition = "TEXT")
 	private String regras;
+	
+	@Column(columnDefinition = "TEXT")
+	private String instrucoesPagamento;
 	
 	private String permalink;
 	
@@ -70,6 +73,14 @@ public class Bolao {
 
 	public void setTaxaAdministrativa(Double taxaAdministrativa) {
 		this.taxaAdministrativa = taxaAdministrativa;
+	}
+
+	public String getInstrucoesPagamento() {
+		return instrucoesPagamento;
+	}
+
+	public void setInstrucoesPagamento(String instrucoesPagamento) {
+		this.instrucoesPagamento = instrucoesPagamento;
 	}
 	
 	

@@ -17,6 +17,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import br.com.guimasnacopa.domain.Jogo;
 import br.com.guimasnacopa.domain.Palpite;
 import br.com.guimasnacopa.domain.Participante;
+import br.com.guimasnacopa.exception.BolaoNaoSelecionadoException;
 import br.com.guimasnacopa.repository.JogoRepository;
 import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.ParticipanteRepository;
@@ -43,8 +44,9 @@ public class GerenciarDatasEResultadosController {
 	ParticipanteRepository participanteRepo;
 	
 	@GetMapping("/jogos/gerenciar")
-	public String gerenciar(Model m) throws LoginException {
+	public String gerenciar(Model m) throws LoginException, BolaoNaoSelecionadoException {
 		autenticacao.checkAdminAthorization();
+		autenticacao.checkBolaoNaoSelecionado();
 		List<Jogo> jogos = jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
 		m.addAttribute("jogos",jogos);
 		m.addAttribute(autenticacao);
@@ -57,7 +59,7 @@ public class GerenciarDatasEResultadosController {
 		autenticacao.checkAdminAthorization();
 		List<Jogo> jogos = jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
 		
-		//comupta jogo a jogo
+		//comuputa jogo a jogo
 		jogos.forEach(j -> {
 			System.out.println("jogo: "+j.getId()+"-"+j.getGrupo());
 			String value = reuqest.getParameter(j.getId().toString());
@@ -81,7 +83,7 @@ public class GerenciarDatasEResultadosController {
 			palpites.forEach(palpite ->{
 				System.out.println("..."+palpite.getGolsTimeA()+" x "+palpite.getGolsTimeB());
 				if(palpite.getGolsTimeA() != null && palpite.getGolsTimeB() != null) {
-					palpite.processarPontuacao();
+					palpite.processarPontuacaoAcumulativa();
 					palpiteRepo.updatePontuacao(palpite.getPontuacaoAtingida(), palpite.getRegraPontuacao(), palpite.getId());
 				}
 				if(palpite.getTipo().equals(Palpite.ACERTAR_TIMES)) {
@@ -93,13 +95,14 @@ public class GerenciarDatasEResultadosController {
 		
 		participanteRepo.updatePontuacao();
 		
+		boolean apenasParticipantesPagos = true;
 		List<Participante> participantes = participanteRepo
-				.findAllByBolaoOrderByPontuacaoDesc(autenticacao.getBolao());
+				.findAllByBolaoAndPgOrderByPontuacaoDesc(autenticacao.getBolao(), apenasParticipantesPagos);
 		int count = 1;
 		int classificacaoAnterior = 0;
 		Double pontuacaoAnterior = -0.1;
 		for (Participante p : participantes) {
-			System.out.println("particiantes>>>>");
+
 			p.setExibirClassificacaoNoRanking(true);
 			if (!p.getPontuacao().equals(pontuacaoAnterior)) {
 				classificacaoAnterior = count;

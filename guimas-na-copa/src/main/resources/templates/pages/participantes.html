@@ -18,45 +18,60 @@
                 </div>
             </div>
         
-        
+        	<div class="table-responsive">
             <table class="table">
                         	<thead>
                         		<tr>
-                        			<th>Jogador</th>
-                        			<th>Email</th>
-                        			<th>Situação</th>
-                        			<th>Preenchimento</th>
+                  
+                        			<th colspan="2">Jogador</th>
+                        			<th th:if="${autenticacao.adminDoBolao}" style="text-align: center;"> Ações </th>
                         		</tr>
                         	</thead>
                         	<tbody>
                         		<th:block th:each="participante : ${participantes}">
 	                        		<tr>
-	                        			<td th:text="${participante.usuario.name}">Dinarte filho</td>
-	                        			<td th:text="${participante.usuario.email}">email@servidor.com</td>
-	                        			<td>
-	                        				<a th:class="${participante.pg == true ? 'btn btn-primary' : 'btn btn-danger'}" th:if="${autenticacao.usuario.admin}" th:href="${'/participante/'+ participante.id +'/alterarpagamento' }"  th:text="${participante.pg == true ? 'Confirmado' : 'Pendente'}">
-	                        					Confirmado
-	                        				</a>
-	                        				
-	                        				<span th:class="${participante.pg == true ? 'badge badge-primary' : 'badge badge-danger'}" th:if="${!autenticacao.usuario.admin}" th:text="${participante.pg == true ? 'Confirmado' : 'Pendente'}">
+	                        			<td width="5%"><img th:src="${participante.usuario.urlFoto}" class="img-perfil-peq" /></td>
+	                        			<td>  
+	                        				<span th:text="${participante.usuario.name}"> Dinarte filho </span>  <br />
+	                        				<span th:text="${participante.usuario.email}">email@servidor.com</span> <br />
+	                        				<span th:if="${participante.userOnLine}" class="text-success">Online</span>
+	                        				<span th:if="${participante.usuario.admin}" class="badge badge-info">Sys Adm</span>
+	                        				<span 	th:class="${participante.pg == true ? 'badge badge-primary' : 'badge badge-danger'}"  
+	                        						th:text="${participante.pg == true ? 'Confirmado' : 'Pendente'}">
 	                        					Confirmado
 	                        				</span>
+	                        				<span th:if="${participante.admin}" class="badge badge-info">Adm do Bolão</span>
+	                        				<div class="progress" style="margin-top:5px; width: 40%">
+											  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40"
+											  aria-valuemin="0" aria-valuemax="100" th:style="${'width:' + #numbers.formatDecimal(participante.porcentagemPalpites,2,0) + '%'}" th:text="${#numbers.formatDecimal(participante.porcentagemPalpites,2,1,'COMMA') + '%'}">
+											    40% 
+											  </div>
+											</div>
 	                        			</td>
-	                        			<td> 
-	                        			
-	                        			<div class="progress">
-										  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40"
-										  aria-valuemin="0" aria-valuemax="100" th:style="${'width:' + #numbers.formatDecimal(participante.porcentagemPalpites,2,0) + '%'}" th:text="${#numbers.formatDecimal(participante.porcentagemPalpites,2,1,'COMMA') + '%'}">
-										    40% 
-										  </div>
-										</div>
 	                        			
 	                        			
+	                        			<td th:if="${autenticacao.adminDoBolao}" style="text-align: right;"> 
+	                        				<form action="/participantes" method="post" onsubmit="javascript:confirm('Remover participante do bolão: Isso fará com que todos os palpites do particiapnte sejam removidos e esta operação não poderá ser desfeita. Temcerteza que deseja remover esse participante do bolão? ]')">
+		                        				<input type="hidden" name="_method" value="delete"/>
+		                        				<input type="hidden" name="id" th:value="${participante.id}"/>
+		                        				<button type="submit" class="btn btn-warning">
+		                        					<i class="fa fa-times"></i>
+		                        				</button>
+		                        				
+		                        				<a  
+		                        					th:class="${participante.pg == true ? 'btn btn-primary' : 'btn btn-danger'}"  
+		                        					th:href="${'/participante/'+ participante.id +'/alterarpagamento' }"  
+		                        					th:text="${participante.pg == true ? 'Confirmado' : 'Pendente'}">
+		                        					Confirmado
+		                        				</a>
+		                        				
+	                        				</form>
 	                        			</td>
 	                        		</tr>
                         		</th:block>
                         	</tbody>
                         </table>
+                        </div>
         </div>
         <!-- /#page-wrapper -->
 

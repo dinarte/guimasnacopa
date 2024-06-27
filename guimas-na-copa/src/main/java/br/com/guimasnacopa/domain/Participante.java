@@ -7,11 +7,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Entity
 public class Participante {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	@ManyToOne
@@ -21,6 +23,8 @@ public class Participante {
 	private Usuario usuario;
 	
 	private Boolean pg = false;
+	
+	private Boolean admin = false;
 	
 	private Double pontuacao;
 	
@@ -38,6 +42,34 @@ public class Participante {
 	
 	@Transient
 	private Double porcentagemPalpites;
+	
+	@Transient
+	private Boolean userOnLine;
+	
+
+	public Boolean getAdmin() {
+		return admin == null ? false : admin;
+	}
+
+	public void setAdmin(Boolean admin) {
+		this.admin = admin;
+	}
+
+	public int getPalpitesParaInformar() {
+		return palpitesParaInformar;
+	}
+
+	public void setPalpitesParaInformar(int palpitesParaInformar) {
+		this.palpitesParaInformar = palpitesParaInformar;
+	}
+
+	public int getPalpitesInformados() {
+		return palpitesInformados;
+	}
+
+	public void setPalpitesInformados(int palpitesInformados) {
+		this.palpitesInformados = palpitesInformados;
+	}
 
 	public Integer getId() {
 		return id;
@@ -109,6 +141,14 @@ public class Participante {
 
 	public void setExibirClassificacaoNoRanking(Boolean exibirClassificacaoNoRanking) {
 		this.exibirClassificacaoNoRanking = exibirClassificacaoNoRanking;
+	}
+
+	public Boolean getUserOnLine() {
+		return userOnLine == null ? false : userOnLine;
+	}
+
+	public void setUserOnLine(Boolean userOnLine) {
+		this.userOnLine = userOnLine;
 	}
 
 	

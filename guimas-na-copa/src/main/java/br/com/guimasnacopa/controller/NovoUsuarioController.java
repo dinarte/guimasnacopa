@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,11 +27,16 @@ public class NovoUsuarioController {
 	UserRepository userRepo;
 	@Autowired
 	AppMessages appMessages;
+	@Autowired
+	LoginController loginComtroller;
 	
 	@GetMapping("singup")
 	public String singUp() {	
 		return "pages/singup";
 	}
+	
+	@Value("${guimasnacopa.config.bolaoAtivo}")
+	String bolaoAtivo;
 	
 	@PostMapping("singup")
 	public String singUp(Usuario usuario, Model model) throws ValidacaoException  {	
@@ -61,11 +67,11 @@ public class NovoUsuarioController {
 			throw new ValidacaoException(erros);
 		}
 		
-		singUpService.criarUsuarioEParticipante(usuario, "copaAmerica2019");
+		singUpService.criarUsuarioEParticipante(usuario, bolaoAtivo);
 		
 		appMessages.getWarningList().add("Você se cadastrou com sucesso! Efetue login.");
 		model.addAttribute(appMessages);
-		return "pages/login";
+		return loginComtroller.login(model);
 	}
 	
 	

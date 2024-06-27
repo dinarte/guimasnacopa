@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+<style>
+@media screen and (min-width: 860px){
+  .compartilhar-whatsapp {
+    display: none;
+  }
+}
+</style>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+ 
+            <div th:replace="fragments/main :: messages"></div>
+        
+        	<div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header" th:text="${session.autenticacao.bolao.nome}">Detalhar Palpite</h1>
+                    <div class="text-center">
+                    	
+                    		<img th:src="${palpiteReferencia.participante.usuario.urlFoto}" class="img-perfil" />
+                    		<br />
+	                    	<span th:text="${palpiteReferencia.participante.usuario.name}"></span>
+	                    	<br />
+	                    	Acertar Finalistas - [[${palpiteReferencia.bolaoCompeticao.competicao.nome}]]
+	                    	<h4 th:utext="${palpiteReferencia.descricaoJogo}">Time a x Time B</h4>
+                    	
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+            
+        
+            	<div class="col-sm-6">
+            		<div class="panel panel-default">
+            			<div class="panel-heading">Resumo geral</div>
+            			<div class="panel-body text-center">
+            				<img th:if="${!palpite.apostaAberta}" th:src="${palpite.bolaoCompeticao.competicao.logoUrl}" height="50"/>
+            				<h4>Acertar Finalistas <span th:if="${!palpite.apostaAberta}" th:utext="${palpite.bolaoCompeticao.competicao.nome}"></span></h4>
+	            			<table class="table text-left">
+	            			<thead>
+	            				<tr>
+	            					<th>Palpite</th>
+	            					<th>Qtd</th>
+	            				</tr>
+	            			</thead>
+	            			<tbody>
+	            				<th:block th:each="entry : ${resumos}">
+	            				<tr>
+		            				<td th:utext="${entry.key}">2 x 1</td>
+		            				<td th:text="${entry.value}"> 4 </td>
+								</tr>
+								</th:block>
+	            			</table>
+            			</div>	
+            		</div>
+            	</div>
+
+            
+            <!--
+            	<div class="col-sm-3">
+            		<div class="panel panel-default">
+            			<div class="panel-heading">Resumo por placar: <br /></div>
+            			<div class="panel-body text-center">
+            				<h5 th:utext="${palpiteReferencia.descricaoJogo}">Time a x Time B</h5>
+	            			<table class="table text-left">
+	            			<thead>
+	            				<tr>
+	            					<th>Palpite</th>
+	            					<th>Qtd</th>
+	            				</tr>
+	            			</thead>
+	            			<tbody>
+	            				<th:block th:each="item : ${resumos}">
+	            				<tr>
+		            				<td th:text="${item.palpite}">2 x 1</td>
+		            				<td th:text="${item.qtd}"> 4 </td>
+								</tr>
+								</th:block>
+	                  			<tfooter>
+	            				<tr>
+	            					<td colspan="2">
+	            					<a class="btn btn-block btn-default compartilhar-whatsapp" th:href="${textWapp}">
+	            					<i class="fa fa-whatsapp"></i>
+	            					compartilhar</a>
+	            					</td>
+	            				</tr>
+	            			</tfooter>
+	            			
+	            			</table>	
+            			</div>
+            		</div>
+            	</div>	
+            -->
+            	
+            		
+            	
+  				<div class="col-sm-6">
+  					<div class="panel panel-default">
+	  					<div class="panel-heading">
+	  					  Detalhamento dos palpites
+	  					</div>
+	  					<div class="panel-body text-center">
+            				<img th:if="${!palpite.apostaAberta}" th:src="${palpite.bolaoCompeticao.competicao.logoUrl}" height="50"/>
+            				<h4>Acertar Finalistas <span th:if="${!palpite.apostaAberta}" th:utext="${palpite.bolaoCompeticao.competicao.nome}"></span></h4>
+            				
+		            		<table class="table text-left">
+		                        	<thead>
+		                        		<tr>
+		                        			<th></th>
+		                        			<th></th>
+		                        			<th>Participante</th>
+		                        			<th class="text-center">Palpite</th>
+		                        		</tr>
+		                        	</thead>
+		                        	<tbody>
+		                        		<th:block th:each="palpite : ${palpites}">
+			                        		
+				                        		<tr>
+				                        			<td>[[${palpite.participante.classificacao}]]ª</td>
+				                        			<td>[[${palpite.participante.pontuacao}]]</td>
+				                        			<td>[[${palpite.participante.usuario.name}]] </td>
+				                        			
+				                        			<td  class="text-center">
+														<span th:if="${palpite.apostaAberta}" > ? </span>
+				                        				<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.descricaoJogo}"></span>
+				                        			</td>
+				                        		</tr>
+				                        	
+		                        	</tbody>
+		                        </table>
+		                     </div>
+	                     </div> 
+                     </div> 
+        		</div>
+        
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>

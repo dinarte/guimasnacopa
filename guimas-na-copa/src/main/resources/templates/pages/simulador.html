@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+        
+        
+	        <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header" th:text="${ 'Simulador: ' + autenticacao.bolao.nome}">Descrição do Bolão</h1>
+                    <h3>Jogos</h3>
+                </div>
+            </div>
+        
+       		<form role="form" action="/simulador"  method="post">
+        
+          <div class="row">
+          	<div class="col-lg-8">
+		    	<th:block th:each="jogo : ${jogos}">
+		    		<div class="col-lg-4">
+		    			<div class="panel panel-info">
+			    			<div class="panel-heading" >
+							  	<span th:text="${jogo.fase.nome + ' - ' + jogo.grupo }">Eliminatórias - Grupo A</span> 
+							</div>
+							<table class="table">
+								<tr>
+								  <th:block th:each="timeNoJogo, status : ${jogo.timesNoJogo}">
+									<td>
+										<label th:text="${timeNoJogo.time.nome}">Brasil</label>
+										<input th:name="${'timeNoJogo_' + timeNoJogo.id}" type="number" class="form-control" th:value="${ timeNoJogo.gols }">
+									</td>
+									<td th:if="${status.count==1}"> VS </td>
+									
+									</th:block>
+								</tr>
+								<tr>
+									<td colspan="5">
+									<label th:for="${jogo.id}">Data</label>
+										<input th:name="${jogo.id}" type="datetime-local" th:value="${jogo.data}" class="form-control">
+									</td>
+								</tr>
+							</table>
+		    			
+		    			</div>
+		    		</div>
+		    	</th:block>
+	    	</div>
+	    	<div class="col-lg-4">
+	    		<table class="table">
+                        	<thead>
+                        		<tr>
+                        			<th></th>
+                        			<th>Jogador</th>
+                        			<th>Pontos</th>
+                        			<th>Aproveitamento</th>
+                        		</tr>
+                        	</thead>
+                        	<tbody>
+                        		<th:block th:each="participante : ${participantes}">
+	                        		<tr th:class="${participante.id == autenticacao.participante.id ? 'participante' : ''}">
+	                        			<td><bage th:if="${participante.exibirClassificacaoNoRanking}" th:text="${participante.classificacao + 'ª'}">1</bage></td>
+	                        			<td th:id="${participante.id}" ><a th:href="${'/palpite/'+participante.id+'/consultar'}" th:text="${participante.usuario.name}">Dnarte</a></td>
+	                        			<td th:text="${participante.pontuacao}">180</td>
+	                        			<td><span th:text="${participante.aproveitamento}">100</span>%</td>
+	                        		</tr>
+                        		</th:block>
+                        	</tbody>
+                        </table>
+        </div>
+	    	</div>
+	    </div>
+        
+        <button class="btn btn-info btn-block">Salvar Jogos</button>
+        	
+         </form>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>
+
+

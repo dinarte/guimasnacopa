@@ -1,0 +1,30 @@
+GET http://localhost:8080/google-oauth-set-cookie/19bcb6ed9f50a10d
+###
+
+POST http://localhost:8080/google-oauth?g_csrf_token=19bcb6ed9f50a10d&credential=eyJhbGciOiJSUzI1NiIsImtpZCI6IjZjZTExYWVjZjllYjE0MDI0YTQ0YmJmZDFiY2Y4YjMyYTEyMjg3ZmEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI4Njc3MjIxMzU1MS00NW1pZnY5dGdqZ2s1dHF1MXJ0ZHRmMDhlNmE2bXM4ay5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6Ijg2NzcyMjEzNTUxLTQ1bWlmdjl0Z2pnazV0cXUxcnRkdGYwOGU2YTZtczhrLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTEzOTA0Nzc4NjE3OTgwNTM3MDA3IiwiZW1haWwiOiJkaW5hcnRlQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYmYiOjE3MTMyOTI2MjEsIm5hbWUiOiJEaW5hcnRlIEZpbGhvIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0lsbjFVMFNPUy0zTm1raDZuNnJfZ09aX0xvNUplVEh3djBKb2ZqZWZEeWh0Q3l6TnNnTkE9czk2LWMiLCJnaXZlbl9uYW1lIjoiRGluYXJ0ZSIsImZhbWlseV9uYW1lIjoiRmlsaG8iLCJpYXQiOjE3MTMyOTI5MjEsImV4cCI6MTcxMzI5NjUyMSwianRpIjoiZWM1NDExZmJhMWMwZWU5NjJhNmZmZWExMGJmNzJlYTc5ODZlY2Y0MSJ9.OMoVVNNpjjRII__8XbjFRQkAgod0SLrSnYVsLUqOwemvVCmplBVtnYIi2VC81BNSCQydF7EHuqTYg7paVbNDTZspnI37m807kRvkMau_5VUxzZZ900vyyZX9H6JnQpduYlJQjfBQBgbGBKTl4mVxlNneq_S9d2DryN20OIN1W93tChTY8LET-yxOI4XU7Aact25u7noqZ0HMJLy4558pW2T5K1fipjtQWbDXjeAT4Ci2qkb8b5WrHWz-Isgm8GQNEW5z9ALUCeNa34eXWKu4znSQGI-N8WG7wkrbpm3ELTUWaIgNjSoxZqKHPgrYLZZlTSr8XE9t9t0-S48Q_6Nudw
+
+
+
+
+#########################
+### Statup do Sistema ###
+#########################
+
+#Carregar dados da API
+###Carregar eurocppa 2024
+GET http://localhost:8080/api/v1/import/apifootball/9/2024
+
+###Carregar copa America
+GET http://localhost:8080/api/v1/import/apifootball/4/2024
+
+###Criar Bolão
+POST http://localhost:8080/api/v1/bolao
+Content-Type: application/json
+
+{
+    "nome": "Euro e Copa America 2024",
+    "regras": "Em breve",
+    "permalink": "guimas2024",
+    "valor": 65.0,
+    "taxaAdministrativa:" : 10
+}

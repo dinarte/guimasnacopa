@@ -12,9 +12,11 @@
 
         <div id="page-wrapper">
         
+        	<div th:replace="fragments/main :: messages" />
+        
         	<div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header" th:text="${autenticacao.bolao.nome}">Descrição do Bolão</h1>
+                    <h1 class="page-header" th:text="${autenticacao?.bolao?.nome}">Descrição do Bolão</h1>
                     <h3>Fases</h3>
                 </div>
             </div>
@@ -22,6 +24,7 @@
 	            <table class="table">
 	            	<thead>
 	            		<tr>
+	            			<th>Competicao</th>
 	            			<th>Fase</th>
 	            			<th></th>
 	            		</tr>
@@ -29,6 +32,7 @@
 	            	<tbody>
 	            		<th:block th:each="fase : ${faseList}">
 	             		<tr>
+	             			<td th:text="${fase.competicao.nome}">Competicao</td>
 	             			<td th:text="${fase.nome}">Fase</td>
 	             			<td>
                       			<a class="btn btn-primary" th:href="${fase.id+'/editar'}"

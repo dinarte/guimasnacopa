@@ -1,0 +1,269 @@
+.navbar {
+background-image: url("/img/campo_de_futebol.jpg");
+background-position: center;
+border-top: 2px solid #eee;
+}
+
+a.navbar-brand {
+	text-shadow: 0 0 2px green; /* horizontal-offset vertical-offset 'blur' colour */
+    -moz-text-shadow: 0 0 2px green;
+    -webkit-text-shadow: 0 0 2px green;
+    font-weight: bolder;
+    color: white;
+}
+
+#page-wrapper {
+	padding-top: 50px;
+}
+
+.title_warpper {
+	height: 42px;
+	padding-top: 0px;
+	margin-top: 0px;
+	
+}
+
+.title {
+	font-size: 18px;
+	padding: 5px;
+	text-shadow: 0 0 5px green; /* horizontal-offset vertical-offset 'blur' colour */
+    -moz-text-shadow: 0 0 5px green;
+    -webkit-text-shadow: 0 0 5px green;
+    font-weight: bolder;
+    color: white;
+}
+
+.navbar-toggle {
+	background-color: #fff;
+}
+
+
+.img-perfil {
+	max-width: 100px;
+    border-radius: 50%;
+    padding: 5px;
+    border: 1px solid #ccc;
+}
+
+img.img-perfil-peq {
+    max-width: 60px;
+    border-radius: 50%;
+    padding: 3px;
+    border: 1px solid #ccc;
+}
+
+.panel-body{
+            
+            padding: 4px
+            }
+            
+            .panel-heading {
+             	text-align: center;
+            }
+            
+            
+            .tab-jogo{
+            	width: 100%;
+            	
+            }
+            
+            .tab-jogo .desc-p{
+  	          text-align: center;
+            }
+            .tab-jogo .vs{
+            	width: 20%;
+            	text-align: center;
+            	vertical-align: middle;
+            }
+            .tab-time .vs{
+            	width: 20%;
+            }
+            
+            .data_h{
+            	text-align: center;
+            	color: #ccc;
+            	font-weight: bold;
+            }
+            
+            .p-valor{
+            	width:30%;
+            	text-align: center;
+            }
+            
+            .p-compara{
+            	width:5%;
+            	text-align: center;
+            	color: #ccc;
+            	font-weight: bolder;
+            }
+            
+            .p-result{
+            	color: #1E90FF;
+            	font-weight: bolder;
+            }
+            .campeao{
+            	text-align: center;
+            }
+            
+            .grupo .panel-heading{color: #fff}
+            
+            .grupo{border: 1px solid #ED9455}
+            .grupo .panel-heading{
+            	background-color: #ED9455;
+            }
+           
+            .grupoa{border: 1px solid #87CEEB}
+            .grupoa .panel-heading{
+            	background-color: #87CEEB;
+            }
+            .grupob{border: 1px solid  #DBA979}
+            .grupob .panel-heading{
+            	background-color:  #DBA979;
+            }
+            .grupoc{border: 1px solid #48D1CC}
+            .grupoc .panel-heading{
+            	background-color: #48D1CC;
+            }
+            .grupod{border: 1px solid #FFA500}
+            .grupod .panel-heading{
+            	background-color: #FFA500;
+            }
+            .grupoe{border: 1px solid #66CDAA}
+            .grupoe .panel-heading{
+            	background-color: #66CDAA;
+            }
+            .grupof{border: 1px solid #B0E0E6}
+            .grupof .panel-heading{
+            	background-color: #B0E0E6;
+            }
+            .grupog{border: 1px solid #DB7093}
+            .grupog .panel-heading{
+            	background-color: #DB7093;
+            }
+            .grupoh{border: 1px solid #DA70D6}
+            .grupoh .panel-heading{
+            	background-color: #DA70D6;
+            }
+            .bonusfinal{border: 1px solid #DA70D6}
+            .bonusfinal .panel-heading{
+            	background-color: #DA70D6;
+            }
+            
+            
+.loader {
+		position: fixed;
+		left: 0px;
+		top: 0px;
+		width: 100%;
+		height: 100%;
+		z-index: 9999;
+		background-size: 5px;
+		opacity: 60%;
+		background: url('/img/loading.gif') 50% 50% no-repeat #ECECEC;
+	}            
+
+.alert{
+    	margin: 12px}
+    	
+    	body {
+			/* background-image: URL('/img/campo_de_futebol.jpg'); */
+		}
+		
+		.logo{
+			margin-top: 8px;
+			border: 1px solid #ccc;
+			border-radius: 20%;
+			padding: 3px;
+			
+		}
+		
+/*===== App Popup css =====*/
+.popup-overlay {
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  display: none;
+}
+
+.app-popup {
+  max-width: 500px;
+  margin: auto;
+  padding: 80px 30px 30px 30px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  display: none;
+  text-align: center;
+  -webkit-clip-path: polygon(50% 0%, 100% 20%, 100% 100%, 0 100%, 0% 20%);
+          clip-path: polygon(50% 0%, 100% 20%, 100% 100%, 0 100%, 0% 20%);
+}
+.app-popup .app-popup-detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.app-popup .app-popup-detail img {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 30px;
+}
+.app-popup .app-popup-detail h6 {
+  font-size: 18px;
+  color: #fff;
+  font-weight: 600;
+  line-height: 28px;
+}
+.app-popup .app-popup-detail p {
+  margin-bottom: 30px;
+  font-size: 13px;
+  color: #fff;
+  line-height: 22px;
+}
+.app-popup .app-popup-detail .btn-group {
+  display: flex;
+  flex-direction: row;
+}
+.app-popup .app-popup-detail .btn-group button {
+  margin-right: 5px;
+}
+
+
+.ki-btn, .ki-btn-1 {
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  padding: 8px 20px;
+  border: none;
+  background: #2d76e1;
+  color: #fff;
+  overflow: hidden;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 30px;
+}
+.ki-btn:hover, .ki-btn-1:hover {
+  opacity: 0.7;
+  text-decoration: none;
+  color: #fff;
+}		
+
+
+
+@media (max-width: 1004px) {
+    .esconder-no-movel {
+        display: none;
+    }
+}
+            

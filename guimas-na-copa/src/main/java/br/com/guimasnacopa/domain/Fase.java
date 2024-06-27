@@ -12,11 +12,14 @@ import javax.persistence.ManyToOne;
 public class Fase {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	@ManyToOne
 	private Bolao bolao;
+	
+	@ManyToOne
+	private Competicao competicao;
 	
 	private String nome;
 	
@@ -32,11 +35,13 @@ public class Fase {
 	
 	private Double acertarEmpate;
 	
-	private Double acertarQtdGolsPerdedor;
+	private Double acertarQtdGolsUmDosTimes;
 	
 	private Double acertarUmTime;
 	
 	private Double acertarTimes;
+	
+	private Long idApi;
 
 	public Integer getId() {
 		return id;
@@ -110,12 +115,12 @@ public class Fase {
 		this.acertarEmpate = acertarEmpate;
 	}
 
-	public Double getAcertarQtdGolsPerdedor() {
-		return acertarQtdGolsPerdedor;
+	public Double getAcertarQtdGolsUmDosTimes() {
+		return acertarQtdGolsUmDosTimes;
 	}
 
-	public void setAcertarQtdGolsPerdedor(Double acertarQtdGolsPerdedor) {
-		this.acertarQtdGolsPerdedor = acertarQtdGolsPerdedor;
+	public void setAcertarQtdGolsUmDosTimes(Double acertarQtdGolsDeUmDosTimes) {
+		this.acertarQtdGolsUmDosTimes = acertarQtdGolsDeUmDosTimes;
 	}
 
 	public Double getAcertarUmTime() {
@@ -133,6 +138,22 @@ public class Fase {
 	public void setAcertarTimes(Double acertarTimes) {
 		this.acertarTimes = acertarTimes;
 	}
-	
+
+	public Competicao getCompeticao() {
+		return competicao;
+	}
+
+	public void setCompeticao(Competicao competicao) {
+		this.competicao = competicao;
+	}
+
+	public Long getIdApi() {
+		return idApi;
+	}
+
+	public void setIdApi(Long idApi) {
+		this.idApi = idApi;
+	}
+		
 	
 }

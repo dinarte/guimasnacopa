@@ -1,32 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-
-
-    <head th:replace="fragments/main :: head" />
-    
-    
-    <style>
-    	.alert{
-    	margin: 12px}
-    </style>
-
-</head>
-
+<head th:replace="fragments/main :: head" />
+   
 <body>
 
     <div class="container">
-    
-    
-        <div class="row">
+       
+    	<div class="row"> 
             
             <div class="col-md-6 col-md-offset-3">
+            	
             
                 <div class="login-panel panel panel-default">
+                
                     <div class="panel-heading">
+                    
+                    	<div>
+	            		<span class="title">GUIMAS.BET. </span>
+			               <span class="title" th:text="${bolao?.nome}">Título do Bolao</span>
+		            	</div>
+	                    
+                    
                         <h3 class="panel-title">Identifique-se Jogador!</h3>
                     </div>
+                    
                     
              
                     <div th:if="${appMessages} != null">
@@ -55,44 +53,196 @@
                      	 </div>
                     </div>       
                     
-                    
+
                     
                     <div class="panel-body">
-                        <form role="form" action="/#" th:action="@{/login}"  method="post">
-                            <fieldset>
-                                <div class="form-group">
-                                    <input class="form-control" placeholder="E-mail"  name="email" type="email" autofocus>
-                                </div>
-                                <div class="form-group">
-                                    <input class="form-control" placeholder="Password" name="pass" type="password" value="">
-                                </div>
-                                
-                                <!-- Change this to a button or input when using this as a form -->
-                                <button type="submit" class="btn btn-lg btn-info btn-block">Login</button>
-                            </fieldset>
-                        </form>
-                        
-                        
-                        <center><strong>OU</strong></center>
-                        
-                        <a href="singup" class="btn btn-lg btn-success btn-block">Cadastre-se agora!</a>
+                    	<div class="col-12" >
+	                    	<div class="col-md-6" >
+	                    		<div class="text-center" ><img width="100" class="logo" src="/img/the-new-copa-america-2024-logo.jpg" /></div>
+    							<div class="text-center" ><img width="100" class="logo" src="/img/euro-2024-logo.png"></div>
+	                    	</div>
+                    		<div class="col-md-6" >
+		                        <form role="form" action="/#" th:action="@{/login}"  method="post">
+		                            <fieldset>
+		                                <div class="form-group">
+		                                    <input class="form-control" placeholder="E-mail"  name="email" type="email" autofocus>
+		                                </div>
+		                                <div class="form-group">
+		                                    <input class="form-control" placeholder="Password" name="pass" type="password" value="">
+		                                </div>
+		                                
+		                                <!-- Change this to a button or input when using this as a form -->
+		                                <button type="submit" class="btn btn-lg btn-info btn-block" data-loading="loader">Login</button>
+		                            </fieldset>
+		                        </form>
+		                        
+		                        <center><strong>OU</strong></center>
+		
+									
+		
+		                          <div id="g_id_onload"
+							         th:data-client_id="${googleOHauthClientId}"
+							         th:data-login_uri="${googleOHauthLoginUri}"
+							         data-locale="pt"
+							      	 data-ux_mode="redirect"
+							         data-auto_prompt="false"> 
+							      </div>
+							      <div class="g_id_signin"
+							         data-type="standard"
+							         data-size="large"
+							         data-theme="filled_blue"
+							         data-text="sign_in_with"
+							         data-shape="rectangular" 
+							         data-callback="OnSuccess"
+							         data-logo_alignment="left">
+							      </div>
+		                        
+		                        <center><strong>OU</strong></center>
+		                        
+		                        <a href="/singup" class="btn btn-lg btn-success btn-block">Cadastre-se agora!</a>
+	                        </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    
+    
+        <!-- cards-->
+        <!-- <div class="row">
+            <div class="col-lg-12 col-lg-offset-1">
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-users fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge" th:text="${qtdParticipantes}">38</div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/' + bolao.permalink + '/participantes'}" href="/participantes">
+                            <div class="panel-footer">
+                                <span class="pull-left">Participantes.</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-usd fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge" th:text="${premioEstimado}">R$ 1.500,00</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/' + bolao.permalink + '/regulamento'}" href="/regulamento">
+                            <div class="panel-footer">
+                                <span class="pull-left">Prêmio Estimado!</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-yellow">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-trophy fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/' + bolao.permalink + '/ranking'}" href="/ranking">
+                            <div class="panel-footer">
+                                <span class="pull-left">Ranking completo</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-gray">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa  fa-bar-chart-o fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/palpite/consultar'}" href="/ranking">
+                            <div class="panel-footer">
+                                <span class="pull-left">Análise de Desempenho</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div> 
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-book fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge"></div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/' + bolao.permalink + '/regulamento'}" href="/regulamento">
+                            <div class="panel-footer">
+                                <span class="pull-left">Regulamento</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <!-- cards end -->
+        <div class="row text-center">
+            	[[${domain}]]:[[${appVersion}]]
+        </div>
+        
+        
+          <!-- Popup app -->
+        <div class="popup-overlay"></div>
+        <div class="app-popup">
+            <div class="app-popup-detail">
+                <h6>GuimasBET App</h6>
+                <p>Isntale o app do Guimas bet e fique ligado no seu bolão com mais facilidade.</p>
+                <div class="btn-group">
+                    <button class="ki-btn-1" id="install_btn">Instalar</button>
+                    <!--<button class="ki-btn-1" class="ki-btn-1 m-l-5 close-popup">Skip</button> -->
+                </div>
+            </div>
+        </div>   
+	</div>
 
-    <!-- jQuery -->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
-
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="../dist/js/sb-admin-2.js"></script>
+    <script th:replace="fragments/main :: scrptsblock" />
+    
+    <script src="/js/service.js"></script>
 
 </body>
 

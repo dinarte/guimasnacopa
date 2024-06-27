@@ -6,15 +6,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Time {
+public class Time implements Comparable<Time>{
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	private String nome;
 	
 	private String flag;
+	
+	private String emoji;
+	
+	private Long idApi;
 
 	public Integer getId() {
 		return id;
@@ -33,11 +37,33 @@ public class Time {
 	}
 
 	public String getFlag() {
-		return flag;
+		String tagImg = " <img src='"+flag+"' width='15' /> ";
+		return tagImg;
 	}
 
 	public void setFlag(String flag) {
 		this.flag = flag;
+	}
+
+	public Long getIdApi() {
+		return idApi;
+	}
+
+	public void setIdApi(Long idApi) {
+		this.idApi = idApi;
+	}
+
+	public String getEmoji() {
+		return emoji;
+	}
+
+	public void setEmoji(String emoji) {
+		this.emoji = emoji;
+	}
+
+	@Override
+	public int compareTo(Time o) {
+		return this.getNome().compareTo(o.getNome());
 	}
 	
 	

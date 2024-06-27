@@ -1,9 +1,16 @@
 package br.com.guimasnacopa.controller;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
+import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.annotations.Cascade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.annotation.RequestScope;
 
+import br.com.guimasnacopa.componentes.GroupNode;
+import br.com.guimasnacopa.componentes.ObjectsGroup;
 import br.com.guimasnacopa.domain.Palpite;
 import br.com.guimasnacopa.domain.Time;
 import br.com.guimasnacopa.messages.AppMessages;
@@ -35,23 +44,47 @@ public class InformarPalpiteController {
 	@Autowired
 	TimeRepository timeRepositpry;
 	
-
-	
 	@GetMapping("/palpite/editar")
-	public String editarPalpite(Model model){
+	public String editarPalpite(Model model) throws LoginException{
+		autenticacao.checkAthorization();
+		
+		palpiteService.criarPalpites(autenticacao.getParticipante());
+		
 		List<Palpite> palpites = palpiteRepo.findAllByParticipante(autenticacao.getParticipante());
-		palpites = palpiteService.criarPalpites(autenticacao.getParticipante());
-		model.addAttribute("times", timeRepositpry.findAllByBolao(autenticacao.getBolao()));
+	
+		List<GroupNode> timesGroup = ObjectsGroup 
+				  .from(palpites
+						  .stream()
+						  .filter(Palpite::isResultado)
+						  .collect(Collectors.toList())
+						 ) 
+				  .groupBy(( p -> ((Palpite) p).getBolaoCompeticao().getCompeticao().getId())) 
+				  .groupBy(( p -> ((Palpite) p).getTimeA())) 
+				  .getNodes();
+		
+		Map<Object, List<Object>> timesMap = timesGroup.stream().collect(Collectors.toMap(GroupNode::getNode, GroupNode::getChildrenAsLastLevel));
+		
+		
+		 
+		
+		List<GroupNode> palpitesNodes = ObjectsGroup
+				 .from(palpites) 
+				 .groupBy(( p -> ((Palpite) p).getBolaoCompeticao().getCompeticao())) 
+				 .groupBy(( p -> ((Palpite) p).getDescricaoGrupo()))
+				 .getNodes();
+		 
+		model.addAttribute("timesMap",timesMap);
 		model.addAttribute(autenticacao);
-		model.addAttribute("palpites",palpites);
+		model.addAttribute("palpitesNodes", palpitesNodes);
 		return "pages/palpite";
 		
 	}
 	
+
 	
 	
 	@PostMapping("/palpite/save")
-	public String editarPalpite(HttpServletRequest request, Model model, AppMessages appMessagens) {
+	public String editarPalpite(HttpServletRequest request, Model model, AppMessages appMessagens) throws LoginException {
 		List<Palpite> palpites = palpiteRepo.findAllByParticipante(autenticacao.getParticipante());
 		palpites.forEach(p -> {
 			String valuesA = request.getParameter(p.getKeyGolsTimeA());
@@ -82,6 +115,8 @@ public class InformarPalpiteController {
 		model.addAttribute("appMessagens",appMessagens);
 		return editarPalpite(model);
 	}
+	
+
 	
 	
 }

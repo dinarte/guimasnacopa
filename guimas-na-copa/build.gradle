@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 buildscript {
     repositories {
         mavenCentral()
@@ -7,6 +9,12 @@ buildscript {
     }
 }
 
+
+plugins {
+    id("org.hidetake.ssh").version("2.9.0")
+}
+
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
@@ -14,23 +22,74 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'war'
 
+repositories {
+    mavenCentral()
+}
+
+ext {
+    // Define a variável global no contexto do Gradle
+    appVersion = ''
+}
+
 bootJar {
     baseName = 'gs-spring-boot'
     version =  '0.1.0'
 }
 
-repositories {
-    mavenCentral()
+
+
+
+task setAppVersion {
+    doLast {
+        // Obtém a data e hora atual
+        def date = new Date()
+        // Define o formato desejado para a string da data
+        def dateFormat = new SimpleDateFormat("yyyyMMdd-HH:mm:ss")
+        // Formata a data no formato especificado
+        appVersion = 'v2.0.' + dateFormat.format(date) + '-SNAPSHOT'
+        
+        // Imprime a versão para verificação
+        println "Version set to: $appVersion"
+        
+         println "Versão atual: ${project.version}"
+        def propsFile = file('src/main/resources/version.properties')
+        propsFile.text = "version=${appVersion}"
+    }
 }
-
-
 
 task createWar(type : War){
     destinationDir = file("$buildDir")
-    baseName = "bolao"
-    version = "1.1.18"
+    baseName = buildBaseName
+    version = buildVersion
     caseSensitive = true
     from "src"
+}
+
+ssh.settings {
+	knownHosts = allowAnyHosts
+}
+
+remotes {
+  ContaigeClaud {
+    host = 'ag-br1-17.conteige.cloud' 
+    port = 28626
+    user = 'application'
+    identity = file("${System.properties['user.home']}/.ssh/guimas_rsa_id") 
+  }
+}  
+
+task deploy {
+  doLast {
+    ssh.run {
+      session(remotes.ContaigeClaud) {
+        put from: "$buildDir/${buildBaseName}-${buildVersion}.war", into: 'appserver/webapps/ROOT.war'
+      }
+    }
+  }
+}
+
+task createWarAndDeploy(dependsOn: ['setAppVersion', 'createWar', 'deploy']) {
+    // empty task body, dependsOn already handles the dependencies
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -42,11 +101,14 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
-    compile('org.springframework.boot:spring-boot-starter-data-jpa')
-   //compile("org.flywaydb:flyway-core:5.0.7")
-    compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212.jre7'
-    testCompile("junit:junit")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    implementation("org.postgresql:postgresql")
+    implementation("com.mashape.unirest:unirest-java:1.4.9")
+	implementation("com.google.api-client:google-api-client:1.32.1")
+	
+    
+    testImplementation("junit:junit")
 }

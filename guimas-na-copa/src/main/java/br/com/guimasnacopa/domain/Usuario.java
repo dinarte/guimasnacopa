@@ -1,5 +1,8 @@
 package br.com.guimasnacopa.domain;
 
+import java.time.LocalDate;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,7 +13,7 @@ import javax.persistence.Transient;
 public class Usuario {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	private String name;
@@ -19,15 +22,21 @@ public class Usuario {
 	
 	private String pass;
 	
+	private String urlFoto;
+	
 	@Transient
 	private String passConfirm;
 	
-	private String faceId;
+	private String loginStrategy;
 	
-	private String authToken;
+	@Column(length = 1500)
+	private String authPayLoad;
+	
+	private LocalDate ultimoLogin;
 	
 	private Boolean admin;
-
+	
+	
 	public Usuario() {}
 	
 	public Usuario(Integer id) {
@@ -66,20 +75,31 @@ public class Usuario {
 		this.pass = pass;
 	}
 
-	public String getFaceId() {
-		return faceId;
+	
+
+	public String getLoginStrategy() {
+		return loginStrategy;
 	}
 
-	public void setFaceId(String faceId) {
-		this.faceId = faceId;
+	public void setLoginStrategy(String loginStrategy) {
+		this.loginStrategy = loginStrategy;
 	}
 
-	public String getAuthToken() {
-		return authToken;
+
+	public String getAuthPayLoad() {
+		return authPayLoad;
 	}
 
-	public void setAuthToken(String authToken) {
-		this.authToken = authToken;
+	public void setAuthPayLoad(String authPeyLoad) {
+		this.authPayLoad = authPeyLoad;
+	}
+
+	public LocalDate getUltimoLogin() {
+		return ultimoLogin;
+	}
+
+	public void setUltimoLogin(LocalDate ultimoLogin) {
+		this.ultimoLogin = ultimoLogin;
 	}
 
 	public Boolean getAdmin() {
@@ -97,5 +117,15 @@ public class Usuario {
 	public void setPassConfirm(String passConfirm) {
 		this.passConfirm = passConfirm;
 	}
+
+	public String getUrlFoto() {
+		return urlFoto;
+	}
+
+	public void setUrlFoto(String urlFoto) {
+		this.urlFoto = urlFoto;
+	}
+	
+	
 	
 }

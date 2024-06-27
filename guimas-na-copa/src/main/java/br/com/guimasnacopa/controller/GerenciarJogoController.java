@@ -11,11 +11,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.context.annotation.RequestScope;
 
 import br.com.guimasnacopa.domain.Jogo;
 import br.com.guimasnacopa.domain.Palpite;
 import br.com.guimasnacopa.domain.TimeNoJogo;
+import br.com.guimasnacopa.exception.BolaoNaoSelecionadoException;
 import br.com.guimasnacopa.messages.AppMessages;
 import br.com.guimasnacopa.repository.FaseRepository;
 import br.com.guimasnacopa.repository.JogoRepository;
@@ -23,6 +25,8 @@ import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.TimeNoJogoRepository;
 import br.com.guimasnacopa.repository.TimeRepository;
 import br.com.guimasnacopa.security.Autenticacao;
+import br.com.guimasnacopa.service.ProcessaRankingService;
+import br.com.guimasnacopa.service.TimeNoJogoService;
 
 @Controller
 @RequestScope
@@ -49,9 +53,16 @@ public class GerenciarJogoController {
 	@Autowired 
 	private TimeNoJogoRepository tmjRepo;
 	
+	@Autowired 
+	private ProcessaRankingService rankingService;
+	
+	@Autowired
+	private TimeNoJogoService tmjService;
+	
 	@GetMapping("/jogo/listar")
-	public String listar(Model model) throws LoginException{
+	public String listar(Model model) throws LoginException, BolaoNaoSelecionadoException{
 		autenticacao.checkAdminAthorization(model);
+		autenticacao.checkBolaoNaoSelecionado();
 		List<Jogo> jogoList = (List<Jogo>) jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
 		model.addAttribute("jogoList", jogoList);
 		return "/jogo/listar";
@@ -119,7 +130,7 @@ public class GerenciarJogoController {
 	
 	
 	@GetMapping("/jogo/{id}/remover")
-	public String remover(@PathVariable("id") Integer id, Model model) throws LoginException {
+	public String remover(@PathVariable("id") Integer id, Model model) throws LoginException, BolaoNaoSelecionadoException {
 		autenticacao.checkAdminAthorization(model);
 		Jogo jogo = jogoRepo.findById(id).get();
 		jogoRepo.delete(jogo);
@@ -127,4 +138,27 @@ public class GerenciarJogoController {
 		appMessages.getSuccessList().add("Registro removido com sucesso.");
 		return listar(model);
 	}
+	
+	@PutMapping("/{bolao}/jogo/{id}/execucao")
+	public String setEmAndamento(
+			@PathVariable("bolao") String bolao, 
+			@PathVariable("id") Integer id, 
+			Integer idTimeA, 
+			Integer golsTimeA,
+			Integer idTimeB, 
+			Integer golsTimeB, 
+			String execucao) {
+		
+		Jogo jogo = jogoRepo.findById(id).get();
+		jogo.setExecucao(execucao);
+		jogoRepo.save(jogo);
+		
+		tmjService.updateGols(golsTimeA == null ? 0 : golsTimeA, idTimeA);
+		tmjService.updateGols(golsTimeB == null ? 0 : golsTimeB, idTimeB);
+		
+		rankingService.processar(bolao);
+		return "redirect:/"+bolao+"/";
+	}
+	
+
 }
