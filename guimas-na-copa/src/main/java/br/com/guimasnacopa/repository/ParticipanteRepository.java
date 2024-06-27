@@ -26,11 +26,11 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 	@Query("select count(*) from Participante where pg is true and bolao =:bolao")
 	public Long countPgByBolao(@Param("bolao") Bolao b);
 	
-	public List<Participante> findAllByBolaoOrderByPontuacaoDesc(Bolao b);
+	public List<Participante> findAllByBolaoAndPgOrderByPontuacaoDesc(Bolao b, Boolean pg);
 	
 	public List<Participante> findAllByBolaoOrderByClassificacaoAscExibirClassificacaoNoRankingDesc(Bolao b);
 	
-	public List<Participante> findTop10ByBolaoOrderByClassificacaoAscExibirClassificacaoNoRankingDesc(Bolao b);
+	public List<Participante> findTop10ByBolaoAndPgOrderByClassificacaoAscExibirClassificacaoNoRankingDesc(Bolao b, Boolean pg);
 	
 	@Modifying(clearAutomatically = true)
 	@Query(value = " update participante set pontuacao = t.pts "
@@ -73,7 +73,7 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 			"                       and not exists (select * " + 
 			"                                           from time_no_jogo " + 
 			"                                          where jogo_id = jogo.id " + 
-			"                                            and gols is null)) * 90) aprov " + 
+			"                                            and gols is null)) * 18) aprov " + 
 			"from  participante p ) t "
 			+ "where participante.id = t.id"
 			, nativeQuery = true)
@@ -90,6 +90,13 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 			"group by to_char(jogo.data, 'yyyy-mm-dd')\r\n" + 
 			"order by 1" , nativeQuery = true)
 	public List<Map<String, Object>> findAproveitameto(@Param("participanteId") Integer participanteId);
+	
+	
+	@Modifying(clearAutomatically = true)
+	@Query(value = "update Participante "
+							+ " set pontuacao = :pontuacao, aproveitamento = :aproveitamento, classificacao = :classificacao, exibirClassificacaoNoRanking = :exibirClassificacaoNoRanking "
+							+ " where id = :palpiteId")
+	public void updateRaking(Integer palpiteId, Double pontuacao, Integer aproveitamento, Integer classificacao, Boolean exibirClassificacaoNoRanking);
 	
 	
 	

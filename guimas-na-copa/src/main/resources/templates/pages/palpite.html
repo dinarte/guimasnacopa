@@ -87,7 +87,7 @@
 							    			<td colspan="4" class="campeao">
 							    					<select class="form-control" th:if="${palpite.apostaAberta}" th:name="${palpite.keyGolsTimeA}" >
 				                        				<option  th:each="time : ${times}" th:value="${time.id}" th:selected="${palpite.timeA == null || palpite.timeA.id==time.id}">[[${time?.nome}]]</option>
-				                        				<option value="" th:selected="${palpite.timeA == null}? 'selected' : ''"> --Selecione um Time--</option>
+				                        				<option value="" th:selected="${palpite.timeA == null}"> --Selecione um Time--</option>
 				                        			</select>
 			                        				<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.timeA.nome}"></span>
 							    			</td>
@@ -100,7 +100,7 @@
 							    			<td colspan="1" class="campeao">
 							    					<select class="form-control" th:if="${palpite.apostaAberta}"  th:name="${palpite.keyGolsTimeA}" >
 				                        				<option  th:each="time : ${times}" th:value="${time.id}" th:selected="${palpite.timeA == null || palpite.timeA.id==time.id}">[[${time?.nome}]]</option>
-				                        				<option value="" th:selected="${palpite.timeA == null}? 'selected' : ''"> --Selecione um Time--</option>
+				                        				<option value="" th:selected="${palpite.timeA == null}"> --Selecione um Time--</option>
 				                        			</select>
 				                       				<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.timeA.nome}"></span>
 							    			</td>
@@ -108,7 +108,7 @@
 							    			<td colspan="2" class="campeao">
 							    					<select class="form-control" th:if="${palpite.apostaAberta}"  th:name="${palpite.keyGolsTimeB}" >
 				                        				<option  th:each="time : ${times}" th:value="${time.id}" th:selected="${palpite.timeB == null || palpite.timeB.id==time.id}">[[${time?.nome}]]</option>
-				                        				<option value="" th:selected="${palpite.timeA == null}? 'selected' : ''"> --Selecione um Time--</option>
+				                        				<option value="" th:selected="${palpite.timeB == null}"> --Selecione um Time--</option>
 				                        			</select>
 				                       				<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.timeB.nome}"></span>
 							    			</td>
@@ -144,7 +144,7 @@
 						    	</table>
 						    </div>
 						    <div class="panel-footer text-center">
-						    	Palpite até: <span  th:text="${#temporals.format(palpite.limiteAposta, 'dd MMM hh:mm')}"> 12:20</span>
+						    	Palpite até: <span  th:text="${#temporals.format(palpite.limiteAposta, 'dd MMM HH:mm')}"> 12:20</span>
 					    				
 					    	</div>			
 						  </div>

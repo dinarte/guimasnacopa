@@ -25,6 +25,7 @@ import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.ParticipanteRepository;
 import br.com.guimasnacopa.repository.TimeNoJogoRepository;
 import br.com.guimasnacopa.security.Autenticacao;
+import br.com.guimasnacopa.service.ProcessaRankingService;
 
 @Controller
 @RequestScope
@@ -45,22 +46,34 @@ public class SimuladorController {
 	@Autowired
 	ParticipanteRepository participanteRepo;
 	
+	@Autowired
+	ProcessaRankingService rankingService;
+	
 	@GetMapping("/simulador")
 	public String gerenciar(Model m) throws LoginException {
 		autenticacao.checkAthorization();
 		List<Jogo> jogos = jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
-		m.addAttribute("jogos",jogos);
-		m.addAttribute(autenticacao);
+		processaPaginaSimulador(m, jogos);
 		return "/pages/simulador";
 	}
 	
-	@PostMapping("/simulador/simular")
+	@PostMapping("/simulador")
 	public String salvar(HttpServletRequest reuqest, Model m) throws LoginException {
-		
 		autenticacao.checkAthorization();
-		
 		List<Jogo> jogos = jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
-		
+		associaDadosDoFormulario(reuqest, jogos);
+		processaPaginaSimulador(m, jogos);
+		return "/pages/simulador";
+	}
+
+	private void processaPaginaSimulador(Model m, List<Jogo> jogos) throws LoginException {
+		List<Participante> participantes = rankingService.processarNoPersist(autenticacao.getBolao());
+		m.addAttribute("jogos", jogos);
+		m.addAttribute("participantes" ,participantes);
+		m.addAttribute(autenticacao);
+	}
+
+	private void associaDadosDoFormulario(HttpServletRequest reuqest, List<Jogo> jogos) {
 		Map<Integer, Double> participantesPontiacaoMap = new HashMap<Integer, Double>();
 		
 		//comupta jogo a jogo
@@ -74,57 +87,9 @@ public class SimuladorController {
 				if (gols != null && !gols.equals("")) {
 					System.out.println("jogo:" + tnj.getTime().getNome());
 					tnj.setGols(Integer.parseInt(gols));
-					//timeNoJogoRepo.updateGols(Integer.parseInt(gols),tnj.getId());
 				}
-			});
-			//processa o ranking
-			Iterable<Palpite> palpites = palpiteRepo.findAllByJogo(j) ;
-			palpites.forEach(palpite ->{
-				System.out.println("..."+palpite.getGolsTimeA()+" x "+palpite.getGolsTimeB());
-				if(palpite.getGolsTimeA() != null && palpite.getGolsTimeB() != null) {
-					palpite.processarPontuacao();
-					popularPontuacaoParticipanteMap(participantesPontiacaoMap, palpite);
-					//palpiteRepo.updatePontuacao(palpite.getPontuacaoAtingida(), palpite.getRegraPontuacao(), palpite.getId());
-				}
-				if(palpite.getTipo().equals(Palpite.ACERTAR_TIMES)) {
-					palpite.processarPontuacaoAcertarTimes();
-					popularPontuacaoParticipanteMap(participantesPontiacaoMap, palpite);
-					//palpiteRepo.updatePontuacao(palpite.getPontuacaoAtingida(), palpite.getRegraPontuacao(), palpite.getId());
-				}
-				
 			});
 		});
-		
-		
-		List<Participante> participantes = participanteRepo
-				.findAllByBolaoOrderByPontuacaoDesc(autenticacao.getBolao());
-		
-		int count = 1;
-		int classificacaoAnterior = 0;
-		Double pontuacaoAnterior = -0.1;
-		for (Participante p : participantes) {
-			System.out.println("particiantes>>>>");
-			
-			p.setPontuacao(participantesPontiacaoMap.get(p.getId()));
-			
-			p.setExibirClassificacaoNoRanking(true);
-			if (!p.getPontuacao().equals(pontuacaoAnterior)) {
-				classificacaoAnterior = count;
-				p.setClassificacao(classificacaoAnterior);
-			}else{
-				p.setClassificacao(classificacaoAnterior);
-				p.setExibirClassificacaoNoRanking(false);
-			}
-			count++;
-			pontuacaoAnterior = p.getPontuacao();
-			//participanteRepo.save(p);
-		}
-		
-		//participanteRepo.updateAproveitamento();
-		m.addAttribute("jogos",jogos);
-		m.addAttribute("participantes", participantes);
-		m.addAttribute(autenticacao);
-		return "/pages/simulador";
 	}
 
 	private void popularPontuacaoParticipanteMap(Map<Integer, Double> participantesPontiacaoMap, Palpite palpite) {

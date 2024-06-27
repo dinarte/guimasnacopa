@@ -17,7 +17,7 @@ public class SecurityInterception implements HandlerInterceptor {
             HttpServletResponse response, Object handler) throws Exception{
 		
 		//TODO: IMPLEMENTAR VERIFICA��O DE SEGURAN�A
-		return true;
+		return false;
 			
 	}
 

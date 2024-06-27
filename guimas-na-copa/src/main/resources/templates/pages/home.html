@@ -41,8 +41,8 @@
           
              
             <!-- /.row -->
-            <div class="row">
-                <div class="col-lg-3 col-md-6">
+            <div class="row esconder-no-movel">
+                <div class="col-lg-3 col-md-6 col-sm-12">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <div class="row">
@@ -64,7 +64,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-3 col-md-6 col-sm-12">
                     <div class="panel panel-green">
                         <div class="panel-heading">
                             <div class="row">
@@ -86,7 +86,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-3 col-md-6 col-sm-12">
                     <div class="panel panel-yellow">
                         <div class="panel-heading">
                             <div class="row">
@@ -108,7 +108,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-3 col-md-6 col-sm-12">
                     <div class="panel panel-red">
                         <div class="panel-heading">
                             <div class="row">
@@ -145,12 +145,67 @@
              
             
             <div class="row">
+                
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-tachometer fa-fw"></i> TOP 10
+                        </div>
+                        <!-- /.panel-heading -->
+                        <style>
+			        	.participante td{
+			        		background-color: #eee;
+			        	}
+			        	</style>
+			        	
+                        <table class="table">
+                        	<thead>
+                        		<tr>
+                        			<th></th>
+                        			<th></th>
+                        			<th>Jogador</th>
+                        			<th>Ptos.</th>
+                        			<th>Apro.</th>
+                        		</tr>
+                        	</thead>
+                        	<tbody>
+                        		<th:block th:each="participante : ${top10}">
+	                        		<tr th:class="${participante.id == autenticacao.participante.id ? 'participante' : ''}">
+	                        			<td><bage th:if="${participante.exibirClassificacaoNoRanking}" th:text="${participante.classificacao + 'ª'}">1</bage></td>
+	                        			<td><img th:src="${participante.usuario.urlFoto}" class="img-perfil-peq" /></td>
+	                        			<td th:id="${participante.id}" ><a th:href="${'/palpite/'+participante.id+'/consultar'}" th:text="${participante.usuario.name}">Dnarte</a></td>
+	                        			<td th:text="${participante.pontuacao}">180</td>
+	                        			<td><span th:text="${participante.aproveitamento}">100</span>%</td>
+	                        		</tr>
+                        		</th:block>
+                        	</tbody>
+                        
+                        	<tfoot>
+                        		<tr>
+                        			<td colspan="5">
+                        				<a th:href="${autenticacao.bolao.permalink + '/ranking'}" href="/ranking" class="btn btn-default btn-block">Ver Ranking completo</a>
+                        			</td>
+                        		</tr>
+                        	</tfoot>
+                        
+                        </table>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                    
+                  
+                </div>
+                <!-- /.col-lg-4 -->
+                
                 <div class="col-lg-8">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <i class="fa fa-bar-chart-o fa-fw"></i> Próximos Jogos 
                             <div class="pull-right">
                                 <div class="btn-group">
+                                	<a href="/palpite/consultar" class="btn btn-default btn-xs dropdown-toggle">Ver todos meus palpites</a>
+                                    
+                                    <!--  
                                     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                                         Outros Palpites
                                         <span class="caret"></span>
@@ -159,6 +214,7 @@
                                         <li><a href="#">Opção Bloqueada</a>
                                         </li>
                                     </ul>
+                                    -->
                                 </div>
                             </div>
                         </div>
@@ -174,53 +230,6 @@
                     
                 </div>
                 <!-- /.col-lg-8 -->
-                <div class="col-lg-4">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-tachometer fa-fw"></i> TOP 10
-                        </div>
-                        <!-- /.panel-heading -->
-                        <style>
-			        	.participante td{
-			        		background-color: #eee;
-			        	}
-			        	</style>
-                        <table class="table">
-                        	<thead>
-                        		<tr>
-                        			<th></th>
-                        			<th>Jogador</th>
-                        			<th>Pontos</th>
-                        			<th>Aproveitamento</th>
-                        		</tr>
-                        	</thead>
-                        	<tbody>
-                        		<th:block th:each="participante : ${top10}">
-	                        		<tr th:class="${participante.id == autenticacao.participante.id ? 'participante' : ''}">
-	                        			<td><bage th:if="${participante.exibirClassificacaoNoRanking}" th:text="${participante.classificacao + 'ª'}">1</bage></td>
-	                        			<td th:id="${participante.id}" ><a th:href="${'/palpite/'+participante.id+'/consultar'}" th:text="${participante.usuario.name}">Dnarte</a></td>
-	                        			<td th:text="${participante.pontuacao}">180</td>
-	                        			<td><span th:text="${participante.aproveitamento}">100</span>%</td>
-	                        		</tr>
-                        		</th:block>
-                        	</tbody>
-                        
-                        	<tfoot>
-                        		<tr>
-                        			<td colspan="4">
-                        				<a th:href="${autenticacao.bolao.permalink + '/ranking'}" href="/ranking" class="btn btn-default btn-block">Ver Ranking completo</a>
-                        			</td>
-                        		</tr>
-                        	</tfoot>
-                        
-                        </table>
-                        <!-- /.panel-body -->
-                    </div>
-                    <!-- /.panel -->
-                    
-                  
-                </div>
-                <!-- /.col-lg-4 -->
             </div>
             <!-- /.row -->
         </div>
@@ -237,14 +246,14 @@
 			  $.ajax({
 			    type:"GET", 
 			    url: "/chart/desempenho/[[${autenticacao.participante.id}]]", 
-			    success: function(data) {
+			    success: function(moris) {
 
-			    		data.xLabelFormat = function(x){return formatDate(x)};
-			    		data.dateFormat = function(x){return formatDate(new Date(x))};
+			    		moris.xLabelFormat = function(x){return formatDate(x)};
+			    		moris.dateFormat = function(x){return formatDate(new Date(x))};
 			    
-			    		
-			    		if (data.length > 0)
-			    			Morris.Line(data);
+
+			    		if (moris.data.length > 0)
+			    			Morris.Line(moris);
 			    		else 
 		    				$("#morris-area-chart").text("Ainda sem dados o suficiente para analisar seu desempenho.");
 			    	

@@ -43,7 +43,7 @@
 		                        			<td th:utext="${palpite.bolaoCompeticao.competicao.nome}"><img height="40" th:src="${palpite.bolaoCompeticao.competicao.logoUrl}"> Competição</td>
 		                        			<td th:utext="${palpite.jogo.fase.nome}">Fase do Jogo</td>
 		                        			<td th:utext="${palpite.jogo.grupo}">Grupo</td>
-		                        			<td th:utext=" ${ #temporals.format(palpite.jogo.data, 'dd MMM hh:mm')}" style="text-align: right;" >
+		                        			<td th:utext=" ${ #temporals.format(palpite.jogo.data, 'dd MMM HH:mm')}" style="text-align: right;" >
 					             			   X/XX/XXXX XX:XX 
 					             			</td> 
 		                        			<td th:utext="${palpite.timeA.nome}" style="text-align: right;">Time A</td>

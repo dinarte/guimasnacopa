@@ -1,6 +1,8 @@
 package br.com.guimasnacopa.domain;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -16,6 +18,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 public class Jogo {
+	
+	public static final String EXECUSSAO_PREVISTO = "Previsto";
+	public static final String EXECUSSAO_EM_ANDAMENTO = "Em andamento";
+	public static final String EXECUSSAO_ENCERRADO = "Encerrado";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +39,8 @@ public class Jogo {
 	List<TimeNoJogo> timesNoJogo;
 	
 	private Boolean liberarCriacaoPalpites;
+	
+	private String execucao = EXECUSSAO_PREVISTO;
 	
 	@ManyToOne
 	private Fase fase;
@@ -141,8 +149,51 @@ public class Jogo {
 	public void setIdApi(Long idApi) {
 		this.idApi = idApi;
 	}
-	
-	
 
+	public String getExecucao() {
+		return execucao;
+	}
+
+	public void setExecucao(String execucao) {
+		this.execucao = execucao;
+	}
 	
+	
+	@Transient
+	public boolean isInicioHoraPrevista() {
+		if (limiteAposta != null) {
+			ZonedDateTime agora = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("UTC"));
+			ZonedDateTime limite = ZonedDateTime.of(data,ZoneId.of("UTC"));
+			return agora.isAfter(limite);
+		}else {
+			return true;
+		}
+	}
+	
+	@Transient
+	public boolean isFimHoraPrevista() {
+		if (limiteAposta != null) {
+			ZonedDateTime agora = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("UTC"));
+			ZonedDateTime limite = ZonedDateTime.of(data, ZoneId.of("UTC")).plusMinutes(105);
+			return agora.isAfter(limite);
+		}else {
+			return true;
+		}
+	}
+	
+	
+	@Transient
+	public boolean isPrevisto() {
+		return execucao == null || execucao.equals(EXECUSSAO_PREVISTO);
+	}
+	
+	@Transient
+	public boolean isEmAndamento() {
+		return execucao != null && execucao.equals(EXECUSSAO_EM_ANDAMENTO);
+	}
+	@Transient
+	public boolean isEncerrado() {
+		return execucao != null && execucao.equals(EXECUSSAO_ENCERRADO);
+	}
+		
 }

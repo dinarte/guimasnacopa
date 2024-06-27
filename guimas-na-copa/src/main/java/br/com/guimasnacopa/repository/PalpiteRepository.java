@@ -4,6 +4,7 @@ package br.com.guimasnacopa.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -12,12 +13,20 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import br.com.guimasnacopa.domain.Bolao;
+import br.com.guimasnacopa.domain.BolaoCompeticao;
 import br.com.guimasnacopa.domain.Jogo;
 import br.com.guimasnacopa.domain.Palpite;
+import br.com.guimasnacopa.domain.PalpiteForProcessingVo;
 import br.com.guimasnacopa.domain.Participante;
 
 @Repository
 public interface PalpiteRepository  extends CrudRepository<Palpite, Integer>{
+	
+	
+	
+	public Set<Palpite> findAllByBolaoCompeticao_bolaoAndTipoOrderByBolaoCompeticao(Bolao bolao, String tipo);
+	
 
 	@Query("select p from Palpite p "
 			+ "left join p.jogo "
@@ -98,5 +107,43 @@ public interface PalpiteRepository  extends CrudRepository<Palpite, Integer>{
 			"group by palpite", nativeQuery = true)
 	public List<Map<String,Object>> findResumoVencedorByJogo(@Param("jogoId") Integer jogoId);
 	
+
+	public void deleteAllByParticipante_id(Integer id);
+
+
+	public List<Palpite> findAllByBolaoCompeticaoAndTipoOrderByParticipante_classificacaoAscParticipante_usuario_nameAscBolaoCompeticaoAsc(
+			BolaoCompeticao bolaoCompeticao,
+			String acertarTimes);
+	
+	@Query(	nativeQuery = true,
+			value="select  p.id, \r\n"
+					+ "		p.participante_id as participanteId, \r\n"
+					+ "		u.name,\r\n"
+					+ "		u.email, \r\n"
+					+ "		u.url_foto as urlFoto,\r\n"
+					+ "		tipo as tipo, \r\n"
+					+ "		timea_id as timeAId, \r\n"
+					+ "		timeb_id as timeBId, \r\n"
+					+ "		gols_timea as golsTimeA, \r\n"
+					+ "		gols_timeb as golsTimeB, \r\n"
+					+ "		tnja.gols as golsJogoTimeA, \r\n"
+					+ "		tnja.gols as golsJogoTimeB,\r\n"
+					+ "		f.pontuacao_acertar_vencedor as pontuacaoAcertarVencedor,\r\n"
+					+ "		f.acertar_empate as pontuacaoAcertarEmpate, \r\n"
+					+ "		f.pontuacao_acertar_placar as pontuacaoAcertarPlacar,\r\n"
+					+ "		f.acertar_qtd_gols_um_dos_times as pontuacaoAcertarQtdGolsTime \r\n"
+					+ "from palpite p\r\n"
+					+ "join participante pa on pa.id = p.participante_id \r\n"
+					+ "join usuario u on u.id = pa.usuario_id \r\n"
+					+ "join jogo j on j.id = p.jogo_id \r\n"
+					+ "join time_no_jogo tnja on tnja.jogo_id = j.id and tnja.time_id = p.timea_id \r\n"
+					+ "join time_no_jogo tnjb on tnjb.jogo_id = j.id and tnjb.time_id = p.timeb_id \r\n"
+					+ "join time ta on ta.id = tnja.time_id  \r\n"
+					+ "join time tb on tb.id = tnjb.time_id\r\n"
+					+ "join fase f on f.id = j.fase_id \r\n"
+					+ "join bolao_competicao bc on bc.id = p.bolao_competicao_id \r\n"
+					+ "where pa.pg is true\r\n"
+					+ "and bc.bolao_id = :bolaoId")
+	public List<PalpiteForProcessingVo> findAllForProssingByBolaoId(@Param("bolaoId") Integer bolaoId);
 	
 }

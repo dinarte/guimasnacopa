@@ -27,7 +27,7 @@
 					    		</tr>
 					    		<tr>
 					    			<td colspan="4" class="data_h">
-					    				<span th:if="${palpite.resultado}" th:text="${#temporals.format(palpite.jogo.data, 'dd MMM hh:mm')}">12:20</span>
+					    				<span th:if="${palpite.resultado}" th:text="${#temporals.format(palpite.jogo.data, 'dd MMM HH:mm')}">12:20</span>
 					    				<span th:if="${palpite.jogo?.data == null}" style="color: #fff"> - </span>
 					    				<a th:href="${'/palpite/'+palpite.id+'/detalhar'}" class="glyphicon glyphicon-search" 
 					    					aria-hidden="true" 
@@ -79,8 +79,16 @@
 						    			<td class="p-compara" th:if="${palpiteComComparacao}">
 						    				<span th:text="${palpite.palpiteComparado.golsTimeA}" > 1 </span>
 						    			</td>
-						    			<td class="p-result" th:if="${palpiteComResultado}">
-						    				<span th:text="${palpite.golsDoJogoTimaA}" > 1 </span>
+						    			<td class="p-result" th:if="${palpiteComResultado}" width="50px">
+						    				<input	th:if="${autenticacao.adminDoBolao && palpite.jogo.emAndamento}" 
+						    						type="number" 
+						    						th:id="${'gols_time_a_'+palpite.id}" 
+						    						th:value="${palpite.golsDoJogoTimaA}" 
+						    						class="form-control"
+						    						style="padding: 3px; height: 20px;"
+						    						min="0"
+						    						th:onChange="${'popularGols('+palpite.id+')'}">
+						    				<span th:if="${!autenticacao.adminDoBolao || !palpite.jogo.emAndamento}" th:text="${palpite.golsDoJogoTimaA}" > 1 </span>
 						    			</td>
 						    		</tr>
 						    		<tr>
@@ -97,7 +105,15 @@
 						    				<span th:text="${palpite.palpiteComparado.golsTimeB}" > 1 </span>
 						    			</td>
 						    			<td class="p-result" th:if="${palpiteComResultado}">
-						    				<span th:text="${palpite.golsDoJogoTimaB}" > 1 </span>
+						    			 	<input	th:if="${autenticacao.adminDoBolao && palpite.jogo.emAndamento}" 
+						    			 			type="number" 
+						    			 			th:id="${'gols_time_b_'+palpite.id}"
+						    			 			th:value="${palpite.golsDoJogoTimaB}" 
+						    			 			class="form-control"
+						    			 			style="padding: 3px; height: 20px;"
+						    			 			min="0"
+						    			 			th:onChange="${'popularGols('+palpite.id+')'}"> 
+						    				<span  th:if="${!autenticacao.adminDoBolao || !palpite.jogo.emAndamento}" th:text="${palpite.golsDoJogoTimaB}" > 1 </span>
 						    			</td>
 						    		</tr>
 						    	
@@ -106,18 +122,112 @@
 					    		
 					    	</table>
 					    </div>
-					    <div style="text-align: center; color:blue; height:35px; font-size:12px;"  
-					    	th:text="${palpite.pontuacaoAtingida != null ? palpite.regraPontuacao + ' ' + palpite.pontuacaoAtingida + ' pts' : ' ' }"> 10 pts  </div>
+					   
+					    <div style="text-align: center; color:blue; height:35px; font-size:12px; padding-bottom: 3px;"> 
+					    	
+					    	<form	th:if="${palpite.resultado}"
+					    			th:id="${'form_' + palpite.id}"
+					    			th:action="${'/'+autenticacao.bolao.permalink+'/jogo/'+palpite.jogo.id+'/execucao'}" 
+			    					method="post" 
+			    					onsubmit="return confirm('Deseja confirmar que o jogo está '+ $('#execucao').val() +'?'); loadOff();"
+			    					 >
+			    					
+			    				<input type="hidden" name="_method" value="put" />
+			    				<input type="hidden" name="idTimeA" id="idTimeA" th:value="${palpite.timeNoJogoTimeA}" />
+			    				<input type="hidden" name="golsTimeA" id="golsTimeA" th:value="${palpite.golsDoJogoTimaA}"/>
+			    				<input type="hidden" name="idTimeB" id="idTimeB" th:value="${palpite.timeNoJogoTimeB}"/>
+			    				<input type="hidden" name="golsTimeB" id="golsTimeB" th:value="${palpite.golsDoJogoTimaB}"/>
+			    				<input type="hidden" name="execucao" id="execucao" value="Em andamento" />
+			    					
+						    	
+						    	<span th:if="${palpite.jogo.encerrado}" class="badge">Encenrrado</span>
+						    	
+						    	<span> <img src="/img/bola-rolando.gif" width="20px" th:if="${palpite.jogo.emAndamento}" />  </span>
+						    	
+						    	<button type="button" th:if="${palpite.exibePontuacaoNoCard}" data-toggle="modal" th:data-target="${'#modal_' + palpite.id}">
+	                                [[${palpite.pontuacaoAtingida}]] Pontos
+	                           	</button>
+	                           	
+				    			<button type="submit" th:if="${palpite.jogo.previsto && palpite.jogo.inicioHoraPrevista && autenticacao.adminDoBolao}" >
+	                            	Marcar como Em Andamento      
+	                            </button>
+	                            <button type="submit" th:if="${palpite.jogo.emAndamento && autenticacao.adminDoBolao }" disabled="disabled" id="btnRaking">
+		                            Atualizar ranking
+		                        </button>
+		                        <button type="submit" th:if="${palpite.jogo.emAndamento && autenticacao.adminDoBolao }" id="btnRaking" th:onclick="${'setEncerrado('+palpite.id+')'}">
+		                            Encerrar jogo
+		                        </button>
+	                         </form>  	
+	                        
+                           	 
+			    	  </div>
 					  </div>
 					 </div>
+					 
+					 <div th:if="${palpite.resultado}" class="modal fade" th:id="${'modal_' + palpite.id}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                         <div class="modal-dialog">
+                             <div class="modal-content">
+                                 <div class="modal-header text-center">
+                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                      <img src="/img/bola-rolando.gif" width="25px" th:if="${palpite.jogo.emAndamento}" /> 
+                                     <h4 class="modal-title" id="myModalLabel" th:utext="${palpite.descricaoJogo}" >Modal title</h4>
+                                 </div>
+                                 <div class="modal-body">
+                                      <table class="table">
+                                     
+                                      	<tr>
+                                      		<td> Palpite: </td>
+                							<td th:utext="${palpite.golsTimeA + ' x ' + palpite.golsTimeB  }"></td>
+                                      	</tr>
+                                      	<tr>
+                                      		<td> Resultado: </td>
+                							<td th:utext="${palpite.golsDoJogoTimaA + ' x ' + palpite.golsDoJogoTimaB}"></td>
+                                      	</tr>
+                                      </table>
+                                      <h4>Extrato da pontuação atingida:</h4>
+                                      <table class="table">
+                                      	<tr>
+                                      		<th>Item:</th><th>Pontuação</th>
+                                      	</tr>
+                                      	<tr th:each="entry : ${palpite.detalhePontuacaoMap}">
+                                      		<td th:text="${entry.key}"></td>
+                							<td th:text="${entry.value}"></td>
+                                      	</tr>
+                                      </table>
+                                 </div>
+                                 <div class="modal-footer">
+                                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                 </div>
+                             </div>
+                             <!-- /.modal-content -->
+                         </div>
+                         <!-- /.modal-dialog -->
+                     </div>
+
+					 
 				</th:block> 
 			</div>
 			
-	<style>
-        /* Regras CSS personalizadas, se necess�rio */
-        .minheight {
-            height: 180px; /* Defina a altura m�nima desejada */
-        }
-    </style>
+<script>
+
+function popularGols(id) {
+	var formId = "form#form_" + id;
+	
+	var golsTimeA = $(formId+' #golsTimeA');
+	var golsTimeB = $(formId+' #golsTimeB');
+	
+	$(golsTimeA).val($('#gols_time_a_'+id).val()); 
+	$(golsTimeB).val($('#gols_time_b_'+id).val()); 
+	$(formId+' #btnRaking').prop('disabled', false);
+}
+
+function setEncerrado(id) {
+	var formId = "form#form_" + id;
+	$(formId+' #execucao').val('Encerrado')
+}
+
+</script>
 </div>			
+
+
 

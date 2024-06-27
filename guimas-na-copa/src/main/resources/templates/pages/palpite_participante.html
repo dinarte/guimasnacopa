@@ -25,6 +25,12 @@
 					</div>
                 </div> 
             </div>
+             <div class="row text-center">
+                  <img th:src="${participanteConsultado.usuario.urlFoto}" class="img-perfil" />
+                	<br />
+                 	<span th:text="${participanteConsultado.usuario.name}"></span>
+                 	<br />
+              </div>
             
             <div class="panel panel-default">
                <div class="panel-heading">
@@ -50,14 +56,14 @@
     	$(function() {
 			  $.ajax({
 			    type:"GET", 
-			    url: "/chart/desempenho/[[${autenticacao.participante.id}]]", 
+			    url: "/chart/desempenho/[[${participanteConsultado.id}]]", 
 			    success: function(data) {
 
 			    		data.xLabelFormat = function(x){return formatDate(x)};
 			    		data.dateFormat = function(x){return formatDate(new Date(x))};
 			    
 			    		
-			    		if (data.length > 0)
+			    		if (data.data.length > 0)
 			    			Morris.Line(data);
 			    		else 
 		    				$("#morris-area-chart").text("Ainda sem dados o suficiente para analisar seu desempenho.");

@@ -2,10 +2,10 @@ package br.com.guimasnacopa.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -109,8 +109,9 @@ public class HomeController {
 				m.addAttribute("premioEstimado", totalValor - ((totalValor * bolao.getTaxaAdministrativa()) / 100) );
 			
 			//seta o quadro de top10 do rannking
-			List<Participante> top10 = participanteRepo.findTop10ByBolaoOrderByClassificacaoAscExibirClassificacaoNoRankingDesc(bolao); 
-			m.addAttribute("top10",top10.stream().filter(p -> p.getPg()).collect(Collectors.toList()) );
+			boolean apenasParticipanteConfirmado = true;
+			List<Participante> top10 = participanteRepo.findTop10ByBolaoAndPgOrderByClassificacaoAscExibirClassificacaoNoRankingDesc(bolao, apenasParticipanteConfirmado); 
+			m.addAttribute("top10", top10);
 			
 			//seta o quadro com os prpoximos jogos
 			LocalDateTime  hoje = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
@@ -154,11 +155,6 @@ public class HomeController {
 		model.addAttribute(autenticacao);
 		model.addAttribute(bolao);
 		return "pages/pagamento";
-	}
-
-
-	private String redirecionaDeAcordoComAutenticacao(Model m) throws AppException {
-		return redirecionaDeAcordoComAutenticacao(m, bolaoAtivo);
 	}
 
 	private String redirecionaDeAcordoComAutenticacao(Model model, String redirectToBolao) throws AppException {

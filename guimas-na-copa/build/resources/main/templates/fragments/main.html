@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color"  content="blue">
     <meta name="description" content="Autentique-se no bolão Guimas na Copa, o mais divertido de tdos!">
     <meta name="author" content="Dinarte">
     <link rel="manifest" href="/js/manifest.json">
@@ -12,8 +13,36 @@
 
     <title>GuimasBet</title>
     
+    <!-- jQuery -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="/vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="/vendor/raphael/raphael.min.js"></script>
+    <script src="/vendor/morrisjs/morris.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="/dist/js/sb-admin-2.js"></script>
+    
+    <!-- JavaScript Console for mobile -->
+   	
+    <script src="/js/eruda.js"></script>
+    
+    <!-- 
+     <script>eruda.init();</script> 
+    --> 
+   
+    <!-- Import Trumbowyg (Richtext)-->
+	<script src="/external/trumbowyg/dist/trumbowyg.min.js"></script>
+    
+    
     <!-- Goggle SingIn Button -->
-    <script src="https://accounts.google.com/gsi/client" async></script>
+    <script src="/js/google-client.js" async></script>
 
     <!-- Bootstrap Core CSS -->
     <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -74,39 +103,45 @@
 </div>
 
 <scriptblock th:fragment="scrptsblock">
-	<!-- jQuery -->
-    <script src="/vendor/jquery/jquery.min.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
-
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="/vendor/metisMenu/metisMenu.min.js"></script>
-
-    <!-- Morris Charts JavaScript -->
-    <script src="/vendor/raphael/raphael.min.js"></script>
-    <script src="/vendor/morrisjs/morris.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="/dist/js/sb-admin-2.js"></script>
-    
-    <!-- JavaScript Console for mobile -->
-    <script src="/js/eruda.js"></script>
-    <script>eruda.init();</script>
-   
-    <!-- Import Trumbowyg (Richtext)-->
-	<script src="/external/trumbowyg/dist/trumbowyg.min.js"></script>
+	
     
     <script>
+    
+    setInterval(() => {
+        fetch('/heartbeat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            //body: new URLSearchParams({ 'username': 'current_user' })
+        });
+    }, 30000); // 30 segundos
+    
+    // tooltip demo
+    $('.tooltip-demo').tooltip({
+        selector: "[data-toggle=tooltip]",
+        container: "body",
+       	content: function() {
+               return $(this).attr('data-content');
+             },
+    })
+    // popover demo
+    $("[data-toggle=popover]")
+        .popover()
+
+    
     
     let el = document.createElement('div');
 	document.body.appendChild(el);
 
+	/*
 	eruda.init({
 	    container: el,
 	    tool: ['console', 'elements']
 	});
+	*/
     
+	
     
     $(window).on('load', function () {
     	
@@ -115,11 +150,6 @@
 	});
     
     $( '[data-loading="loader"]' ).click(function(obj) {
-  		//alert($(obj).attr('href'));
-	  $(".loader").fadeIn("fast");
-	});
-    
-    $( 'form' ).submit(function(obj) {
   		//alert($(obj).attr('href'));
 	  $(".loader").fadeIn("fast");
 	});

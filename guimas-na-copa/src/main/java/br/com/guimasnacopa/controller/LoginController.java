@@ -1,11 +1,17 @@
 package br.com.guimasnacopa.controller;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.Cookie;
@@ -36,11 +42,13 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.gson.Gson;
 
+import br.com.guimasnacopa.domain.Autorizacao;
 import br.com.guimasnacopa.domain.Bolao;
 import br.com.guimasnacopa.domain.Usuario;
 import br.com.guimasnacopa.exception.BolaoNaoSelecionadoException;
 import br.com.guimasnacopa.exception.ValidacaoException;
 import br.com.guimasnacopa.messages.AppMessages;
+import br.com.guimasnacopa.repository.AutorizacaoRespository;
 import br.com.guimasnacopa.repository.BolaoRepository;
 import br.com.guimasnacopa.repository.ParticipanteRepository;
 import br.com.guimasnacopa.repository.UserRepository;
@@ -78,6 +86,9 @@ public class LoginController {
 	
 	@Autowired
 	HttpServletRequest request;
+
+	@Autowired
+	HttpServletResponse response;
 	
 	@Autowired
 	Environment env;
@@ -85,6 +96,20 @@ public class LoginController {
 	@Autowired
 	ResourceLoader versionResource;
 	
+	@Autowired
+	AutorizacaoRespository autorizacaoRespo;
+	
+
+	@RequestMapping(value = "/heartbeat", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public void heartbeat(@CookieValue( name = "guimasbet-session-id") String autIdOpt) {
+			autorizacaoRespo.findById(autIdOpt).flatMap(autorizacao -> {
+			Integer idUser = autorizacao.getUsuario().getId();
+			Autenticacao.getUserheartbeats().put(idUser, System.currentTimeMillis());
+			return Optional.empty();
+		});
+        
+    }
 		
 	@PostMapping("/login")
 	public String login( Usuario usuario, Model model) throws LoginException {
@@ -93,19 +118,25 @@ public class LoginController {
 			autenticacao.setAutenticado(true);
 			autenticacao.setBolao(bolaoRepo.findOneByPermalink(bolaoAtivo));
 			
+			String idAutorizacao = gerarToken(autenticacao.getUsuario().getId());
+			Autorizacao autorizacao = new Autorizacao();
+			autorizacao.setId(idAutorizacao);
+			autorizacao.setUsuario(autenticacao.getUsuario());
+			autorizacao.setDateTime(LocalDateTime.now());
+			autorizacao.setDispositivo(request.getHeader("User-Agent"));
+			autorizacao.setIp(request.getRemoteAddr());
+			response.addCookie(getCookie(idAutorizacao));
+			autorizacaoRespo.save(autorizacao);
+			autenticacao.setAutorizacao(autorizacao);
 			model.addAttribute(autenticacao);
 			
-			if (autenticacao.getUsuario().getAdmin() != true)
-				return "redirect:/" + bolaoAtivo; 
-			else
-				return "redirect:/bolao/listar";
+			return redirectAccordingByKindOfUser();
 		}
 		else {
 			throw new LoginException("Que é isso jogador? errou seus dados! Tente novamente...");
 		}	
 	}
 	
-
 	
 	@ResponseBody()
 	@RequestMapping(value = "google-oauth-test", method = {RequestMethod.POST}, produces = "application/json")
@@ -189,40 +220,73 @@ public class LoginController {
 	}
 
 	
-	@GetMapping("/login")
+	
+	public String login(String linkBolao, Model model) throws BolaoNaoSelecionadoException {
+		return login(bolaoAtivo, model, null);
+	}
+	
 	public String login(Model model) throws BolaoNaoSelecionadoException {
-		return login(bolaoAtivo, model);
+		return login(bolaoAtivo, model, null);
+	}
+	
+	@GetMapping("/login")
+	public String login(Model model, @CookieValue( name = "guimasbet-session-id") String autId) throws BolaoNaoSelecionadoException {
+		return login(bolaoAtivo, model, autId);
 	}
 	
 	@GetMapping("/{linkBolao}/login/")
-	public String login(@PathVariable("linkBolao") String linkBolao, Model model) throws BolaoNaoSelecionadoException {
-		Bolao bolao = bolaoService.getBolaoByPermaLink(linkBolao);
-		model.addAttribute(bolao);
-		model.addAttribute(appMessages);
-		model.addAttribute("usuario", new Usuario());
+	public String login(@PathVariable("linkBolao") String linkBolao, Model model, @CookieValue( name = "guimasbet-session-id") String autIdOpt) throws BolaoNaoSelecionadoException {
 		
-		String domain = request.getServerName();
-		model.addAttribute("domain", domain);
+		String autId = getAutId(autIdOpt);
 		
-		String googleOHauthClientId =  env.getProperty("google."+request.getServerName()+".oauth.client_id");
-		String googleOHauthLoginUri = env.getProperty("google."+request.getServerName()+".oauth.login_uri");
+		if (getAutorizacaFromCookie(autId).isPresent()) {
+			model.addAttribute(autenticacao);
+			return redirectAccordingByKindOfUser();
+		} else {
 		
-		model.addAttribute("googleOHauthClientId", googleOHauthClientId);
-		model.addAttribute("googleOHauthLoginUri", googleOHauthLoginUri);
-		
-		model.addAttribute("appVersion", getVersion());
-		
-		//seta o card de total de participantes
-		Long totalParticipaantesAtivos = participanteRepo.countPgByBolao(bolao);
-		Double totalValor = totalParticipaantesAtivos * bolao.getValor();
-		
-		//seta o card do valor do premio
-		if (bolao.getTaxaAdministrativa() != null)
-			model.addAttribute("premioEstimado", totalValor - ((totalValor * bolao.getTaxaAdministrativa()) / 100) );
-		
-		
-		return "pages/login";
+			Bolao bolao = bolaoService.getBolaoByPermaLink(linkBolao);
+			model.addAttribute(bolao);
+			model.addAttribute(appMessages);
+			model.addAttribute("usuario", new Usuario());
+			
+			String domain = request.getServerName();
+			model.addAttribute("domain", domain);
+			
+			String googleOHauthClientId =  env.getProperty("google."+request.getServerName()+".oauth.client_id");
+			String googleOHauthLoginUri = env.getProperty("google."+request.getServerName()+".oauth.login_uri");
+			
+			model.addAttribute("googleOHauthClientId", googleOHauthClientId);
+			model.addAttribute("googleOHauthLoginUri", googleOHauthLoginUri);
+			
+			model.addAttribute("appVersion", getVersion());
+			
+			//seta o card de total de participantes
+			Long totalParticipaantesAtivos = participanteRepo.countPgByBolao(bolao);
+			Double totalValor = totalParticipaantesAtivos * bolao.getValor();
+			
+			//seta o card do valor do premio
+			if (bolao.getTaxaAdministrativa() != null)
+				model.addAttribute("premioEstimado", totalValor - ((totalValor * bolao.getTaxaAdministrativa()) / 100) );
+			
+			return "pages/login";
+			
+		}
 	}
+
+
+	private String getAutId(String autIdOpt) {
+		String autId =  Optional.ofNullable(autIdOpt).orElse( 
+				
+				Arrays
+						.stream(request.getCookies())
+						.filter(cookie -> cookie.getName().equals("guimasbet-session-id") )
+						.map(Cookie::getValue)
+						.findFirst()
+						.orElse(null)
+			);
+		return autId;
+	}
+	
 	
 	@GetMapping("/logout")
 	public String logout(Model model) throws BolaoNaoSelecionadoException {
@@ -234,6 +298,9 @@ public class LoginController {
 			model.addAttribute(appMessages);
 			autenticacao.setUsuario(null);
 			autenticacao.setAutenticado(false);
+			autenticacao.getAutorizacao().setDataTimeDisconnected(LocalDateTime.now());
+			autorizacaoRespo.save(autenticacao.getAutorizacao());
+			autenticacao.setAutorizacao(null);
 		}	
 		return login(bolaoAtivo, model);
 	}
@@ -249,5 +316,46 @@ public class LoginController {
 		}
         return props.getProperty("version");
     }
+	
+	
+	private String gerarToken(Integer userId) {
+        String randomId = UUID.randomUUID().toString();
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        String rawToken = userId.toString() + randomId + timestamp;
+        return rawToken;
+    }
+	
+	private Cookie getCookie(String value) {
+	        Cookie cookie = new Cookie("guimasbet-session-id", value);
+	        cookie.setMaxAge(200 * 24 * 60 * 60); // 7 dias de validade
+	        cookie.setHttpOnly(true); // Apenas acessível via HTTP (não acessível por JavaScript)
+	       //cookie.setSecure(true); // Apenas enviado via HTTPS
+	       //cookie.setPath("/"); // Caminho onde o cookie é válido
+	        return cookie;
+   }
+	
+   private Optional<Autorizacao> getAutorizacaFromCookie(String autId) {
+	
+		
+		Optional.ofNullable(autId).ifPresent(autoId ->{
+			Optional<Autorizacao> autorizacaoOpt = autorizacaoRespo.findById(autId).filter(Autorizacao::isConnected); 
+			autorizacaoOpt.ifPresent (autorizacao -> {
+				autenticacao.setUsuario(autorizacao.getUsuario());
+				autenticacao.setAutenticado(true);
+				autenticacao.setBolao(bolaoRepo.findOneByPermalink(bolaoAtivo));
+				autenticacao.setAutorizacao(autorizacao);
+				
+			});
+		});
+		
+		return Optional.ofNullable(autenticacao.getAutorizacao());
+	}
+	
+	private String redirectAccordingByKindOfUser() {
+		if (autenticacao.getUsuario().getAdmin() != true)
+			return "redirect:/" + bolaoAtivo; 
+		else
+			return "redirect:/bolao/listar";
+	}
 	
 }

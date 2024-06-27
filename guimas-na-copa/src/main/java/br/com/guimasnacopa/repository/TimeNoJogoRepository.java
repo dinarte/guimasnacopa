@@ -23,6 +23,6 @@ public interface TimeNoJogoRepository  extends CrudRepository<TimeNoJogo, Intege
 
 	@Modifying(clearAutomatically = true)
 	@Query("update TimeNoJogo set gols = :gols where id = :id")
-	public void updateGols(@Param("gols") int gols, @Param("id") Integer id);
+	public void updateGols(@Param("gols") int gols, @Param("id") Integer idTimeNoJogo);
 	
 }

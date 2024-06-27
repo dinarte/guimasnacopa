@@ -59,7 +59,7 @@ public class GerenciarDatasEResultadosController {
 		autenticacao.checkAdminAthorization();
 		List<Jogo> jogos = jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
 		
-		//comupta jogo a jogo
+		//comuputa jogo a jogo
 		jogos.forEach(j -> {
 			System.out.println("jogo: "+j.getId()+"-"+j.getGrupo());
 			String value = reuqest.getParameter(j.getId().toString());
@@ -83,7 +83,7 @@ public class GerenciarDatasEResultadosController {
 			palpites.forEach(palpite ->{
 				System.out.println("..."+palpite.getGolsTimeA()+" x "+palpite.getGolsTimeB());
 				if(palpite.getGolsTimeA() != null && palpite.getGolsTimeB() != null) {
-					palpite.processarPontuacao();
+					palpite.processarPontuacaoAcumulativa();
 					palpiteRepo.updatePontuacao(palpite.getPontuacaoAtingida(), palpite.getRegraPontuacao(), palpite.getId());
 				}
 				if(palpite.getTipo().equals(Palpite.ACERTAR_TIMES)) {
@@ -95,13 +95,14 @@ public class GerenciarDatasEResultadosController {
 		
 		participanteRepo.updatePontuacao();
 		
+		boolean apenasParticipantesPagos = true;
 		List<Participante> participantes = participanteRepo
-				.findAllByBolaoOrderByPontuacaoDesc(autenticacao.getBolao());
+				.findAllByBolaoAndPgOrderByPontuacaoDesc(autenticacao.getBolao(), apenasParticipantesPagos);
 		int count = 1;
 		int classificacaoAnterior = 0;
 		Double pontuacaoAnterior = -0.1;
 		for (Participante p : participantes) {
-			System.out.println("particiantes>>>>");
+
 			p.setExibirClassificacaoNoRanking(true);
 			if (!p.getPontuacao().equals(pontuacaoAnterior)) {
 				classificacaoAnterior = count;

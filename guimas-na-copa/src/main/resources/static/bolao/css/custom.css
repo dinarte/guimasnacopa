@@ -258,4 +258,12 @@ img.img-perfil-peq {
   text-decoration: none;
   color: #fff;
 }		
+
+
+
+@media (max-width: 1004px) {
+    .esconder-no-movel {
+        display: none;
+    }
+}
             

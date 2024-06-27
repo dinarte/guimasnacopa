@@ -5,10 +5,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,8 +21,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.com.guimasnacopa.service.PalpiteProcessor;
 
 @Entity
 public class Palpite implements Comparable<Palpite> {
@@ -72,6 +79,11 @@ public class Palpite implements Comparable<Palpite> {
 	@Transient
 	private Integer golsDoJogoTimaB;
 	
+	@Transient
+	private Integer timeNoJogoTimeA;
+	
+	@Transient
+	private Integer timeNoJogoTimeB;
 	
 
 	@Transient
@@ -83,6 +95,16 @@ public class Palpite implements Comparable<Palpite> {
 		}else {
 			return true;
 		}
+	}
+	
+	
+	@Transient
+	public boolean isExibePontuacaoNoCard() {
+		if (isResultado())
+			if (jogo != null) {
+				return jogo.isEmAndamento() || jogo.isEncerrado();
+			}
+		return false;	
 	}
 	
 	@Transient
@@ -120,6 +142,95 @@ public class Palpite implements Comparable<Palpite> {
 		
 	}
 	
+	
+	@Transient
+	public String getDescricaoJogo() {
+		String timeA = this.timeA != null ? this.timeA.getNome() : "";
+		String timeB = this.timeB != null ? this.timeB.getNome() : "";
+		String flagA = this.timeA != null ? this.timeA.getFlag() : "";
+		String flagB = this.timeB != null ? this.timeB.getFlag() : "";
+		
+		return timeA
+				.concat(flagA)
+				.concat(" vs ")
+				.concat(flagB)
+				.concat(timeB);
+	}
+	
+	@Transient
+	public String getDescricaoPalpite() {
+		String timeA = this.timeA != null ? this.timeA.getNome() : "";
+		String timeB = this.timeB != null ? this.timeB.getNome() : "";
+		String flagA = this.timeA != null ? this.timeA.getFlag() : "";
+		String flagB = this.timeB != null ? this.timeB.getFlag() : "";
+		String golsA = this.golsTimeA != null ? this.golsTimeA.toString() : "";
+		String golsB = this.golsTimeB != null ? this.golsTimeB.toString() : "";
+		
+		return timeA
+				.concat(flagA)
+				.concat(" ")
+				.concat(golsA)
+				.concat(" vs ")
+				.concat(golsB)
+				.concat(" ")
+				.concat(flagB)
+				.concat(timeB);
+	}
+	
+	@Transient
+	public String getDescricaoTimesEmOrdemAfalbetica() {
+		
+		String timeA = this.timeA != null ? this.timeA.getNome() : "";
+		String timeB = this.timeB != null ? this.timeB.getNome() : "";
+		String flagA = this.timeA != null ? this.timeA.getFlag() : "";
+		String flagB = this.timeB != null ? this.timeB.getFlag() : "";
+		
+		LinkedList<String> timesEmOrdem = new LinkedList<>();
+		timesEmOrdem.add(timeA);
+		timesEmOrdem.add(timeB);
+		Collections.sort(timesEmOrdem);
+		
+		Map<String, String> flagMap = new HashMap<>();
+		flagMap.put(timeA, flagA);
+		flagMap.put(timeB, flagB);
+	
+		String time0 = timesEmOrdem.get(0);
+		String time1 = timesEmOrdem.get(1);
+		
+		return time0
+				.concat(flagMap.get(time0))
+				.concat(timeA != null || timeB != null ? " vs " : "")
+				.concat(flagMap.get(time1))
+				.concat(time1);
+	}
+	
+	@Transient
+	public Double getAproveitamento() {
+		
+		Double pontuacaoMaxima = 0.0;
+		
+		//TODO: IMPLEMENTAR FORMA DE BUSCAR AS PONTUACAO DINAMICAMENTE
+		if (isResultado()) 
+			pontuacaoMaxima = 18.0;
+		if (isAcertarTimes()) 
+			pontuacaoMaxima = 54.0;
+		if (isAcertarCampeao()) {
+			pontuacaoMaxima = 36.0;
+		}
+
+		Double aproveitamento = (getPontuacaoAtingida() * 100) / pontuacaoMaxima; 
+		return aproveitamento;
+	}
+	
+	
+	@Transient
+	public boolean isProcessado() {
+		popularGolsDoJogo();
+		return Objects.nonNull(golsDoJogoTimaA) && Objects.nonNull(golsDoJogoTimaB);
+	}
+	
+	
+	
 	public boolean isResultado() {
 		return tipo.equals( RESULTADO );
 	}
@@ -133,19 +244,24 @@ public class Palpite implements Comparable<Palpite> {
 	}
 	
 	private void incrementarPontuacao(Double pontuacao) {
-		this.pontuacaoAtingida = this.pontuacaoAtingida + pontuacao;
+		this.pontuacaoAtingida = this.pontuacaoAtingida == null ? pontuacao : this.pontuacaoAtingida + pontuacao;
 	}
 	
 	public void popularGolsDoJogo() {
-		getJogo().getTimesNoJogo().forEach(tmj ->{
-			
-			if (getTimeA().getId().equals( tmj.getTime().getId() )) {
-				setGolsDoJogoTimaA(tmj.getGols());
-			} 
-			if (getTimeB().getId().equals( tmj.getTime().getId() )){
-				setGolsDoJogoTimaB(tmj.getGols());
-			} 
-		});
+		System.out.println(tipo);
+		System.out.println(jogo);
+		if (isResultado()) {
+			getJogo().getTimesNoJogo().forEach(tmj ->{
+				if (getTimeA() != null && getTimeA().getId().equals( tmj.getTime().getId() )) {
+					setTimeNoJogoTimeA(tmj.getId());
+					setGolsDoJogoTimaA(tmj.getGols());
+				} 
+				if (getTimeB() != null && getTimeB().getId().equals( tmj.getTime().getId() )){
+					setTimeNoJogoTimeB(tmj.getId());
+					setGolsDoJogoTimaB(tmj.getGols());
+				} 
+			});
+		}	
 	}
 	
 	public void processarPontuacaoAcertarTimes() {
@@ -163,6 +279,8 @@ public class Palpite implements Comparable<Palpite> {
 		});
 	}
 	
+	
+	@Deprecated
 	public void processarPontuacao() {
 		popularGolsDoJogo();
 		
@@ -248,6 +366,16 @@ public class Palpite implements Comparable<Palpite> {
 		return golsPalpiteTime >= QTD_GOLS_BENEFICIO_PLACAR_ALTO && golsJogoTime >= QTD_GOLS_BENEFICIO_PLACAR_ALTO;
 	}
 	
+	
+	public void processarApenasPalpitesDeJogosComResultado() {
+		if (isResultado()) {
+			if (golsDoJogoTimaA != null && golsDoJogoTimaB != null) {
+				processarPontuacaoAcumulativa();
+			}
+		} else {
+			setPontuacaoAtingida(null);
+		}
+	}
 	
 	
 	public void processarPontuacaoAcumulativa() {
@@ -441,7 +569,7 @@ public class Palpite implements Comparable<Palpite> {
 	}
 
 	public Double getPontuacaoAtingida() {
-		return pontuacaoAtingida;
+		return pontuacaoAtingida != null ? pontuacaoAtingida : 0.0;
 	}
 
 	public void setPontuacaoAtingida(Double pontuacaoAtingida) {
@@ -451,6 +579,17 @@ public class Palpite implements Comparable<Palpite> {
 	
 	public String getRegraPontuacao() {
 		return regraPontuacao;
+	}
+	
+	public Map<?, ?> getDetalhePontuacaoMap() throws JsonParseException, JsonMappingException, IOException {
+		
+		if (Objects.nonNull(regraPontuacao)) {
+			ObjectMapper mapper = new ObjectMapper();	
+			TreeMap<?,?> detalhePontuacao = new TreeMap<>();
+			return mapper.readValue(regraPontuacao, detalhePontuacao.getClass());
+		} 
+		
+		return null;
 	}
 
 	public void setRegraPontuacao(String regraPontuacao) {
@@ -502,174 +641,131 @@ public class Palpite implements Comparable<Palpite> {
 		palpite.setTimeB(b);
 		
 		
-		//testarEmLote(brasil, alemanha, palpite);
+		testarEmLote(brasil, alemanha, palpite);
 		
 		//System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		
-		testarIndividual(brasil, alemanha, palpite);
+		//testarIndividual(brasil, alemanha, palpite);
 		
 	}
 
-	private static void testarIndividual(TimeNoJogo brasil, TimeNoJogo alemanha, Palpite palpite) {
+	private static void testarIndividual(TimeNoJogo brasil, TimeNoJogo alemanha, Palpite palpite) {		
 		
 		brasil.setGols(5);
-		alemanha.setGols(5);
-		palpite.setGolsTimeA(4);
-		palpite.setGolsTimeB(4);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(0);
-		alemanha.setGols(0);
-		palpite.setGolsTimeA(2);
-		palpite.setGolsTimeB(2);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(0);
 		alemanha.setGols(0);
 		palpite.setGolsTimeA(4);
-		palpite.setGolsTimeB(4);
+		palpite.setGolsTimeB(0);
+		palpite.setTipo(Palpite.RESULTADO);
 		palpite.processarPontuacaoAcumulativa();
+		
 		escreverResultado(palpite, brasil, alemanha);
 		
-		brasil.setGols(0);
-		alemanha.setGols(1);
-		palpite.setGolsTimeA(1);
-		palpite.setGolsTimeB(1);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
+		PalpiteProcessor processor = new PalpiteProcessor();
+		
+		processor.setPontuacaoAcertarEmpate(9.0);
+		processor.setPontuacaoAcertarPlacar(3.0);
+		processor.setPontuacaoAcertarQtdGolsTime(3.0);
+		processor.setPontuacaoAcertarVencedor(9.0);
+		processor.setGolsJogoTimeA(brasil.getGols().longValue());
+		processor.setGolsJogoTimeB(alemanha.getGols().longValue());
+		processor.setGolsTimeA(palpite.getGolsTimeA().longValue());
+		processor.setGolsTimeB(palpite.getGolsTimeB().longValue());
+		
+		escreverResultado(processor);
 		
 		
-		brasil.setGols(0);
-		alemanha.setGols(1);
-		palpite.setGolsTimeA(3);
-		palpite.setGolsTimeB(1);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
 		
 		
-		brasil.setGols(0);
-		alemanha.setGols(1);
-		palpite.setGolsTimeA(0);
-		palpite.setGolsTimeB(1);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		
-		brasil.setGols(2);
-		alemanha.setGols(3);
-		palpite.setGolsTimeA(2);
-		palpite.setGolsTimeB(3);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(2);
-		alemanha.setGols(3);
-		palpite.setGolsTimeA(1);
-		palpite.setGolsTimeB(4);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(2);
-		alemanha.setGols(3);
-		palpite.setGolsTimeA(1);
-		palpite.setGolsTimeB(2);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(2);
-		alemanha.setGols(4);
-		palpite.setGolsTimeA(2);
-		palpite.setGolsTimeB(4);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		
-		brasil.setGols(2);
-		alemanha.setGols(4);
-		palpite.setGolsTimeA(1);
-		palpite.setGolsTimeB(4);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(2);
-		alemanha.setGols(4);
-		palpite.setGolsTimeA(5);
-		palpite.setGolsTimeB(4);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(4);
-		alemanha.setGols(4);
-		palpite.setGolsTimeA(4);
-		palpite.setGolsTimeB(4);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(4);
-		alemanha.setGols(4);
-		palpite.setGolsTimeA(2);
-		palpite.setGolsTimeB(2);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(4);
-		alemanha.setGols(4);
-		palpite.setGolsTimeA(5);
-		palpite.setGolsTimeB(5);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(4);
-		alemanha.setGols(4);
-		palpite.setGolsTimeA(5);
-		palpite.setGolsTimeB(4);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(5);
-		alemanha.setGols(4);
-		palpite.setGolsTimeA(5);
-		palpite.setGolsTimeB(4);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(5);
-		alemanha.setGols(4);
-		palpite.setGolsTimeA(7);
-		palpite.setGolsTimeB(4);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(5);
-		alemanha.setGols(4);
-		palpite.setGolsTimeA(5);
-		palpite.setGolsTimeB(6);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		
-		brasil.setGols(5);
-		alemanha.setGols(4);
-		palpite.setGolsTimeA(7);
-		palpite.setGolsTimeB(9);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(2);
-		alemanha.setGols(4);
-		palpite.setGolsTimeA(7);
-		palpite.setGolsTimeB(9);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
-		
-		brasil.setGols(4);
-		alemanha.setGols(5);
-		palpite.setGolsTimeA(7);
-		palpite.setGolsTimeB(9);
-		palpite.processarPontuacaoAcumulativa();
-		escreverResultado(palpite, brasil, alemanha);
+		/*
+		 * brasil.setGols(0); alemanha.setGols(0); palpite.setGolsTimeA(2);
+		 * palpite.setGolsTimeB(2); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(0); alemanha.setGols(0); palpite.setGolsTimeA(4);
+		 * palpite.setGolsTimeB(4); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(0); alemanha.setGols(1); palpite.setGolsTimeA(1);
+		 * palpite.setGolsTimeB(1); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * 
+		 * brasil.setGols(0); alemanha.setGols(1); palpite.setGolsTimeA(3);
+		 * palpite.setGolsTimeB(1); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * 
+		 * brasil.setGols(0); alemanha.setGols(1); palpite.setGolsTimeA(0);
+		 * palpite.setGolsTimeB(1); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * 
+		 * brasil.setGols(2); alemanha.setGols(3); palpite.setGolsTimeA(2);
+		 * palpite.setGolsTimeB(3); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(2); alemanha.setGols(3); palpite.setGolsTimeA(1);
+		 * palpite.setGolsTimeB(4); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(2); alemanha.setGols(3); palpite.setGolsTimeA(1);
+		 * palpite.setGolsTimeB(2); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(2); alemanha.setGols(4); palpite.setGolsTimeA(2);
+		 * palpite.setGolsTimeB(4); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * 
+		 * brasil.setGols(2); alemanha.setGols(4); palpite.setGolsTimeA(1);
+		 * palpite.setGolsTimeB(4); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(2); alemanha.setGols(4); palpite.setGolsTimeA(5);
+		 * palpite.setGolsTimeB(4); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(4); alemanha.setGols(4); palpite.setGolsTimeA(4);
+		 * palpite.setGolsTimeB(4); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(4); alemanha.setGols(4); palpite.setGolsTimeA(2);
+		 * palpite.setGolsTimeB(2); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(4); alemanha.setGols(4); palpite.setGolsTimeA(5);
+		 * palpite.setGolsTimeB(5); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(4); alemanha.setGols(4); palpite.setGolsTimeA(5);
+		 * palpite.setGolsTimeB(4); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(5); alemanha.setGols(4); palpite.setGolsTimeA(5);
+		 * palpite.setGolsTimeB(4); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(5); alemanha.setGols(4); palpite.setGolsTimeA(7);
+		 * palpite.setGolsTimeB(4); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(5); alemanha.setGols(4); palpite.setGolsTimeA(5);
+		 * palpite.setGolsTimeB(6); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * 
+		 * brasil.setGols(5); alemanha.setGols(4); palpite.setGolsTimeA(7);
+		 * palpite.setGolsTimeB(9); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(2); alemanha.setGols(4); palpite.setGolsTimeA(7);
+		 * palpite.setGolsTimeB(9); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 * 
+		 * brasil.setGols(4); alemanha.setGols(5); palpite.setGolsTimeA(7);
+		 * palpite.setGolsTimeB(9); palpite.processarPontuacaoAcumulativa();
+		 * escreverResultado(palpite, brasil, alemanha);
+		 */
 	}
 
 	private static void testarEmLote(TimeNoJogo brasil, TimeNoJogo alemanha, Palpite palpite) {
@@ -682,9 +778,22 @@ public class Palpite implements Comparable<Palpite> {
 						alemanha.setGols(y);
 						palpite.setGolsTimeA(x);
 						palpite.setGolsTimeB(z);
+						palpite.setTipo(Palpite.RESULTADO);
 						palpite.processarPontuacaoAcumulativa();
 						
 						escreverResultado(palpite, brasil, alemanha);
+						
+						PalpiteProcessor processor = new PalpiteProcessor();
+						processor.setPontuacaoAcertarEmpate(9.0);
+						processor.setPontuacaoAcertarPlacar(3.0);
+						processor.setPontuacaoAcertarQtdGolsTime(3.0);
+						processor.setPontuacaoAcertarVencedor(9.0);
+						processor.setGolsJogoTimeA(brasil.getGols().longValue());
+						processor.setGolsJogoTimeB(alemanha.getGols().longValue());
+						processor.setGolsTimeA(palpite.getGolsTimeA().longValue());
+						processor.setGolsTimeB(palpite.getGolsTimeB().longValue());
+						
+						escreverResultado(processor);
 					}
 				}
 			}
@@ -713,6 +822,27 @@ public class Palpite implements Comparable<Palpite> {
 		System.out.println("------------------------------------");
 		System.out.println("");
 	}
+	
+	private static void escreverResultado(PalpiteProcessor palpite) {
+		System.out.println("---------PALPITE PROCESSOR--------");
+		Double total = palpite.processarPontuacao();
+		Map<String, Double> detalhePontuacao = null;
+		detalhePontuacao = palpite.getDetalhePontuacao();
+		detalhePontuacao = detalhePontuacao.entrySet()
+		        .stream()
+		        .sorted(Map.Entry.comparingByKey())
+		        .collect(LinkedHashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), Map::putAll);
+		System.out.println("Jogo:    Time A "+palpite.getGolsJogoTimeA()+" x "+palpite.getGolsJogoTimeB()+" Time B");
+		System.out.println("Palpite: Time A "+palpite.getGolsTimeA()+" x "+palpite.getGolsTimeB()+" Time B");
+		System.out.println("Detalhamento da Pontuação: Total(*"+total+"*)");
+		
+		for (String regraPontoacao : detalhePontuacao.keySet()) {
+			System.out.println("  - " + regraPontoacao + ": " + detalhePontuacao.get(regraPontoacao));
+		}
+		System.out.println("------------------------------------");
+		System.out.println("");
+	}
+
 
 	@Override
 	public int compareTo(Palpite o) {
@@ -723,5 +853,27 @@ public class Palpite implements Comparable<Palpite> {
 		return 1;
 		
 	}
+
+
+	public Integer getTimeNoJogoTimeA() {
+		return timeNoJogoTimeA;
+	}
+
+
+	public void setTimeNoJogoTimeA(Integer timeNoJogoTimeA) {
+		this.timeNoJogoTimeA = timeNoJogoTimeA;
+	}
+
+
+	public Integer getTimeNoJogoTimeB() {
+		return timeNoJogoTimeB;
+	}
+
+
+	public void setTimeNoJogoTimeB(Integer timeNoJogoTimeB) {
+		this.timeNoJogoTimeB = timeNoJogoTimeB;
+	}
+
+
 	
 }

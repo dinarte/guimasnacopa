@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Entity
 public class Participante {
 	
@@ -41,6 +43,8 @@ public class Participante {
 	@Transient
 	private Double porcentagemPalpites;
 	
+	@Transient
+	private Boolean userOnLine;
 	
 
 	public Boolean getAdmin() {
@@ -137,6 +141,14 @@ public class Participante {
 
 	public void setExibirClassificacaoNoRanking(Boolean exibirClassificacaoNoRanking) {
 		this.exibirClassificacaoNoRanking = exibirClassificacaoNoRanking;
+	}
+
+	public Boolean getUserOnLine() {
+		return userOnLine == null ? false : userOnLine;
+	}
+
+	public void setUserOnLine(Boolean userOnLine) {
+		this.userOnLine = userOnLine;
 	}
 
 	

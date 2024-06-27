@@ -35,7 +35,8 @@ public class Usuario {
 	private LocalDate ultimoLogin;
 	
 	private Boolean admin;
-
+	
+	
 	public Usuario() {}
 	
 	public Usuario(Integer id) {

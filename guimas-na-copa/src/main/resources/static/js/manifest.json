@@ -6,7 +6,7 @@
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ffffff",
+  "background_color": "#000000",
   "theme_color": "#2d76e1",
   "generated" : "true",
   "categories": ["sport", "bet", "bolão", "diversão", "futebol", "soccer", "esporte"],
@@ -84,7 +84,8 @@
     {
       "src": "/img/icons/icon-1024x1024.png",
       "type": "image/png",
-      "sizes": "1024x1024"
+      "sizes": "1024x1024",
+      "purpose": "maskable"
     }
   ]
 }

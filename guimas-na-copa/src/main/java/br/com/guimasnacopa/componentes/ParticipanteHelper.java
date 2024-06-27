@@ -39,6 +39,7 @@ public class ParticipanteHelper {
 
 		participantes.forEach(p -> {
 			popularPorcentagemDePreenchimentoDoParticipante(p);
+			p.setUserOnLine(Autenticacao.isUserOnline(p.getUsuario().getId()));
 		});
 		model.addAttribute("participantes",participantes);
 	}
