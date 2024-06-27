@@ -41,8 +41,18 @@ public class Fase {
 	
 	private Double acertarTimes;
 	
+	private Integer qtdGolsConsideraPlacarAlto;
+	
+	private Double pontuacaoAcertarPlacarAlto;
+	
+	private Double maximoPontuacaoPossivelPalpite;
+	
+	private Boolean faseFinal;
+	
+	private Integer ordinal;
+	
 	private Long idApi;
-
+	
 	public Integer getId() {
 		return id;
 	}
@@ -154,6 +164,45 @@ public class Fase {
 	public void setIdApi(Long idApi) {
 		this.idApi = idApi;
 	}
-		
-	
+
+	public Integer getOrdinal() {
+		return ordinal;
+	}
+
+	public void setOrdinal(Integer ordinal) {
+		this.ordinal = ordinal;
+	}
+
+	public Integer getQtdGolsConsideraPlacarAlto() {
+		return qtdGolsConsideraPlacarAlto;
+	}
+
+	public void setQtdGolsConsideraPlacarAlto(Integer qtdGolsConsideraPlacarAlto) {
+		this.qtdGolsConsideraPlacarAlto = qtdGolsConsideraPlacarAlto;
+	}
+
+	public Double getPontuacaoAcertarPlacarAlto() {
+		return pontuacaoAcertarPlacarAlto;
+	}
+
+	public void setPontuacaoAcertarPlacarAlto(Double pontuacaoAcertarPlacarAlto) {
+		this.pontuacaoAcertarPlacarAlto = pontuacaoAcertarPlacarAlto;
+	}
+
+	public Double getMaximoPontuacaoPossivelPalpite() {
+		return maximoPontuacaoPossivelPalpite;
+	}
+
+	public void setMaximoPontuacaoPossivelPalpite(Double maximoPontuacaoPossivelPalpite) {
+		this.maximoPontuacaoPossivelPalpite = maximoPontuacaoPossivelPalpite;
+	}
+
+	public Boolean getFaseFinal() {
+		return faseFinal == null ? false : faseFinal;
+	}
+
+	public void setFaseFinal(Boolean faseFinal) {
+		this.faseFinal = faseFinal;
+	}			
+
 }

@@ -260,10 +260,26 @@ img.img-perfil-peq {
 }		
 
 
+				  
+label.br-2 {
+	height: 35px;
+}
+
+label.br-3 {
+	height: 40px;
+}
+
+
+
 
 @media (max-width: 1004px) {
     .esconder-no-movel {
         display: none;
     }
+    
+    label.br-2, label.br-3 {
+	height: auto;
+}
+    
 }
             

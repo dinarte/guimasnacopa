@@ -97,6 +97,11 @@ public class Palpite implements Comparable<Palpite> {
 		}
 	}
 	
+	@Transient
+	public boolean isApostaFechada() {
+		return !isApostaAberta();
+	}
+	
 	
 	@Transient
 	public boolean isExibePontuacaoNoCard() {

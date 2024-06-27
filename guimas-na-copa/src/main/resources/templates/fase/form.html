@@ -14,8 +14,9 @@
         	<div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">Gerenciar fase</h1>
-                    <h3 th:if="${fase.id == 0}">Nova Fase</h3>
-                    <h3 th:if="${fase.id != 0}">Editar</h3>
+                    <h3 th:if="${fase.id == null}">Nova Fase</h3>
+                    <h3 th:if="${fase.id != null}">Editar</h3>
+                    
                 </div>
             </div>
         
@@ -23,56 +24,100 @@
         			
         		 <input type="hidden" th:field="*{id}">
         		 
-        		 <div class="form-group">
-				    <label for="nome">Competicao:</label>
-        		 <select th:field="*{competicao}" class="form-control">
-				  	<option th:each="c : ${competicaoList}" 
-				          th:value="${c.id}" 
-				          th:text="${c.nome}">Wireframe</option>
-				 </select>
-				 </div>
+        		 <div class="row">
         		 
-        		  <div class="form-group">
-				    <label for="nome">Fase:</label>
-				    <input type="text" class="form-control" id="nome" th:value="*{nome}" th:field="*{nome}">
+	        		 <div class="form-group col-lg-3 col-md-6 col-sm-12">
+					    <label for="competicao">Competição:</label>
+		        		 <select th:field="*{competicao}" class="form-control">
+						  	<option th:each="c : ${competicaoList}" 
+						          th:value="${c.id}" 
+						          th:text="${c.nome}">Wireframe</option>
+						 </select>
+					 </div>
+	        		 
+	        		  <div class="form-group col-lg-3 col-md-6 col-sm-12">
+					    <label for="nome">Nome da Fase:</label>
+					    <input type="text" class="form-control" id="nome" th:value="*{nome}" th:field="*{nome}">
+					  </div>
+					  
+					  <div class="form-group col-lg-2 col-md-4 col-sm-4">
+					    <label for="faseFinal">Esta é a fase final?:</label> 
+					    <input type="checkbox" class="form-control" id="faseFinal" th:value="*{faseFinal}" th:field="*{faseFinal}">
+					  </div>
+				 </div>	  
+				  
+				  
+				  <div class="panel panel-default">
+				  	<div class="panel-heading">
+                        Bets - Pontuações básicas
+                    </div>
+                    <div class="panel-body">
+	                    <div class="row">
+							  <div class="form-group col-lg-3 col-md-6 col-sm-12">
+							    <label for="pontuacaoAcertarVencedor">Acertar o vencedor:</label>
+							    <input type="number" step="0.50" class="form-control" id="pontuacaoAcertarVencedor" th:value="*{pontuacaoAcertarVencedor}" th:field="*{pontuacaoAcertarVencedor}">
+							  </div>
+							  <div class="form-group col-lg-3 col-md-6 col-sm-12">
+							    <label for="acertarEmpate">Acertar empate:</label>
+							    <input type="number" step="0.50" class="form-control" id="acertarEmpate" th:value="*{acertarEmpate}" th:field="*{acertarEmpate}">
+							  </div>
+							  <div class="form-group col-lg-3 col-md-6 col-sm-12">
+							    <label for="acertarQtdGolsUmDosTimes">Acertar gols de um dos times:</label>
+							    <input type="number" step="0.50" class="form-control" id="acertarQtdGolsUmDosTimes" th:value="*{acertarQtdGolsUmDosTimes}" th:field="*{acertarQtdGolsUmDosTimes}">
+							  </div>
+					  	</div> 
+                    </div>
 				  </div>
 				  
-				  <div class="row">
-					  <div class="form-group col-lg-1">
-					    <label for="nome">Acertar Placar:</label>
-					    <input type="number" step="0.50" class="form-control" id="acertarPlacar" th:value="*{pontuacaoAcertarPlacar}" th:field="*{pontuacaoAcertarPlacar}">
-					  </div>
-					  
-					  <div class="form-group col-lg-2">
-					    <label for="nome">Vencedor e Gols:</label>
-					    <input type="number" step="0.50" class="form-control" id="pontuacaoAcertarVencedorEQtdGols" th:value="*{pontuacaoAcertarVencedorEQtdGols}" th:field="*{pontuacaoAcertarVencedorEQtdGols}">
-					  </div>
-					  
-					  <div class="form-group col-lg-2">
-					    <label for="nome">Apenas Vencedor:</label>
-					    <input type="number" step="0.50" class="form-control" id="pontuacaoAcertarVencedor" th:value="*{pontuacaoAcertarVencedor}" th:field="*{pontuacaoAcertarVencedor}">
-					  </div>
-					  
-					  <div class="form-group col-lg-1">
-					    <label for="nome">Empate:</label>
-					    <input type="number" step="0.50" class="form-control" id="acertarEmpate" th:value="*{acertarEmpate}" th:field="*{acertarEmpate}">
-					  </div>
-					  
-					  <div class="form-group col-lg-2">
-					    <label for="nome">Gols Perdedor:</label>
-					    <input type="number" step="0.50" class="form-control" id="acertarQtdGolsUmDosTimes" th:value="*{acertarQtdGolsUmDosTimes}" th:field="*{acertarQtdGolsUmDosTimes}">
-					  </div>
-					  
-					  <div class="form-group col-lg-2">
-					    <label for="nome">Acertar Um Time:</label>
-					    <input type="number" step="0.50" class="form-control" id="acertarUmTime" th:value="*{acertarUmTime}" th:field="*{acertarUmTime}">
-					  </div>
-					  
-					  <div class="form-group col-lg-2">
-					    <label for="nome">Acertar Dois Times:</label>
-					    <input type="number" step="0.50" class="form-control" id="acertarTimes" th:value="*{acertarTimes}" th:field="*{acertarTimes}">
-					  </div>
-				  </div>
+				  <div class="panel panel-default">
+				  	<div class="panel-heading">
+                        Bets - Prêmios e bonificações
+                    </div>
+                    <div class="panel-body">
+                    	<div class="form-group col-lg-3 col-md-6 col-sm-12">
+						    <label for="acertarPlacar" class="br-2">Prêmio de placar exato:</label>
+						    <input type="number" step="0.50" class="form-control" id="acertarPlacar" th:value="*{pontuacaoAcertarPlacar}" th:field="*{pontuacaoAcertarPlacar}">
+						</div>
+                    	<div class="form-group col-lg-3 col-md-6 col-sm-12">
+						    <label for="qtdGolsConsideraPlacarAlto" class="br-2">Número de gols de um time para ser considerado placar alto:</label>
+						    <input type="number" step="1" class="form-control" id="qtdGolsConsideraPlacarAlto" th:value="*{qtdGolsConsideraPlacarAlto}" th:field="*{qtdGolsConsideraPlacarAlto}">
+					  	</div>
+					  	<div class="form-group col-lg-3 col-md-6 col-sm-12">
+						    <label for="pontuacaoAcertarPlacarAlto" class="br-2">Pontuação bonus por acertar placal alto:</label>
+						    <input type="number" step="0.50" class="form-control" id="pontuacaoAcertarPlacarAlto" th:value="*{pontuacaoAcertarPlacarAlto}" th:field="*{pontuacaoAcertarPlacarAlto}">
+					  	</div>
+					  	<div class="form-group col-lg-3 col-md-6 col-sm-12">
+						    <label for="maximoPontuacaoPossivelPalpite" class="br-2">Máximo de pontuação possível em um palpite:</label>
+						    <input type="number" step="0.50" class="form-control" id="maximoPontuacaoPossivelPalpite" th:value="*{maximoPontuacaoPossivelPalpite}" th:field="*{maximoPontuacaoPossivelPalpite}">
+					  	</div>
+                    </div>
+                  </div>  
+                  
+                  <div class="panel panel-default">
+				  	<div class="panel-heading">
+                        Bets - Pontos por Predição de finalistas
+                        <span class="text-primary">Preencha apenas se esta fase for a Final do campeonato.</span>
+                    </div>
+                    <div class="panel-body">
+						<div class="row">
+							
+							<div class="form-group col-lg-2">
+								<label for="acertarTimes">Acertar Finalistas:</label>
+								<input type="number" step="0.50" class="form-control" id="acertarTimes" th:value="*{acertarTimes}" th:field="*{acertarTimes}">
+							</div>
+							
+							<div class="form-group col-lg-2">
+								<label for="form-control">Acertar Campão:</label>
+								<input type="number" step="0.50" class="form-control" id="acertarUmTime" th:value="*{acertarUmTime}" th:field="*{acertarUmTime}">
+							</div>
+							 
+						</div>
+                    </div>
+                  </div>  
+				  
+				  
+				  
+				  
         	
         		  
 				  <button type="submit" class="btn btn-info btn-block" th:text="${fase.id == 0 ? 'Cadastrar' : 'Salvar'}">Salvar</button>
@@ -88,7 +133,8 @@
 
     <srcript th:replace="fragments/main :: scrptsblock" />
     
-
+				  	
+			
 </body>
 
 </html>
