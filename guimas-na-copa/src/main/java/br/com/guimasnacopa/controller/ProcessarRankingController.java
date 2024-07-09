@@ -32,5 +32,16 @@ public class ProcessarRankingController {
         System.out.println("Tempo de execução " + duration.toMillis() + " milissegundos");
 		return processor;
 	} 
+	
+	
+	@GetMapping("/{bolaoId}/processar/save")
+	public List<ParticipanteNoRankingProcessor> processarESalvar(@PathVariable("bolaoId") Integer bolaoId) {
+		Instant start = Instant.now();
+		List<ParticipanteNoRankingProcessor> processor = rankingService.processarESalvarByBolaoId(bolaoId);
+		Instant end = Instant.now();
+        Duration duration = Duration.between(start, end);
+        System.out.println("Tempo de execução " + duration.toMillis() + " milissegundos");
+		return processor;
+	} 
 
 }

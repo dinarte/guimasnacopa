@@ -12,52 +12,90 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.guimasnacopa.api.domain.interfaces.IPalpiteBasico;
 import br.com.guimasnacopa.domain.PalpiteForProcessingVo;
 import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.ParticipanteRepository;
 
 
 @Service
+@Transactional
 public class ProcessaFlatRankingService {
 	
 	
 	@Autowired PalpiteRepository palpiteRepo;
 	@Autowired ParticipanteRepository participanteRepo;
+	@Autowired PalpitesProcessorsCache cacheSrvice;
 	
-	
-	@Transactional
+	public List<ParticipanteNoRankingProcessor> processarESalvarByBolaoId(Integer bolaoId) {
+		List<ParticipanteNoRankingProcessor> processamento = processarByBolaoId(bolaoId);
+		save(processamento);
+		return processamento;
+		
+	}
+
 	public List<ParticipanteNoRankingProcessor> processarByBolaoId(Integer bolaoId){
 		List<PalpiteProcessor> palpiteProcessados = processarPalpites(bolaoId);
 		List<ParticipanteNoRankingProcessor> participantesProcessados = processarParticipantes(palpiteProcessados);
-		for (ParticipanteNoRankingProcessor participanteNoRankingProcessor : participantesProcessados) {
-			System.out.println(participanteNoRankingProcessor.getName());
-		}
+		return processarClassificacao(participantesProcessados);		
+	}
+	
+	public List<ParticipanteNoRankingProcessor> processarByBolaoId(List<PalpiteProcessor> processors,  Integer bolaoId){
+		List<PalpiteProcessor> palpiteProcessados = processarPalpites(bolaoId, processors);
+		List<ParticipanteNoRankingProcessor> participantesProcessados = processarParticipantes(palpiteProcessados);
 		return processarClassificacao(participantesProcessados);		
 	}
 
 	private List<PalpiteProcessor>  processarPalpites(Integer bolaoId) {
-		
-		
-		List<PalpiteForProcessingVo> palpitesForProcess = palpiteRepo.findAllForProssingByBolaoId(bolaoId);
-		
-		List<PalpiteProcessor> processors = palpitesForProcess
-				.parallelStream()
-				.map( palpiteToProccess -> {
-						PalpiteProcessor processor = new ObjectMapper().convertValue(palpiteToProccess, PalpiteProcessor.class);
-						if (processor.canProcess()) {
-							processor.processarPontuacao();
-							palpiteRepo.updatePontuacao(processor.getPontuacaoAtingida(), getDetahePonuacaoString(processor), processor.getId().intValue());
-						}
-						return processor;
-				})
-				.filter( PalpiteProcessor::canProcess )
-				.collect(Collectors.toList());
+		return processarPalpites(bolaoId, null);
+	}
 	
+	private List<PalpiteProcessor>  processarPalpites(Integer bolaoId, List<PalpiteProcessor> processors) {
 		
+		processors = processors != null ? processors : loadPalpitesProcessors(bolaoId);
+		
+		processors = processors.stream()
+				.filter( PalpiteProcessor::canProcess )
+				.map( processor -> {
+						processor.processarPontuacao();
+						return processor;
+				}).collect(Collectors.toList());
+			
 		return processors;
 	}
 
-	private String getDetahePonuacaoString(PalpiteProcessor processor) {
+	public List<PalpiteProcessor> loadPalpitesProcessors(Integer bolaoId) {
+		return loadPalpitesProcessors(bolaoId, false);
+	}
+	
+	public List<PalpiteProcessor> loadPalpitesProcessorsFromCache(Integer bolaoId) {
+		return loadPalpitesProcessors(bolaoId, true);
+	}
+	
+	public List<PalpiteProcessor> loadPalpitesProcessors(Integer bolaoId, Boolean cache) {
+		
+		System.out.println("Cache mode is " + cache);
+		
+		if (cache && cacheSrvice.notIsEmpty()) {
+			System.out.println("Load from Cache");
+			return cacheSrvice.load();
+		} else {
+			System.out.println("Load from DataBase");
+			List<PalpiteForProcessingVo> palpitesForProcess = palpiteRepo.findAllForProssingByBolaoId(bolaoId);
+			List<PalpiteProcessor> processors = palpitesForProcess.parallelStream().map( palpVo -> {
+				return new ObjectMapper().convertValue(palpVo, PalpiteProcessor.class);
+			}).collect(Collectors.toList());
+			
+			if (cache) {
+				System.out.println("Set cache");
+				cacheSrvice.set(processors);
+			}
+			
+			return processors;
+		}	
+	}
+
+	private String getDetahePonuacaoString(IPalpiteBasico processor) {
 		try {
 			return new ObjectMapper().writeValueAsString(processor.getDetalhePontuacao());
 		} catch (JsonProcessingException e) {
@@ -102,6 +140,11 @@ public class ProcessaFlatRankingService {
 
 	private IPalpiteBasico mapToPalpiteBasico(PalpiteProcessor p) {
 		return new IPalpiteBasico() {
+
+			@Override
+			public Long getId() {
+				return p.getId();
+			}
 			
 			@Override
 			public Double getPontuacaoAtingida() {
@@ -137,6 +180,7 @@ public class ProcessaFlatRankingService {
 			public Double getAproveitamentoPalpite() {
 				return p.getAproveitamentoPalpite();
 			}
+
 		};
 	}
 	
@@ -147,7 +191,7 @@ public class ProcessaFlatRankingService {
 		anterior.setClassificacao(1);
 		anterior.setExibirClassificacaoNoRanking(true);
 		participanteRepo.updateRaking(anterior.getId(), anterior.getPontuacao(), anterior.getAproveitamento(), anterior.getClassificacao(), anterior.getExibirClassificacaoNoRanking());
-		for (int i = 1; i < participantes.size()-1; i++) {
+		for (int i = 1; i < participantes.size(); i++) {
 			ParticipanteNoRankingProcessor atual = participantes.get(i);
 			if (atual.getPontuacao().equals(anterior.getPontuacao())) {
 				atual.setClassificacao(anterior.getClassificacao());
@@ -158,11 +202,19 @@ public class ProcessaFlatRankingService {
 			}
 			
 			anterior = atual;
-			participanteRepo.updateRaking(atual.getId(), atual.getPontuacao(), atual.getAproveitamento(), atual.getClassificacao(), atual.getExibirClassificacaoNoRanking());
 		}
 		
 		return participantes;
 		
-	}			
+	}		
+	
+	private void save(List<ParticipanteNoRankingProcessor> participantes) {
+		participantes.forEach(p -> {
+			participanteRepo.updateRaking(p.getId().intValue(), p.getPontuacao(), p.getAproveitamento(), p.getClassificacao(), p.getExibirClassificacaoNoRanking());
+			p.getPalpitesProcessados().forEach(pal -> {
+				palpiteRepo.updatePontuacao(pal.getPontuacaoAtingida(), getDetahePonuacaoString(pal), pal.getId().intValue());
+			});
+		});
+	}
 	
 }

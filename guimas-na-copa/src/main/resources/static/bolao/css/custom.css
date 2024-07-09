@@ -52,103 +52,107 @@ img.img-perfil-peq {
     border: 1px solid #ccc;
 }
 
-.panel-body{
+.panel-body{        
+	padding: 4px
+}
             
-            padding: 4px
-            }
-            
-            .panel-heading {
-             	text-align: center;
-            }
-            
-            
-            .tab-jogo{
-            	width: 100%;
-            	
-            }
-            
-            .tab-jogo .desc-p{
-  	          text-align: center;
-            }
-            .tab-jogo .vs{
-            	width: 20%;
-            	text-align: center;
-            	vertical-align: middle;
-            }
-            .tab-time .vs{
-            	width: 20%;
-            }
-            
-            .data_h{
-            	text-align: center;
-            	color: #ccc;
-            	font-weight: bold;
-            }
-            
-            .p-valor{
-            	width:30%;
-            	text-align: center;
-            }
-            
-            .p-compara{
-            	width:5%;
-            	text-align: center;
-            	color: #ccc;
-            	font-weight: bolder;
-            }
-            
-            .p-result{
-            	color: #1E90FF;
-            	font-weight: bolder;
-            }
-            .campeao{
-            	text-align: center;
-            }
-            
-            .grupo .panel-heading{color: #fff}
-            
-            .grupo{border: 1px solid #ED9455}
-            .grupo .panel-heading{
-            	background-color: #ED9455;
-            }
-           
-            .grupoa{border: 1px solid #87CEEB}
-            .grupoa .panel-heading{
-            	background-color: #87CEEB;
-            }
-            .grupob{border: 1px solid  #DBA979}
-            .grupob .panel-heading{
-            	background-color:  #DBA979;
-            }
-            .grupoc{border: 1px solid #48D1CC}
-            .grupoc .panel-heading{
-            	background-color: #48D1CC;
-            }
-            .grupod{border: 1px solid #FFA500}
-            .grupod .panel-heading{
-            	background-color: #FFA500;
-            }
-            .grupoe{border: 1px solid #66CDAA}
-            .grupoe .panel-heading{
-            	background-color: #66CDAA;
-            }
-            .grupof{border: 1px solid #B0E0E6}
-            .grupof .panel-heading{
-            	background-color: #B0E0E6;
-            }
-            .grupog{border: 1px solid #DB7093}
-            .grupog .panel-heading{
-            	background-color: #DB7093;
-            }
-            .grupoh{border: 1px solid #DA70D6}
-            .grupoh .panel-heading{
-            	background-color: #DA70D6;
-            }
-            .bonusfinal{border: 1px solid #DA70D6}
-            .bonusfinal .panel-heading{
-            	background-color: #DA70D6;
-            }
-            
+.panel-heading {
+ 	text-align: center;
+}
+
+
+.tab-jogo{
+	width: 100%;
+	
+}
+
+.tab-jogo .desc-p{
+ text-align: center;
+}
+.tab-jogo .vs{
+	width: 20%;
+	text-align: center;
+	vertical-align: middle;
+}
+.tab-time .vs{
+	width: 20%;
+}
+
+.data_h{
+	text-align: center;
+	color: #ccc;
+	font-weight: bold;
+}
+
+.p-valor{
+	width:30%;
+	text-align: center;
+}
+
+.p-compara{
+	width:5%;
+	text-align: center;
+	color: #ccc;
+	font-weight: bolder;
+}
+
+.p-result{
+	color: #1E90FF;
+	font-weight: bolder;
+}
+.campeao{
+	text-align: center;
+}
+
+.grupo .panel-heading{color: #fff}
+
+
+.oitavas{border: 1px solid #ED9477}
+.oitavas .panel-heading{
+	background-color: #ED9477;
+}
+
+.grupo{border: 1px solid #ED9455}
+.grupo .panel-heading{
+	background-color: #ED9455;
+}
+
+.grupoa{border: 1px solid #87CEEB}
+.grupoa .panel-heading{
+	background-color: #87CEEB;
+}
+.grupob{border: 1px solid  #DBA979}
+.grupob .panel-heading{
+	background-color:  #DBA979;
+}
+.grupoc{border: 1px solid #48D1CC}
+.grupoc .panel-heading{
+	background-color: #48D1CC;
+}
+.grupod{border: 1px solid #FFA500}
+.grupod .panel-heading{
+	background-color: #FFA500;
+}
+.grupoe{border: 1px solid #66CDAA}
+.grupoe .panel-heading{
+	background-color: #66CDAA;
+}
+.grupof{border: 1px solid #B0E0E6}
+.grupof .panel-heading{
+	background-color: #B0E0E6;
+}
+.grupog{border: 1px solid #DB7093}
+.grupog .panel-heading{
+	background-color: #DB7093;
+}
+.grupoh{border: 1px solid #DA70D6}
+.grupoh .panel-heading{
+	background-color: #DA70D6;
+}
+.bonusfinal{border: 1px solid #DA70D6}
+.bonusfinal .panel-heading{
+	background-color: #DA70D6;
+}
             
 .loader {
 		position: fixed;
@@ -176,6 +180,15 @@ img.img-perfil-peq {
 			padding: 3px;
 			
 		}
+		
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 30%;
+    width: 50%;
+    padding: 10px 0; /* Espaçamento interno do rodapé */
+    margin: 3px;
+}		
 		
 /*===== App Popup css =====*/
 .popup-overlay {
@@ -278,8 +291,11 @@ label.br-3 {
     }
     
     label.br-2, label.br-3 {
-	height: auto;
-}
-    
+		height: auto;
+    }
+	
+	.footer {
+    	left: 25%;
+    }
 }
             

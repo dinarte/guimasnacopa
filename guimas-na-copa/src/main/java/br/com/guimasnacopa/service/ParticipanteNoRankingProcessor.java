@@ -3,7 +3,10 @@ package br.com.guimasnacopa.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ParticipanteNoRankingProcessor {
+import br.com.guimasnacopa.api.domain.interfaces.IPalpiteBasico;
+import br.com.guimasnacopa.api.domain.interfaces.IParticipanteNoRanking;
+
+public class ParticipanteNoRankingProcessor implements IParticipanteNoRanking {
 	
 	private Long participanteId;
     
@@ -23,17 +26,20 @@ public class ParticipanteNoRankingProcessor {
 	
 	
 	
+	@Override
 	public Double getPontuacao() {
-		return palpitesProcessados.stream().collect(Collectors.summingDouble(IPalpiteBasico::getPontuacaoAtingida));
+		return palpitesProcessados.stream().filter(p->p.getPontuacaoAtingida()!=null).collect(Collectors.summingDouble(IPalpiteBasico::getPontuacaoAtingida));
 	}
 	
+	@Override
 	public Integer getAproveitamento() {
-		Double aproveitamento = palpitesProcessados.stream().collect(Collectors.summingDouble(IPalpiteBasico::getAproveitamentoPalpite)) / palpitesProcessados.size(); 
+		Double aproveitamento = palpitesProcessados.stream().filter(p->p.getPontuacaoAtingida()!=null).collect(Collectors.summingDouble(IPalpiteBasico::getAproveitamentoPalpite)) / palpitesProcessados.size(); 
 		return aproveitamento.intValue();
 	}
 	
 	
 	
+	@Override
 	public Integer getId() {
 		return this.participanteId.intValue();
 	}
@@ -42,24 +48,28 @@ public class ParticipanteNoRankingProcessor {
 		this.participanteId = id.longValue();
 	}
 	
+	@Override
 	public Long getParticipanteId() {
 		return participanteId;
 	}
 	public void setParticipanteId(Long participanteId) {
 		this.participanteId = participanteId;
 	}
+	@Override
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
+	@Override
 	public String getEmail() {
 		return email;
 	}
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	@Override
 	public String getUrlFoto() {
 		return urlFoto;
 	}
@@ -67,12 +77,14 @@ public class ParticipanteNoRankingProcessor {
 		this.urlFoto = urlFoto;
 	}
 	
+	@Override
 	public Integer getClassificacao() {
 		return classificacao;
 	}
 	public void setClassificacao(Integer classificacao) {
 		this.classificacao = classificacao;
 	}
+	@Override
 	public Boolean getExibirClassificacaoNoRanking() {
 		return exibirClassificacaoNoRanking;
 	}
@@ -80,6 +92,7 @@ public class ParticipanteNoRankingProcessor {
 		this.exibirClassificacaoNoRanking = exibirClassificacaoNoRanking;
 	}
 	
+	@Override
 	public List<IPalpiteBasico> getPalpitesProcessados() {
 		return palpitesProcessados;
 	}
@@ -89,7 +102,7 @@ public class ParticipanteNoRankingProcessor {
 	
 	@Override
 	public boolean equals(Object obj) {
-		return this.participanteId.equals(((ParticipanteNoRankingProcessor) obj).getParticipanteId());
+		return this.participanteId.equals(((IParticipanteNoRanking) obj).getParticipanteId());
 	}
 	
 	@Override

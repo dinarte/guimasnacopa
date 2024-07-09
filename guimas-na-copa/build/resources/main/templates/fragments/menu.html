@@ -43,9 +43,9 @@
 		                            <a data-loading="loader" href="/jogo/listar"><i class="fa fa-gear fa-fw"></i> Jogos </a>
 		                        </li>
 		                        
-		                        <li>
+		                        <!-- <li>
 		                            <a data-loading="loader" href="/jogos/gerenciar"><i class="fa fa-gear fa-fw"></i> Datas e Resultados</a>
-		                        </li>
+		                        </li> -->
 		              
 		                        <li>
 		                            <a data-loading="loader" href="/participantes"><i class="fa fa-gear fa-fw"></i> Participantes </a>
@@ -56,18 +56,17 @@
                         <li data-loading="loader" th:if="${autenticacao.participanteDoBolao}">
                             <a data-loading="loader" href="/palpite/editar"><i class="fa fa-plus-circle fa-fw"></i> Informar Palpites </a>
                         </li>
-                        <!-- 
+                         
                         <li th:if="${autenticacao.participanteDoBolao}">
                             <a data-loading="loader" href="/simulador"><i class="fa fa-eye fa-fw"></i> Simulador </a>
                         </li>
-                         -->
+                        
                         <li>
                             <a data-loading="loader" th:href="${'/' + bolao.permalink + '/participantes'}" href="/participantes"><i class="fa fa-users fa-fw"></i> Participantes </a>
                         </li>
                         <li>
                             <a data-loading="loader" th:href="${'/' + bolao.permalink + '/regulamento'}" href="/regulamento"><i class="fa fa-book fa-fw"></i> Regulamento </a>
                         </li>
-                        
                         
                     </ul>
                 </div>

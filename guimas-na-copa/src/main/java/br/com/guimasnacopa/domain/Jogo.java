@@ -195,5 +195,11 @@ public class Jogo {
 	public boolean isEncerrado() {
 		return execucao != null && execucao.equals(EXECUSSAO_ENCERRADO);
 	}
+	
+	@Transient
+	public String[] getExecucoesPossiveis() {
+		String[] execucoes = {EXECUSSAO_PREVISTO, EXECUSSAO_EM_ANDAMENTO, EXECUSSAO_ENCERRADO};
+		return execucoes;
+	}
 		
 }

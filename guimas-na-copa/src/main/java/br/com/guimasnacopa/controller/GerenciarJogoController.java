@@ -1,6 +1,10 @@
 package br.com.guimasnacopa.controller;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.LoginException;
 
@@ -27,7 +31,7 @@ import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.TimeNoJogoRepository;
 import br.com.guimasnacopa.repository.TimeRepository;
 import br.com.guimasnacopa.security.Autenticacao;
-import br.com.guimasnacopa.service.ProcessaRankingService;
+import br.com.guimasnacopa.service.ProcessaFlatRankingService;
 import br.com.guimasnacopa.service.TimeNoJogoService;
 
 @Controller
@@ -56,20 +60,53 @@ public class GerenciarJogoController {
 	private TimeNoJogoRepository tmjRepo;
 	
 	@Autowired 
-	private ProcessaRankingService rankingService;
+	private ProcessaFlatRankingService rankingService;
 	
 	@Autowired
 	private TimeNoJogoService tmjService;
 	
 	@Autowired
-	private BolaoCompeticaoRepository bolaoCompeticaoRepo;
+	private BolaoCompeticaoRepository bolaoCompeticaoRepo; 
+	
+	@GetMapping("/jogo/listar/filterBy/{filterBy}/orderBy/{orderBy}")
+	public String listar(Model model, @PathVariable("filterBy") String filterBy, @PathVariable("orderBy") String orderBy) throws LoginException, BolaoNaoSelecionadoException{
+		return doList(model, filterBy, orderBy);
+	}
 	
 	@GetMapping("/jogo/listar")
 	public String listar(Model model) throws LoginException, BolaoNaoSelecionadoException{
+		return doList(model, "all", "competicao");
+	}
+
+	private String doList(Model model, String filterBy, String orderBy) throws LoginException, BolaoNaoSelecionadoException {
 		autenticacao.checkAdminAthorization(model);
 		autenticacao.checkBolaoNaoSelecionado();
-		List<Jogo> jogoList = (List<Jogo>) jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
+		System.out.println(">>>>>>>");
+		System.out.println(orderBy);
+		
+		List<Map<String, String>> ordenacoesList = new ArrayList<>();
+		Map<String, String> competicao = new HashMap<>();
+		Map<String, String> dataDesc = new HashMap<>();
+		competicao.put("key", "competicao");
+		competicao.put("value", "Competição, fase, grupo");
+		dataDesc.put("key", "dataDesc");
+		dataDesc.put("value", "Data do jogo decrescente");
+		ordenacoesList.add(competicao);
+		ordenacoesList.add(dataDesc);
+		
+		List<Jogo> jogoList = null;
+		if (orderBy.equals("competicao")) {
+			System.out.println("ordena por competicao");
+			jogoList = (List<Jogo>) jogoRepo.findAllByBolaoOrderByCompeticaoGrupoData(autenticacao.getBolao());
+		}	
+		else if (orderBy.equals("dataDesc")) {
+			System.out.println("ordena por data desc");
+			jogoList = (List<Jogo>) jogoRepo.findAllByBolaoOrderByDataDescCompeticaoFaseGrupo(autenticacao.getBolao());
+		}	
 		model.addAttribute("jogoList", jogoList);
+		model.addAttribute("ordenacoesList", ordenacoesList);
+		model.addAttribute("orderBy", orderBy);
+		model.addAttribute("filterBy", filterBy);
 		return "/jogo/listar";
 	}
 	
@@ -103,36 +140,70 @@ public class GerenciarJogoController {
 		boolean newState = jogo.getId() == null ? true : false;
 		jogoRepo.save(jogo);
 		
-		//caso esteja dando update atualiza o limite dos palpites
+		
 		if (!newState) {
-		
-			List<Palpite> palpites = palpiteRepo.findAllByJogoAndTipo(jogo,Palpite.RESULTADO);
-			palpites.forEach(p -> {
-				List<BolaoCompeticao>  bolaoCompeticao = bolaoCompeticaoRepo.findAllByBolaoAndCompeticao(jogo.getFase().getBolao(), jogo.getFase().getCompeticao());
-				p.setLimiteAposta(jogo.getLimiteAposta());
-				p.setBolaoCompeticao(bolaoCompeticao.get(0));
-				palpiteRepo.save(p);
-			});
+			onUpdate(jogo);
+		}else{
+			onCreate(jogo);
 		}
 		
-		//caso esteja criando cria os times dentro do jogo	
-		else{
-			TimeNoJogo tmjA = new TimeNoJogo();
-			tmjA.setJogo(jogo);
-			tmjA.setTime(jogo.getTimeA());
-			tmjRepo.save(tmjA);
-			
-			TimeNoJogo tmjB = new TimeNoJogo();
-			tmjB.setJogo(jogo);
-			tmjB.setTime(jogo.getTimeB());
-			tmjRepo.save(tmjB);
-		}
-			
+		//caso o jogo seja marcado como final, relaciona os palpites do tipo Acertar times e Acertar Campeao:
+		if (jogo.getFase().getFaseFinal()) {
+			List<Palpite> palpitesFinais = palpiteRepo.findAllByBolaoCompeticao_bolaoAndBolaoCompeticao_competicaoAndTipoIn(autenticacao.getBolao(), jogo.getFase().getCompeticao(), new String[]{Palpite.ACERTAR_CAMPEAO, Palpite.ACERTAR_TIMES});
+			if (palpitesFinais != null && palpitesFinais.size() > 0) {
+				palpitesFinais.forEach(palpite -> {
+					palpite.setJogo(jogo);
+					palpiteRepo.save(palpite);
+				});
+			}
+		}	
 		
 		model.addAttribute(jogo);
 		appMessages.getSuccessList().add("Operação realizada com sucesso.");
 		model.addAttribute(appMessages);
 		return "redirect:/jogo/listar";
+	}
+
+	private void onCreate(Jogo jogo) {
+		//cria os times dentro do jogo	
+		TimeNoJogo tmjA = new TimeNoJogo();
+		tmjA.setJogo(jogo);
+		tmjA.setTime(jogo.getTimeA());
+		tmjRepo.save(tmjA);
+		
+		TimeNoJogo tmjB = new TimeNoJogo();
+		tmjB.setJogo(jogo);
+		tmjB.setTime(jogo.getTimeB());
+		tmjRepo.save(tmjB);
+	}
+
+	private void onUpdate(Jogo jogo) {
+		
+		
+		//atualiza os times no jogo
+		List<TimeNoJogo> tnjList = tmjRepo.findAllByJogo(jogo);
+		tnjList.sort(new Comparator<TimeNoJogo>() {
+			@Override
+			public int compare(TimeNoJogo tnj1, TimeNoJogo tnj2) {
+				return tnj1.getId().compareTo(tnj2.getId());
+			}
+		});
+		tnjList.get(0).setTime(jogo.getTimeA());
+		tnjList.get(1).setTime(jogo.getTimeB());
+		tmjRepo.saveAll(tnjList);
+		
+		
+		//atualisa os palpites
+		List<Palpite> palpites = palpiteRepo.findAllByJogoAndTipo(jogo,Palpite.RESULTADO);
+		palpites.forEach(p -> {
+			List<BolaoCompeticao>  bolaoCompeticao = bolaoCompeticaoRepo.findAllByBolaoAndCompeticao(jogo.getFase().getBolao(), jogo.getFase().getCompeticao());
+			p.setLimiteAposta(jogo.getLimiteAposta());
+			p.setBolaoCompeticao(bolaoCompeticao.get(0));
+			p.setTimeA(jogo.getTimeA());
+			p.setTimeB(jogo.getTimeB());
+			palpiteRepo.save(p);
+		});
+		
 	}
 	
 	
@@ -147,23 +218,25 @@ public class GerenciarJogoController {
 	}
 	
 	@PutMapping("/{bolao}/jogo/{id}/execucao")
-	public String setEmAndamento(
+	public String upExecucao(
 			@PathVariable("bolao") String bolao, 
 			@PathVariable("id") Integer id, 
 			Integer idTimeA, 
 			Integer golsTimeA,
 			Integer idTimeB, 
 			Integer golsTimeB, 
-			String execucao) {
+			String execucao,
+			String vencedor) {
 		
 		Jogo jogo = jogoRepo.findById(id).get();
 		jogo.setExecucao(execucao);
 		jogoRepo.save(jogo);
 		
-		tmjService.updateGols(golsTimeA == null ? 0 : golsTimeA, idTimeA);
-		tmjService.updateGols(golsTimeB == null ? 0 : golsTimeB, idTimeB);
+		tmjService.updateGols(golsTimeA == null ? 0 : golsTimeA, vencedor.equals("timeA") ? true : false, idTimeA);
+		tmjService.updateGols(golsTimeB == null ? 0 : golsTimeB, vencedor.equals("timeB") ? true : false, idTimeB);
 		
-		rankingService.processar(bolao);
+		//rankingService.processar(bolao);
+		rankingService.processarESalvarByBolaoId(autenticacao.getBolao().getId());
 		return "redirect:/"+bolao+"/";
 	}
 	

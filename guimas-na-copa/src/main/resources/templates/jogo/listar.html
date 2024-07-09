@@ -20,37 +20,42 @@
                 	<a href="/jogo/novo" class="btn btn-primary"> + Novo Jogo</a>
                 </div>
             </div>
+            
+            <div class="form-group">
+			    <label for="execucao">Ordenar lista de jogos por:</label>
+			  	<select class="form-control" id="ordenacao" onchange="window.location.href='/jogo/listar/filterBy/all/orderBy/' + $(this).val()">
+			  		<option th:each="o : ${ordenacoesList}"
+			          th:value="${o['key']}" 
+			          th:text="${o['value']}"
+			          th:selected="${(o['key'] == orderBy)}">Previsto</option>
+			  	</select>
+			  	</form>
+			  </div>
        
 	            <table class="table">
 	            	<thead>
 	            		<tr>
-	            			<th colspan="2">Competição</th>
-	            			<th>Fase</th>
-	            			<th>Grupo</th>
-	            			<th style="text-align: center"> Jogo </th>
-	            			<th>Data do Jogo</th>
-	            			<th>Limite Palpite</th>
-	            			<th></th>
+	            			<th class="text-center" colspan="2"> Jogo </th>
+	            			<th width="3%">Editar</th>
 	            		</tr>
 	            	</thead>
 	            	<tbody>
 	            		<th:block th:each="jogo : ${jogoList}">
 	             		<tr>
-	             			<td><img th:src="${jogo.fase.competicao.logoUrl}" height="30px" /></td>
-	             			<td th:text="${jogo.fase.competicao.nome}">Competição</td>
-	             			<td th:text="${jogo.fase.nome}">Fase</td>
-	             			<td th:text="${jogo.grupo}">Grupo A</td>
-	             			<td th:utext="${jogo.timesDescricao}" style="text-align: center">
-	             				Time a x Time b
+	             			<td class="text-left" width="25%">
+	             				<img th:src="${jogo.fase.competicao.logoUrl}" height="30px" /> <span class="text-primary" th:text="${jogo.fase.competicao.nome}">Competição</span> <br />
+	             				<span class="text-center text-warning" style="display: block;" th:text="${jogo.fase.nome}">Fase</span>
+	             				<span th:class="${jogo.colorClass + ' text-center'}" style="display:block;" th:text="${jogo.grupo}"><strong>Grupo A</strong></span> <br />
 	             			</td>
-	             			<td th:text=" ${#temporals.format(jogo.data, 'dd/MMM/yyyy HH:mm')} " >
-	             			   X/XX/XXXX XX:XX
+	             			<td  class="text-left">
+	             				<span th:text="${jogo.execucao}" class="badge">Previsto</span><br />
+	             				<span th:utext="${jogo.timesDescricao}"> Time a x Time b </span><br />
+	             				Data do Jogo: <span class="text-primary" th:text=" ${#temporals.format(jogo.data, 'dd/MMM/yyyy HH:mm')}">X/XX/XXXX XX:XX</span> <br />
+	             				Limite do Palpite: <span class="text-danger" th:text=" ${#temporals.format(jogo.limiteAposta, 'dd/MMM/yyyy HH:mm')}">X/XX/XXXX XX:XX</span> <br />
 	             			</td>
-	             			<td th:text=" ${#temporals.format(jogo.limiteAposta, 'dd/MMM/yyyy HH:mm')}" >
-	             			   X/XX/XXXX XX:XX
-	             			</td>
-	             			<td >
-	             				<a class="btn btn-primary" th:href="${jogo.id+'/editar'}"
+	             			
+	             			<td  width="3%">
+	             				<a class="btn btn-primary" th:href="${'/jogo/' +jogo.id+'/editar'}"
 		                        				data-toggle="tooltip" 
 		                        				data-placement="top" 
 		                        				title="Editar Dados do Jogo">
