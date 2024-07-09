@@ -1,4 +1,4 @@
-package br.com.guimasnacopa.service;
+package br.com.guimasnacopa.api.domain.interfaces;
 
 public interface IParticipanteBasico {
 

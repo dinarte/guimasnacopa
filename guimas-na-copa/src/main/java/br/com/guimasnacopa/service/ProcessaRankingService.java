@@ -64,7 +64,7 @@ public class ProcessaRankingService {
 	
 	private void processarPontuacaoPalpite(Bolao bolao, boolean persist) {
 		
-		List<Jogo> jogos = jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(bolao);
+		List<Jogo> jogos = jogoRepo.findAllByBolaoOrderByCompeticaoGrupoData(bolao);
 		
 		jogos.forEach(j -> {
 			//processa o ranking

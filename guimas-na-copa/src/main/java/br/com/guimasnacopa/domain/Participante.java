@@ -1,5 +1,7 @@
 package br.com.guimasnacopa.domain;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,8 +11,11 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.guimasnacopa.api.domain.interfaces.IPalpiteBasico;
+import br.com.guimasnacopa.api.domain.interfaces.IParticipanteNoRanking;
+
 @Entity
-public class Participante {
+public class Participante implements IParticipanteNoRanking {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -149,6 +154,36 @@ public class Participante {
 
 	public void setUserOnLine(Boolean userOnLine) {
 		this.userOnLine = userOnLine;
+	}
+
+	@Transient
+	@Override
+	public Long getParticipanteId() {
+		return id.longValue();
+	}
+
+	@Transient
+	@Override
+	public String getName() {
+		return getUsuario().getName();
+	}
+
+	@Transient
+	@Override
+	public String getEmail() {
+		return getUsuario().getEmail();
+	}
+
+	@Transient
+	@Override
+	public String getUrlFoto() {
+		return getUsuario().getUrlFoto();
+	}
+
+	@Transient
+	@Override
+	public List<IPalpiteBasico> getPalpitesProcessados() {
+		return null;
 	}
 
 	

@@ -18,12 +18,20 @@ import br.com.guimasnacopa.domain.Participante;
 public interface JogoRepository extends CrudRepository<Jogo, Integer> {
 
 	@EntityGraph(attributePaths = { "timesNoJogo" })
-	@Query("select j from Jogo as j where j.fase.bolao = :bolao order by j.fase, j.grupo, j.data")
-	public List<Jogo> findAllByFase_BolaoOrderByFaseGrupoData(@Param("bolao") Bolao bolao);
+	@Query("select j from Jogo as j where j.fase.bolao = :bolao order by j.fase.competicao, j.grupo, j.data")
+	public List<Jogo> findAllByBolaoOrderByCompeticaoGrupoData(@Param("bolao") Bolao bolao);
 	
+	
+	
+	@EntityGraph(attributePaths = { "timesNoJogo" })
+	@Query("select j from Jogo as j where j.fase.bolao = :bolao order by j.data desc, j.fase.competicao, j.fase, j.grupo")
+	public List<Jogo> findAllByBolaoOrderByDataDescCompeticaoFaseGrupo(@Param("bolao") Bolao bolao);
+	
+		
 	@EntityGraph(attributePaths = { "timesNoJogo" })
 	@Query("select j from Jogo as j "
 			+ "where j.fase.bolao = :bolao "
+			+ "and j.liberarCriacaoPalpites is true "
 			+ "and not exists (select p.id "
 			+ "					from Palpite p "
 			+ "					where p.jogo = j "
@@ -37,8 +45,10 @@ public interface JogoRepository extends CrudRepository<Jogo, Integer> {
 	@Query("update Jogo set data = :data where id = :jogoId")
 	public void updateData(@Param("data") LocalDateTime data, @Param("jogoId") Integer jogoId);
 
-	@Query("select count(id) from Jogo j " + "where j.liberarCriacaoPalpites is true " + "and j.fase.bolao =:bolao "
-			+ "and not exists (select id from Palpite p where p.jogo = j and p.participante = :participante)")
+	@Query("select count(id) from Jogo j "  
+			+ "where j.liberarCriacaoPalpites is true " 
+			+ "and j.fase.bolao =:bolao "
+			+ "and not exists (select id from Palpite p where p.jogo = j and p.participante = :participante and p.tipo = 'Resultado')")
 	public Long countJogosComPalpitesPendentesByBolaoAndParticipante(@Param("bolao") Bolao bolao,
 			@Param("participante") Participante participante);
 

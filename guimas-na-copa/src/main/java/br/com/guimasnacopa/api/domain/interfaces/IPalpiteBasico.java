@@ -1,8 +1,10 @@
-package br.com.guimasnacopa.service;
+package br.com.guimasnacopa.api.domain.interfaces;
 
 import java.util.Map;
 
 public interface IPalpiteBasico {
+	
+	Long getId();
 
 	Long getGolsTimeA();
 

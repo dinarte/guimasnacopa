@@ -64,13 +64,14 @@ public class PalpiteHelper {
 		List<Palpite> meusPalpites = palpiteRepo.findAllByParticipante(autenticacao.getParticipante());
 		palpites.forEach(p ->{
 			meusPalpites.forEach(meuPalpite ->{
-				if (meuPalpite.getJogo() != null && p.getJogo() != null) {
+				if (meuPalpite.isResultado()) {
 					if (meuPalpite.getJogo().getId().equals(p.getJogo().getId())) {
 						p.setPalpiteComparado(meuPalpite);
 					}
-				} else if ((meuPalpite.isAcertarTimes() && p.isAcertarTimes())
-						|| (meuPalpite.isAcertarCampeao() && p.isAcertarCampeao()) ) {
-					p.setPalpiteComparado(meuPalpite);
+				} else if (meuPalpite.getBolaoCompeticao().getId().equals(p.getBolaoCompeticao().getId())) {
+					if (meuPalpite.isAcertarTimes() && p.isAcertarTimes() || (meuPalpite.isAcertarCampeao() && p.isAcertarCampeao()) ) {
+						p.setPalpiteComparado(meuPalpite);
+					}	
 				}
 				
 			});

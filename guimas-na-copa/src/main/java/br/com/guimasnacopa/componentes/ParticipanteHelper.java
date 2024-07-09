@@ -12,6 +12,7 @@ import br.com.guimasnacopa.domain.Bolao;
 import br.com.guimasnacopa.domain.Palpite;
 import br.com.guimasnacopa.domain.Participante;
 import br.com.guimasnacopa.exception.AppException;
+import br.com.guimasnacopa.repository.JogoRepository;
 import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.ParticipanteRepository;
 import br.com.guimasnacopa.security.Autenticacao;
@@ -31,6 +32,9 @@ public class ParticipanteHelper {
 	PalpiteRepository palpiteRepo;
 	
 	@Autowired
+	JogoRepository jogoRepo;
+	
+	@Autowired
 	Autenticacao autenticacao;
 	
 	public void prepareAllParticipantes(String linkBolao, Model model) throws AppException {
@@ -46,6 +50,7 @@ public class ParticipanteHelper {
 
 	public void popularPorcentagemDePreenchimentoDoParticipante(Participante p) {
 		List<Palpite> palpitesDoParaticipante = palpiteRepo.findAllByParticipante(p);
+		Long totalPalpitesNaoCriados = jogoRepo.countJogosComPalpitesPendentesByBolaoAndParticipante(p.getBolao(), p);
 		palpitesDoParaticipante.forEach(palpite -> {
 			p.palpitesParaInformar ++;
 			if (palpite.isResultado()) {
@@ -65,7 +70,7 @@ public class ParticipanteHelper {
 					p.palpitesInformados ++;
 			}
 			
-			Double porcentagem = (Double.valueOf(p.palpitesInformados) * 100) / p.palpitesParaInformar;
+			Double porcentagem = (Double.valueOf(p.palpitesInformados) * 100) / (p.palpitesParaInformar + totalPalpitesNaoCriados);
 			p.setPorcentagemPalpites(porcentagem);
 		});
 	}

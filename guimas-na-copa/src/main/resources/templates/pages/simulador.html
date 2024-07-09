@@ -9,80 +9,94 @@
 
         <nav th:replace="fragments/navigation :: navbar"  />
 
-        <div id="page-wrapper">
-        
-        
-	        <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="page-header" th:text="${ 'Simulador: ' + autenticacao.bolao.nome}">Descrição do Bolão</h1>
-                    <h3>Jogos</h3>
-                </div>
-            </div>
-        
-       		<form role="form" action="/simulador"  method="post">
-        
-          <div class="row">
-          	<div class="col-lg-8">
-		    	<th:block th:each="jogo : ${jogos}">
-		    		<div class="col-lg-4">
-		    			<div class="panel panel-info">
-			    			<div class="panel-heading" >
-							  	<span th:text="${jogo.fase.nome + ' - ' + jogo.grupo }">Eliminatórias - Grupo A</span> 
-							</div>
-							<table class="table">
-								<tr>
-								  <th:block th:each="timeNoJogo, status : ${jogo.timesNoJogo}">
-									<td>
-										<label th:text="${timeNoJogo.time.nome}">Brasil</label>
-										<input th:name="${'timeNoJogo_' + timeNoJogo.id}" type="number" class="form-control" th:value="${ timeNoJogo.gols }">
-									</td>
-									<td th:if="${status.count==1}"> VS </td>
-									
-									</th:block>
-								</tr>
-								<tr>
-									<td colspan="5">
-									<label th:for="${jogo.id}">Data</label>
-										<input th:name="${jogo.id}" type="datetime-local" th:value="${jogo.data}" class="form-control">
-									</td>
-								</tr>
-							</table>
-		    			
-		    			</div>
-		    		</div>
-		    	</th:block>
-	    	</div>
-	    	<div class="col-lg-4">
-	    		<table class="table">
-                        	<thead>
-                        		<tr>
-                        			<th></th>
-                        			<th>Jogador</th>
-                        			<th>Pontos</th>
-                        			<th>Aproveitamento</th>
-                        		</tr>
-                        	</thead>
-                        	<tbody>
-                        		<th:block th:each="participante : ${participantes}">
-	                        		<tr th:class="${participante.id == autenticacao.participante.id ? 'participante' : ''}">
-	                        			<td><bage th:if="${participante.exibirClassificacaoNoRanking}" th:text="${participante.classificacao + 'ª'}">1</bage></td>
-	                        			<td th:id="${participante.id}" ><a th:href="${'/palpite/'+participante.id+'/consultar'}" th:text="${participante.usuario.name}">Dnarte</a></td>
-	                        			<td th:text="${participante.pontuacao}">180</td>
-	                        			<td><span th:text="${participante.aproveitamento}">100</span>%</td>
-	                        		</tr>
-                        		</th:block>
-                        	</tbody>
-                        </table>
-        </div>
-	    	</div>
-	    </div>
-        
-        <button class="btn btn-info btn-block">Salvar Jogos</button>
-        	
-         </form>
-        </div>
+        <form role="form" action="/simulador"  method="post">
+	        <div id="page-wrapper">
+	        
+	        
+		        <div class="row">
+	                <div class="col-lg-12">
+	                    <h1 class="page-header" th:text="${ 'Simulador: ' + autenticacao.bolao.nome}">Descrição do Bolão</h1>
+	                    <h3>Jogos</h3>
+	                </div>
+	            </div>
+	        
+	       		
+	        
+		          <div class="row">
+		          	<div class="col-lg-6 col-md-6 col-sm-6">
+				    	<th:block th:each="jogo : ${jogos}">
+				    	
+				    		<div class="col-lg-6 col-md-12 col-sm-12">
+				    			<div class="panel panel-info">
+					    			<div class="panel-heading" >
+					    				<img th:src="${jogo.fase.competicao.logoUrl}" height="30px"/>
+									  	<span th:text="${jogo.fase.competicao.nome}">Eliminatórias - Grupo A</span> <br />
+									  	<span th:text="${jogo.fase.nome + ' - ' + jogo.grupo }">Eliminatórias - Grupo A</span>
+									  	 
+									</div>
+									<div class="panel-body">
+										<div class="text-center text-primary"><span th:text="${#temporals.format(jogo.data, 'dd MMM HH:mm')}">12:20</span></div>
+										<div class="text-center">
+											<img src="/img/bola-rolando.gif" width="20px" th:if="${jogo.emAndamento}" />
+											<div th:text="${jogo.execucao}" class="badge">
+												<span>Encenrrado</span>
+											</div>
+										</div>
+										<table class="tab-jogo">
+											<tr>
+											  <th:block th:each="timeNoJogo, status : ${jogo.timesNoJogo}">
+												<td th:class="${status.count==1 ? 'text-right' : 'text-left'}">
+													<label th:if="${status.count==1}" th:utext="${timeNoJogo.time.nome + ' ' + timeNoJogo.time.flag}">Brasil</label>
+													<label th:if="${status.count==2}" th:utext="${timeNoJogo.time.flag + ' ' + timeNoJogo.time.nome}">Brasil</label>
+													<input th:name="${'jogoId:' + jogo.id + '-timeId:' + timeNoJogo.time.id + '-timeNoJogoId:'+timeNoJogo.id}" type="number" class="form-control" th:value="${ timeNoJogo.gols }">
+												</td>
+												<td th:if="${status.count==1}" class="m-3"> vs </td>
+												
+												</th:block>
+											</tr>
+										</table>
+				    				</div>
+				    			</div>
+				    		</div>
+				    	</th:block>
+			    	</div>
+			    	<div class="col-lg-6 col-md-6 col-sm-6">
+			    		<table class="table">
+		                        	<thead>
+		                        		<tr>
+		                        			<th></th>
+		                        			<th>Jogador</th>
+		                        			<th>Pontos</th>
+		                        			<th>Aproveitamento</th>
+		                        		</tr>
+		                        	</thead>
+		                        	<tbody>
+		                        		<th:block th:each="participante : ${participantes}">
+			                        		<tr th:class="${participante.id == autenticacao.participante.id ? 'participante' : ''}">
+			                        			<td><bage th:if="${participante.exibirClassificacaoNoRanking}" th:text="${participante.classificacao + 'ª'}">1</bage></td>
+			                        			<td><img th:src="${participante.urlFoto}" class="img-perfil-peq" height="40px" /></td>
+			                        			<td th:id="${participante.id}" ><a th:href="${'/palpite/'+participante.id+'/consultar'}" th:text="${participante.name}">Dnarte</a></td>
+			                        			<td th:text="${participante.pontuacao}">180</td>
+			                        			<td><span th:text="${participante.aproveitamento}">100</span>%</td>
+			                        		</tr>
+		                        		</th:block>
+		                        	</tbody>
+		                        </table>
+		        	</div>
+			    </div>
+			  <!-- row : end -->  
+			  
+			</div>
+	        
+	        	<div class="">
+				
+					<button class="btn btn-warning btn-block footer">Simular Ranking</button>
+					
+				</div>
+	         
+	        </div>
         <!-- /#page-wrapper -->
-
+		</form>
     </div>
     <!-- /#wrapper -->
 

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.guimasnacopa.domain.Bolao;
 import br.com.guimasnacopa.domain.BolaoCompeticao;
+import br.com.guimasnacopa.domain.Competicao;
 import br.com.guimasnacopa.domain.Jogo;
 import br.com.guimasnacopa.domain.Palpite;
 import br.com.guimasnacopa.domain.PalpiteForProcessingVo;
@@ -117,6 +118,7 @@ public interface PalpiteRepository  extends CrudRepository<Palpite, Integer>{
 	
 	@Query(	nativeQuery = true,
 			value="select  p.id, \r\n"
+					+ "		j.id as jogoId, \r\n"
 					+ "		p.participante_id as participanteId, \r\n"
 					+ "		u.name,\r\n"
 					+ "		u.email, \r\n"
@@ -127,23 +129,36 @@ public interface PalpiteRepository  extends CrudRepository<Palpite, Integer>{
 					+ "		gols_timea as golsTimeA, \r\n"
 					+ "		gols_timeb as golsTimeB, \r\n"
 					+ "		tnja.gols as golsJogoTimeA, \r\n"
-					+ "		tnja.gols as golsJogoTimeB,\r\n"
+					+ "		tnjb.gols as golsJogoTimeB,\r\n"
+					+ "		tnja.vencedor as vencedorJogoTimeA, \r\n"
+					+ "		tnjb.vencedor as vencedorJogoTimeB,\r\n"
 					+ "		f.pontuacao_acertar_vencedor as pontuacaoAcertarVencedor,\r\n"
 					+ "		f.acertar_empate as pontuacaoAcertarEmpate, \r\n"
 					+ "		f.pontuacao_acertar_placar as pontuacaoAcertarPlacar,\r\n"
-					+ "		f.acertar_qtd_gols_um_dos_times as pontuacaoAcertarQtdGolsTime \r\n"
+					+ "		f.acertar_qtd_gols_um_dos_times as pontuacaoAcertarQtdGolsTime, \r\n"
+					+ "		qtd_gols_considera_placar_alto as qtdGolsConsideraPlacarAlto, "
+					+ "		pontuacao_acertar_placar_alto as pontuacaoAcertarPlacarAlto, "
+					+ "		maximo_pontuacao_possivel_palpite as maximoPontuacaoPossivelPalpite, \r\n"
+					+ "		acertar_times pontuacaoAcertarTimes,\r\n"
+					+ "		acertar_um_time pontuacaoAcertarUmTime, \r\n"
+					+ "		(select tnj_aa.time_id from time_no_jogo tnj_aa where tnj_aa.jogo_id = j.id order by tnj_aa.id asc limit 1) as timeAJogoId, \r\n"
+					+ "		(select tnj_bb.time_id from time_no_jogo tnj_bb where tnj_bb.jogo_id = j.id order by tnj_bb.id desc limit 1) as timeBJogoId \r\n"
 					+ "from palpite p\r\n"
 					+ "join participante pa on pa.id = p.participante_id \r\n"
 					+ "join usuario u on u.id = pa.usuario_id \r\n"
-					+ "join jogo j on j.id = p.jogo_id \r\n"
-					+ "join time_no_jogo tnja on tnja.jogo_id = j.id and tnja.time_id = p.timea_id \r\n"
-					+ "join time_no_jogo tnjb on tnjb.jogo_id = j.id and tnjb.time_id = p.timeb_id \r\n"
-					+ "join time ta on ta.id = tnja.time_id  \r\n"
-					+ "join time tb on tb.id = tnjb.time_id\r\n"
-					+ "join fase f on f.id = j.fase_id \r\n"
+					+ "left join jogo j on j.id = p.jogo_id \r\n"
+					+ "left join time_no_jogo tnja on tnja.jogo_id = j.id and tnja.time_id = p.timea_id \r\n"
+					+ "left join time_no_jogo tnjb on tnjb.jogo_id = j.id and tnjb.time_id = p.timeb_id \r\n"
+					+ "left join time ta on ta.id = tnja.time_id  \r\n"
+					+ "left join time tb on tb.id = tnjb.time_id\r\n"
+					+ "left join fase f on f.id = j.fase_id \r\n"
 					+ "join bolao_competicao bc on bc.id = p.bolao_competicao_id \r\n"
 					+ "where pa.pg is true\r\n"
 					+ "and bc.bolao_id = :bolaoId")
 	public List<PalpiteForProcessingVo> findAllForProssingByBolaoId(@Param("bolaoId") Integer bolaoId);
+
+
+	public List<Palpite> findAllByBolaoCompeticao_bolaoAndBolaoCompeticao_competicaoAndTipoIn(Bolao bolao, Competicao competicao,
+			String[] tipos);
 	
 }

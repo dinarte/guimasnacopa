@@ -172,8 +172,8 @@
                         		<th:block th:each="participante : ${top10}">
 	                        		<tr th:class="${participante.id == autenticacao.participante.id ? 'participante' : ''}">
 	                        			<td><bage th:if="${participante.exibirClassificacaoNoRanking}" th:text="${participante.classificacao + 'ª'}">1</bage></td>
-	                        			<td><img th:src="${participante.usuario.urlFoto}" class="img-perfil-peq" /></td>
-	                        			<td th:id="${participante.id}" ><a th:href="${'/palpite/'+participante.id+'/consultar'}" th:text="${participante.usuario.name}">Dnarte</a></td>
+	                        			<td><img th:src="${participante.urlFoto}" class="img-perfil-peq" /></td>
+	                        			<td th:id="${participante.id}" ><a th:href="${'/palpite/'+participante.id+'/consultar'}" th:text="${participante.name}">Dnarte</a></td>
 	                        			<td th:text="${participante.pontuacao}">180</td>
 	                        			<td><span th:text="${participante.aproveitamento}">100</span>%</td>
 	                        		</tr>
@@ -183,7 +183,7 @@
                         	<tfoot>
                         		<tr>
                         			<td colspan="5">
-                        				<a th:href="${autenticacao.bolao.permalink + '/ranking'}" href="/ranking" class="btn btn-default btn-block">Ver Ranking completo</a>
+                        				<a th:href="${'/' + autenticacao.bolao.permalink + '/ranking'}" href="/ranking" class="btn btn-default btn-block">Ver Ranking completo</a>
                         			</td>
                         		</tr>
                         	</tfoot>

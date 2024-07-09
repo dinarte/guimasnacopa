@@ -95,8 +95,13 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 	@Modifying(clearAutomatically = true)
 	@Query(value = "update Participante "
 							+ " set pontuacao = :pontuacao, aproveitamento = :aproveitamento, classificacao = :classificacao, exibirClassificacaoNoRanking = :exibirClassificacaoNoRanking "
-							+ " where id = :palpiteId")
-	public void updateRaking(Integer palpiteId, Double pontuacao, Integer aproveitamento, Integer classificacao, Boolean exibirClassificacaoNoRanking);
+							+ " where id = :participanteId")
+	public void updateRaking( 
+			@Param("participanteId") Integer participanteId, 
+			@Param("pontuacao") Double pontuacao, 
+			@Param("aproveitamento") Integer aproveitamento, 
+			@Param("classificacao") Integer classificacao, 
+			@Param("exibirClassificacaoNoRanking") Boolean exibirClassificacaoNoRanking);
 	
 	
 	

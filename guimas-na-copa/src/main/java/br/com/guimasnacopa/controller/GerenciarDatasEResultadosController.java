@@ -23,6 +23,7 @@ import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.ParticipanteRepository;
 import br.com.guimasnacopa.repository.TimeNoJogoRepository;
 import br.com.guimasnacopa.security.Autenticacao;
+import br.com.guimasnacopa.service.ProcessaFlatRankingService;
 
 @Controller
 @RequestScope
@@ -43,11 +44,14 @@ public class GerenciarDatasEResultadosController {
 	@Autowired
 	ParticipanteRepository participanteRepo;
 	
+	@Autowired
+	ProcessaFlatRankingService rakingProcessService;
+	
 	@GetMapping("/jogos/gerenciar")
 	public String gerenciar(Model m) throws LoginException, BolaoNaoSelecionadoException {
 		autenticacao.checkAdminAthorization();
 		autenticacao.checkBolaoNaoSelecionado();
-		List<Jogo> jogos = jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
+		List<Jogo> jogos = jogoRepo.findAllByBolaoOrderByDataDescCompeticaoFaseGrupo(autenticacao.getBolao());
 		m.addAttribute("jogos",jogos);
 		m.addAttribute(autenticacao);
 		return "/pages/gerenciar_jogos";
@@ -57,7 +61,7 @@ public class GerenciarDatasEResultadosController {
 	@Transactional
 	public String salvar(HttpServletRequest reuqest, Model m) throws LoginException {
 		autenticacao.checkAdminAthorization();
-		List<Jogo> jogos = jogoRepo.findAllByFase_BolaoOrderByFaseGrupoData(autenticacao.getBolao());
+		List<Jogo> jogos = jogoRepo.findAllByBolaoOrderByDataDescCompeticaoFaseGrupo(autenticacao.getBolao());
 		
 		//comuputa jogo a jogo
 		jogos.forEach(j -> {
@@ -78,45 +82,10 @@ public class GerenciarDatasEResultadosController {
 					timeNoJogoRepo.updateGols(Integer.parseInt(gols),tnj.getId());
 				}
 			});
-			//processa o ranking
-			Iterable<Palpite> palpites = palpiteRepo.findAllByJogo(j) ;
-			palpites.forEach(palpite ->{
-				System.out.println("..."+palpite.getGolsTimeA()+" x "+palpite.getGolsTimeB());
-				if(palpite.getGolsTimeA() != null && palpite.getGolsTimeB() != null) {
-					palpite.processarPontuacaoAcumulativa();
-					palpiteRepo.updatePontuacao(palpite.getPontuacaoAtingida(), palpite.getRegraPontuacao(), palpite.getId());
-				}
-				if(palpite.getTipo().equals(Palpite.ACERTAR_TIMES)) {
-					palpite.processarPontuacaoAcertarTimes();
-					palpiteRepo.updatePontuacao(palpite.getPontuacaoAtingida(), palpite.getRegraPontuacao(), palpite.getId());
-				}
-			});
+			
 		});
 		
-		participanteRepo.updatePontuacao();
-		
-		boolean apenasParticipantesPagos = true;
-		List<Participante> participantes = participanteRepo
-				.findAllByBolaoAndPgOrderByPontuacaoDesc(autenticacao.getBolao(), apenasParticipantesPagos);
-		int count = 1;
-		int classificacaoAnterior = 0;
-		Double pontuacaoAnterior = -0.1;
-		for (Participante p : participantes) {
-
-			p.setExibirClassificacaoNoRanking(true);
-			if (!p.getPontuacao().equals(pontuacaoAnterior)) {
-				classificacaoAnterior = count;
-				p.setClassificacao(classificacaoAnterior);
-			}else{
-				p.setClassificacao(classificacaoAnterior);
-				p.setExibirClassificacaoNoRanking(false);
-			}
-			count++;
-			pontuacaoAnterior = p.getPontuacao();
-			participanteRepo.save(p);
-		}
-		
-		participanteRepo.updateAproveitamento();
+		rakingProcessService.processarESalvarByBolaoId(autenticacao.getBolao().getId());
 		return "redirect:/jogos/gerenciar";
 	}
 	

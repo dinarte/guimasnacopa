@@ -14,8 +14,8 @@ public class TimeNoJogoService {
 	@Autowired
 	private TimeNoJogoRepository timeNojogoRepository;
 	
-	public void updateGols(Integer gols, Integer idTimeNoJogo) {
-		timeNojogoRepository.updateGols(gols, idTimeNoJogo);
+	public void updateGols(Integer gols, boolean vencedor, Integer idTimeNoJogo) {
+		timeNojogoRepository.updateGolsAndVencedor(gols, vencedor, idTimeNoJogo);
 	}
 	
 	public void updateGols(TimeNoJogo tmjA, TimeNoJogo tmjB) {

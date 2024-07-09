@@ -1,19 +1,24 @@
 package br.com.guimasnacopa.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import br.com.guimasnacopa.api.domain.interfaces.IPalpiteBasico;
+import br.com.guimasnacopa.api.domain.interfaces.IParticipanteBasico;
 import br.com.guimasnacopa.domain.Palpite;
 import br.com.guimasnacopa.domain.PalpiteForProcessingVo;
 
 public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBasico, IPalpiteBasico {
     
-    private static final String Z_PONTUACAO_MAXIMA_ULTRAPASSADA_AJUSTE = "zPontuação máxima ultrapassada (Ajuste)";
+    private static final String ACERTOU_O_CAMPEAO = "Acertou o campeão";
+	private static final String BONUS_POR_ACERTAR_OS_DOIS_FINALISTAS = "Bonus por acertar os dois finalistas";
+	private static final String ACERTOU_O_FINALISTA_B = "Acertou o finalista B";
+	private static final String ACERTOU_O_FINALISTA_A = "Acertou o finalista A";
+	private static final String Z_PONTUACAO_MAXIMA_ULTRAPASSADA_AJUSTE = "zPontuação máxima ultrapassada (Ajuste)";
 	private static final String PAI_LOLO_NAO_DEIXOU = "Pai Lolô não deixou";
 	private static final String BONUS_PLACAR_ALTO_DO_TIME_A = "Bonus placar alto do time A";
 	private static final String BONUS_PLACAR_ALTO_DO_TIME_B = "Bonus placar alto do time B";
@@ -22,8 +27,7 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
 	private static final String PREMIO_DE_PLACAR_EXATO = "Prêmio de placar exato";
 	private static final String ACERTOU_GOLS_DO_TIME_B = "Acertou gols do time B";
 	private static final String ACERTOU_GOLS_DO_TIME_A = "Acertou gols do time A";
-	private static final Integer QTD_GOLS_CONSIDERA_PLACAR_ALTO = 4;
-    
+	
 	private Long id;
 	private Long jogoId;
     private Long participanteId;
@@ -37,27 +41,67 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
     private Long golsTimeB;
     private Long golsJogoTimeA;
     private Long golsJogoTimeB;
+    private Boolean vencedorJogoTimeA;
+    private Boolean vencedorJogoTimeB;
     private Double pontuacaoAcertarVencedor;
     private Double pontuacaoAcertarEmpate;
     private Double pontuacaoAcertarPlacar;
     private Double pontuacaoAcertarQtdGolsTime;
     private Double pontuacaoAtingida;
+    private Long qtdGolsConsideraPlacarAlto;
+    private Double pontuacaoAcertarPlacarAlto;
+    private Double maximoPontuacaoPossivelPalpite; 
+    private Double pontuacaoAcertarTimes;
+    private Double pontuacaoAcertarUmTime;
+    private Long timeAJogoId;
+    private Long timeBJogoId;
     private Map<String, Double> detalhePontuacao = new HashMap<>();
 	
     
     public boolean canProcess() {
-    	    	
-    	return (tipo.equals( Palpite.RESULTADO ) 
-	    			&& Objects.nonNull(golsJogoTimeA) 
-	    			&& Objects.nonNull(golsJogoTimeB) 
-	    			&& Objects.nonNull(golsTimeA) 
-	    			&& Objects.nonNull(golsTimeB));
+    	if (tipo.equals(Palpite.RESULTADO))
+    		return canProcessTipoResultado();
+    	else if (tipo.equals(Palpite.ACERTAR_TIMES))
+    		return canProcessTipoAcertarTimes();
+    	else if (tipo.equals(Palpite.ACERTAR_CAMPEAO))
+    		return canProcessTipoAcertarCampeao();    	
+    	return canProcessTipoResultado();
     }
+
+	private boolean canProcessTipoResultado() {
+		return (tipo.equals(Palpite.RESULTADO) &&
+				Objects.nonNull(golsJogoTimeA) &&  
+    			Objects.nonNull(golsJogoTimeB) &&  
+    			Objects.nonNull(golsTimeA) &&  
+    			Objects.nonNull(golsTimeB));
+	}
+	
+	private boolean canProcessTipoAcertarTimes() {
+		return (tipo.equals(Palpite.ACERTAR_TIMES) && jogoId != null);
+	}
+	
+	private boolean canProcessTipoAcertarCampeao() {
+		return (tipo.equals(Palpite.ACERTAR_CAMPEAO) && jogoId != null);
+	}
     
     public Double processarPontuacao() {
  
-    	List<Double> processList = new ArrayList<>() ;
-	
+    	if (tipo.equals(Palpite.RESULTADO))
+    		pontuacaoAtingida = processarTipoResultado();	
+    	else if (tipo.equals(Palpite.ACERTAR_TIMES)) {
+    		pontuacaoAtingida = processarAcertarTimes();    		
+    	}	
+    	else if (tipo.equals(Palpite.ACERTAR_CAMPEAO))
+    		pontuacaoAtingida = processarAcertarUmTime();
+    	
+    	if (pontuacaoAtingida.equals(0.0))
+    		detalhePontuacao.put(PAI_LOLO_NAO_DEIXOU, 0.0);
+    	
+    	return pontuacaoAtingida;
+    }
+
+	private Double processarTipoResultado() {
+		List<Double> processList = new ArrayList<>() ;
 		processList.add(calcularPontuacaoPorAcertarVencedor());
 		processList.add(calcularPontuacaoPorAcertarEmpate());
 		processList.add(calularPontuacaoAcertarPlacar());
@@ -65,20 +109,50 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
 		processList.add(calularPontuacaoAcertarGolsTimeB());
 		processList.add(calularPontuacaoAcertarPlacarAltoTimeA());
 		processList.add(calularPontuacaoAcertarPlacarAltoTimeB());
-    	
     	Double pontuacaoAtingida = processList.stream().reduce(0.0, Double::sum);
     	Double pontuacaoAjustada = calcularAjustePontuacaoMaximaAtingida(pontuacaoAtingida);
-    	
-    	if (pontuacaoAjustada.equals(0.0))
-    		detalhePontuacao.put(PAI_LOLO_NAO_DEIXOU, 0.0);
-    	
     	this.pontuacaoAtingida = pontuacaoAjustada;
-    	return pontuacaoAtingida;
-    }
+		return pontuacaoAtingida;
+	}
+	
+	private Double processarAcertarTimes() {
+		pontuacaoAtingida = 0.0;
+		List<Double> processList = new ArrayList<>() ;
+		boolean acertouTimeA = false;
+		if (timeAId == timeAJogoId || timeAId == timeBJogoId) {
+			acertouTimeA = true;
+			processList.add(pontuacaoAcertarTimes);
+			detalhePontuacao.put(ACERTOU_O_FINALISTA_A, pontuacaoAcertarTimes);
+		}
+		boolean acertouTimeB = false;
+		if (timeBId == timeAJogoId || timeBId == timeBJogoId) {
+			acertouTimeB = true;
+			processList.add(pontuacaoAcertarTimes);
+			detalhePontuacao.put(ACERTOU_O_FINALISTA_B, pontuacaoAcertarTimes);
+		}
+		if (acertouTimeA && acertouTimeB) {
+			processList.add(pontuacaoAcertarTimes);
+			detalhePontuacao.put(BONUS_POR_ACERTAR_OS_DOIS_FINALISTAS, pontuacaoAcertarTimes);
+		}
+		pontuacaoAtingida = processList.stream().reduce(0.0, Double::sum);
+		return pontuacaoAtingida;
+	}
+	
+	private Double processarAcertarUmTime() {
+		pontuacaoAtingida = 0.0;
+		
+		if (timeAId == timeAJogoId && getVencedorJogoTimeA() || 
+				 timeAId == timeBJogoId && getVencedorJogoTimeA()) {
+			 pontuacaoAtingida = pontuacaoAcertarUmTime;
+			 detalhePontuacao.put(ACERTOU_O_CAMPEAO, pontuacaoAcertarUmTime);
+		}
+		
+		return pontuacaoAtingida;
+	}
     
     
     public Double calcularPontuacaoPorAcertarVencedor() {
-    	if ( (golsJogoTimeA > golsJogoTimeB && golsTimeA > golsJogoTimeB) || (golsJogoTimeA < golsJogoTimeB && golsTimeA < golsJogoTimeB)) {
+    	if ( (golsJogoTimeA > golsJogoTimeB && golsTimeA > golsTimeB) || (golsJogoTimeA < golsJogoTimeB && golsTimeA < golsTimeB)) {
     		detalhePontuacao.put(ACERTOU_O_VENCEDOR, pontuacaoAcertarVencedor);
     		return pontuacaoAcertarVencedor;
     	}
@@ -118,23 +192,23 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
     }
     
     public Double calularPontuacaoAcertarPlacarAltoTimeA() {
-    	if (golsJogoTimeA >= QTD_GOLS_CONSIDERA_PLACAR_ALTO && golsTimeA >= QTD_GOLS_CONSIDERA_PLACAR_ALTO) {
-    		detalhePontuacao.put(BONUS_PLACAR_ALTO_DO_TIME_A, pontuacaoAcertarQtdGolsTime);
+    	if (golsJogoTimeA >= qtdGolsConsideraPlacarAlto && golsTimeA >= qtdGolsConsideraPlacarAlto) {
+    		detalhePontuacao.put(BONUS_PLACAR_ALTO_DO_TIME_A, pontuacaoAcertarPlacarAlto);
     		return pontuacaoAcertarQtdGolsTime;
     	}
     	return 0.0;
     }
     
     public Double calularPontuacaoAcertarPlacarAltoTimeB() {
-    	if (golsJogoTimeB >= QTD_GOLS_CONSIDERA_PLACAR_ALTO && golsTimeB >= QTD_GOLS_CONSIDERA_PLACAR_ALTO){
-    		detalhePontuacao.put(BONUS_PLACAR_ALTO_DO_TIME_B, pontuacaoAcertarQtdGolsTime);
+    	if (golsJogoTimeB >= qtdGolsConsideraPlacarAlto && golsTimeB >= qtdGolsConsideraPlacarAlto){
+    		detalhePontuacao.put(BONUS_PLACAR_ALTO_DO_TIME_B, pontuacaoAcertarPlacarAlto);
     		return pontuacaoAcertarQtdGolsTime;
     	}
     	return 0.0;
     }
     
     public Double calcularAjustePontuacaoMaximaAtingida(Double pontuacao) {
-    	Double pontuacaoMaximaPermitida = calcularPontuacaoMaximaPossivel();
+    	Double pontuacaoMaximaPermitida = maximoPontuacaoPossivelPalpite;
     	if (Double.compare(pontuacao, pontuacaoMaximaPermitida) > 0) {
     		Double ajuste = Double.sum(pontuacao, -pontuacaoMaximaPermitida);
     		detalhePontuacao.put(Z_PONTUACAO_MAXIMA_ULTRAPASSADA_AJUSTE, ajuste);
@@ -144,20 +218,8 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
     }
     
     public Double getAproveitamentoPalpite() {
-    	return (getPontuacaoAtingida() * 100) / calcularPontuacaoMaximaPossivel();
+    	return (getPontuacaoAtingida() * 100) / maximoPontuacaoPossivelPalpite;
     }
-
-	private Double calcularPontuacaoMaximaPossivel() {
-		double[] pontuacoesPossiveis = {
-							    			pontuacaoAcertarPlacar, 
-							    			pontuacaoAcertarQtdGolsTime, 
-							    			pontuacaoAcertarQtdGolsTime, 
-							    			pontuacaoAcertarVencedor 
-							    		};
-    	Double pontuacaoMaximaPermitida = Arrays.stream( pontuacoesPossiveis ).sum();
-		return pontuacaoMaximaPermitida;
-	}
-    
   
     
     
@@ -298,8 +360,26 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
     public void setGolsJogoTimeB(Long golsJogoTimeB) {
         this.golsJogoTimeB = golsJogoTimeB;
     }
-
+    
     @Override
+    public Boolean getVencedorJogoTimeA() {
+		return vencedorJogoTimeA == null ? false : true;
+	}
+
+	public void setVencedorJogoTimeA(Boolean vencedorJogoTimeA) {
+		this.vencedorJogoTimeA = vencedorJogoTimeA;
+	}
+
+	@Override
+	public Boolean getVencedorJogoTimeB() {
+		return vencedorJogoTimeB == null ? false : true;
+	}
+
+	public void setVencedorJogoTimeB(Boolean vencedorJogoTimeB) {
+		this.vencedorJogoTimeB = vencedorJogoTimeB;
+	}
+
+	@Override
     public Double getPontuacaoAcertarVencedor() {
         return pontuacaoAcertarVencedor;
     }
@@ -358,5 +438,60 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
 	}
 
 
-    
+	public Long getQtdGolsConsideraPlacarAlto() {
+		return qtdGolsConsideraPlacarAlto;
+	}
+
+	public void setQtdGolsConsideraPlacarAlto(Long qtdGolsConsideraPlacarAlto) {
+		this.qtdGolsConsideraPlacarAlto = qtdGolsConsideraPlacarAlto;
+	}
+
+	public Double getPontuacaoAcertarPlacarAlto() {
+		return pontuacaoAcertarPlacarAlto;
+	}
+
+	public void setPontuacaoAcertarPlacarAlto(Double pontuacaoAcertarPlacarAlto) {
+		this.pontuacaoAcertarPlacarAlto = pontuacaoAcertarPlacarAlto;
+	}
+
+	public Double getMaximoPontuacaoPossivelPalpite() {
+		return maximoPontuacaoPossivelPalpite;
+	}
+
+	public void setMaximoPontuacaoPossivelPalpite(Double maximoPontuacaoPossivelPalpite) {
+		this.maximoPontuacaoPossivelPalpite = maximoPontuacaoPossivelPalpite;
+	}
+
+	public Double getPontuacaoAcertarTimes() {
+		return pontuacaoAcertarTimes;
+	}
+
+	public void setPontuacaoAcertarTimes(Double pontuacaoAcertarTimes) {
+		this.pontuacaoAcertarTimes = pontuacaoAcertarTimes;
+	}
+
+	public Double getPontuacaoAcertarUmTime() {
+		return pontuacaoAcertarUmTime;
+	}
+
+	public void setPontuacaoAcertarUmTime(Double pontuacaoAcertarUmTime) {
+		this.pontuacaoAcertarUmTime = pontuacaoAcertarUmTime;
+	}
+
+	public Long getTimeAJogoId() {
+		return timeAJogoId;
+	}
+
+	public void setTimeAJogoId(Long timeAJogoId) {
+		this.timeAJogoId = timeAJogoId;
+	}
+
+	public Long getTimeBJogoId() {
+		return timeBJogoId;
+	}
+
+	public void setTimeBJogoId(Long timeBJogoId) {
+		this.timeBJogoId = timeBJogoId;
+	}
+		
 }

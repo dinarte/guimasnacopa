@@ -5,11 +5,9 @@ package br.com.guimasnacopa.controller;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -170,6 +168,7 @@ public class ConsultarPalpiteController {
 		"\n"+
 		"*class.*	*ptos.*	*nome*		*palpites*\n";
 		for(Palpite palpite : palpites) {
+			System.out.println(">>>>>>" +  palpite.getParticipante().getUsuario().getName());
 			String classificacao = palpite.getParticipante().getClassificacao().toString();
 			String pontuacao = palpite.getParticipante().getPontuacao().toString();
 			String nome = getPrimeiroNome(palpite.getParticipante().getUsuario().getName()).trim();

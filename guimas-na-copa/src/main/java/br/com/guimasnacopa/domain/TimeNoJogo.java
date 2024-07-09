@@ -26,6 +26,8 @@ public class TimeNoJogo {
 	private  Time time;
 	
 	private Integer gols;
+	
+	private Boolean vencedor;
 
 	public Integer getId() {
 		return id;
@@ -57,6 +59,14 @@ public class TimeNoJogo {
 
 	public void setJogo(Jogo jogo) {
 		this.jogo = jogo;
+	}
+
+	public Boolean getVencedor() {
+		return vencedor == null ? false : vencedor;
+	}
+
+	public void setVencedor(Boolean vencedor) {
+		this.vencedor = vencedor;
 	}
 	
 }

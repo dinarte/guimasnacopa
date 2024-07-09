@@ -18,14 +18,14 @@
                     <h3 th:if="${jogo.id != null}">Editar </h3>
                 </div>
             </div>
-        
+      
         	<form th:action="@{/jogo/salvar}" th:object="${jogo}" method="post">
         			
-        		 <input type="hidden" th:field="*{id}">
+        		 <input type="hidden" th:field="*{id}" name="id" id="id">
         		 
         		 <div class="form-group">
-				    <label for="nome">Fase:</label>
-        		 <select th:field="*{fase}" class="form-control">
+				    <label for="fase">Fase:</label>
+        		 <select th:field="*{fase}" class="form-control" id="fase">
 				  	<option th:each="f : ${faseList}" 
 				          th:value="${f.id}" 
 				          th:text="${f.competicao.nome +' - '+ f.nome}">Wireframe</option>
@@ -33,8 +33,8 @@
 				 </div>
 				 
 				 <div class="form-group">
-				    <label for="nome">Time A:</label>
-        		 <select th:field="*{timeA}" class="form-control">
+				    <label for="timeA">Time A:</label>
+        		 <select th:field="*{timeA}" class="form-control" id="timeA">
 				  	<option th:each="t : ${timeList}" 
 				          th:value="${t.id}" 
 				          th:text="${t.nome}">Brasil</option>
@@ -42,8 +42,8 @@
 				 </div>
 				 
 				 <div class="form-group">
-				    <label for="nome">Time B:</label>
-        		 <select th:field="*{timeB}" class="form-control">
+				    <label for="timeB">Time B:</label>
+        		 <select th:field="*{timeB}" class="form-control" id="timeB">
 				  	<option th:each="t : ${timeList}" 
 				          th:value="${t.id}" 
 				          th:text="${t.nome}">Brasil</option>
@@ -53,23 +53,33 @@
 				 
         		 
         		 <div class="form-group">
-				    <label for="nome">Grupo:</label>
+				    <label for="grupo">Grupo:</label>
 				    <input type="text" class="form-control" id="grupo" th:value="*{grupo}" th:field="*{grupo}">
 				  </div>
         	
 	        	  <div class="form-group">
-				    <label for="nome">Data:</label>
+				    <label for="data">Data:</label>
 				    <input type="datetime-local" class="form-control" id="data" th:value="*{data}" th:field="*{data}">
 				  </div>
 				  
 				  <div class="form-group">
-				    <label for="permaLink">Limite dos Palpites:</label>
+				    <label for="limiteAoposta">Limite dos Palpites:</label>
 				    <input type="datetime-local" class="form-control" id="limiteAoposta" th:value="*{limiteAposta}" th:field="*{limiteAposta}">
 				  </div>
 				  
 				  <div class="form-group">
-				    <label for="permaLink">Libera Criação de Palpites?:</label>
-				  <input type="checkbox" class="form-control" id="liberarCriacaoPalpites" th:value="*{liberarCriacaoPalpites}" th:field="*{liberarCriacaoPalpites}">
+				    <label for="execucao">Libera Criação de Palpites?:</label>
+				  <input type="checkbox" class="form-control" id="execucao" th:value="*{liberarCriacaoPalpites}" th:field="*{liberarCriacaoPalpites}">
+				  </div>
+				  
+				  
+				  <div class="form-group">
+				    <label for="execucao">Ststus da Execução do Jogo:</label>
+				  	<select  class="form-control" id="execucao" th:field="*{execucao}">
+				  		<option th:each="e : ${jogo.execucoesPossiveis}" 
+				          th:value="${e}" 
+				          th:text="${e}">Previsto</option>
+				  	</select>
 				  </div>
 				  
 				  
