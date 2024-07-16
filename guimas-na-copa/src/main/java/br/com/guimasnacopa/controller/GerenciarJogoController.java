@@ -81,8 +81,7 @@ public class GerenciarJogoController {
 	private String doList(Model model, String filterBy, String orderBy) throws LoginException, BolaoNaoSelecionadoException {
 		autenticacao.checkAdminAthorization(model);
 		autenticacao.checkBolaoNaoSelecionado();
-		System.out.println(">>>>>>>");
-		System.out.println(orderBy);
+
 		
 		List<Map<String, String>> ordenacoesList = new ArrayList<>();
 		Map<String, String> competicao = new HashMap<>();
@@ -181,7 +180,7 @@ public class GerenciarJogoController {
 		
 		
 		//atualiza os times no jogo
-		List<TimeNoJogo> tnjList = tmjRepo.findAllByJogo(jogo);
+		List<TimeNoJogo> tnjList = tmjRepo.findAllByJogoOrderById(jogo);
 		tnjList.sort(new Comparator<TimeNoJogo>() {
 			@Override
 			public int compare(TimeNoJogo tnj1, TimeNoJogo tnj2) {

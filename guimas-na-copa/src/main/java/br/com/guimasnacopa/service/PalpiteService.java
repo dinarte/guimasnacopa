@@ -58,7 +58,7 @@ public class PalpiteService {
 				
 				Map<Integer, TimeNoJogo> times = new HashMap<>();
 				int i = 1;
-				List<TimeNoJogo> timesNojogo = timesNoJogoRepo.findAllByJogo(jogo);
+				List<TimeNoJogo> timesNojogo = timesNoJogoRepo.findAllByJogoOrderById(jogo);
 				for (TimeNoJogo timeNoJogo : timesNojogo) {
 					times.put(i, timeNoJogo);
 					i++;

@@ -27,10 +27,6 @@ public interface PalpiteForProcessingVo {
     Long getGolsJogoTimeA();
 
     Long getGolsJogoTimeB();
-    
-    Boolean getVencedorJogoTimeA();
-    
-    Boolean getVencedorJogoTimeB();
 
     Double getPontuacaoAcertarVencedor();
 
@@ -53,4 +49,6 @@ public interface PalpiteForProcessingVo {
     Long getTimeAJogoId();
     
     Long getTimeBJogoId();
+    
+    Long getIdTimeCampeaao();
 }

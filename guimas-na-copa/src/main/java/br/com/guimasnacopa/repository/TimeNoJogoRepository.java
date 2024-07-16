@@ -17,7 +17,7 @@ import br.com.guimasnacopa.domain.TimeNoJogo;
 public interface TimeNoJogoRepository  extends CrudRepository<TimeNoJogo, Integer>{
 
 	
-	public List<TimeNoJogo> findAllByJogo(Jogo jogo);
+	public List<TimeNoJogo> findAllByJogoOrderById(Jogo jogo);
 
 	public List<TimeNoJogo> findAllByJogo_Fase_Bolao(Bolao bolao);
 
