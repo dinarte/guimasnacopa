@@ -23,11 +23,11 @@
 	                   	<br />
 	                   	Detalhe Palpite - [[${palpiteReferencia.bolaoCompeticao.competicao.nome}]]
 	                   	<h4 th:utext="${palpiteReferencia.descricaoPalpite}">Time a x Time B</h4>
+	                   	<h4 class="text-primary"><span th:text="${palpiteReferencia.golsDoJogoTimaA}"></span> vs <span th:text="${palpiteReferencia.golsDoJogoTimaB}"></span></h4>
 	                   	<span th:if="${!palpiteReferencia.jogo.emAndamento}" th:text="${palpiteReferencia.jogo.execucao}" class="badge">Encenrrado</span>
 	                   	<img src="/img/bola-rolando.gif" width="20px" th:if="${palpiteReferencia.jogo.emAndamento}" />
 	                   	<br /><br />
 	                 
-	                   	
 	                   	<a class="btn btn-block btn-default compartilhar-whatsapp" th:href="${'whatsapp://send?text='+textWapp}">
          					<i class="fa fa-whatsapp"></i>
          					compartilhar
@@ -106,7 +106,8 @@
 		                        			<th></th>
 		                        			<th></th>
 		                        			<th>Participante</th>
-		                        			<th colspan="3"><center>Palpite</center></th>
+		                        			<th colspan="3" class="text-center">Palpite</th>
+		                        			<th class="text-center">Ptos. Palp.</th>
 		                        		</tr>
 		                        	</thead>
 		                        	<tbody>
@@ -126,7 +127,9 @@
 				                        				<span th:if="${palpite.apostaAberta}" > ? </span>
 				                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.golsTimeB}"></span>
 				                        			</td>
-				                        			
+				                        			<td class="text-center">
+				                        				<span th:if="${!palpite.apostaAberta}" th:text="${palpite.pontuacaoAtingida}"></span>
+				                        			</td>
 				                        		</tr>
 				                        	</th:block>
 		                        	</tbody>

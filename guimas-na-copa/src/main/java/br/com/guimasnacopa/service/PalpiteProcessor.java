@@ -41,8 +41,6 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
     private Long golsTimeB;
     private Long golsJogoTimeA;
     private Long golsJogoTimeB;
-    private Boolean vencedorJogoTimeA;
-    private Boolean vencedorJogoTimeB;
     private Double pontuacaoAcertarVencedor;
     private Double pontuacaoAcertarEmpate;
     private Double pontuacaoAcertarPlacar;
@@ -55,6 +53,7 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
     private Double pontuacaoAcertarUmTime;
     private Long timeAJogoId;
     private Long timeBJogoId;
+    private Long idTimeCampeaao;
     private Map<String, Double> detalhePontuacao = new HashMap<>();
 	
     
@@ -141,10 +140,11 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
 	private Double processarAcertarUmTime() {
 		pontuacaoAtingida = 0.0;
 		
-		if (timeAId == timeAJogoId && getVencedorJogoTimeA() || 
-				 timeAId == timeBJogoId && getVencedorJogoTimeA()) {
-			 pontuacaoAtingida = pontuacaoAcertarUmTime;
-			 detalhePontuacao.put(ACERTOU_O_CAMPEAO, pontuacaoAcertarUmTime);
+		if (idTimeCampeaao != null) {
+			if (idTimeCampeaao == timeAId) {
+				pontuacaoAtingida = pontuacaoAcertarUmTime;
+				detalhePontuacao.put(ACERTOU_O_CAMPEAO,pontuacaoAcertarUmTime);
+			}
 		}
 		
 		return pontuacaoAtingida;
@@ -361,24 +361,6 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
         this.golsJogoTimeB = golsJogoTimeB;
     }
     
-    @Override
-    public Boolean getVencedorJogoTimeA() {
-		return vencedorJogoTimeA == null ? false : true;
-	}
-
-	public void setVencedorJogoTimeA(Boolean vencedorJogoTimeA) {
-		this.vencedorJogoTimeA = vencedorJogoTimeA;
-	}
-
-	@Override
-	public Boolean getVencedorJogoTimeB() {
-		return vencedorJogoTimeB == null ? false : true;
-	}
-
-	public void setVencedorJogoTimeB(Boolean vencedorJogoTimeB) {
-		this.vencedorJogoTimeB = vencedorJogoTimeB;
-	}
-
 	@Override
     public Double getPontuacaoAcertarVencedor() {
         return pontuacaoAcertarVencedor;
@@ -493,5 +475,16 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
 	public void setTimeBJogoId(Long timeBJogoId) {
 		this.timeBJogoId = timeBJogoId;
 	}
+
+	@Override
+	public Long getIdTimeCampeaao() {
+		return idTimeCampeaao;
+	}
+
+	public void setIdTimeCampeaao(Long idTimeCampeaao) {
+		this.idTimeCampeaao = idTimeCampeaao;
+	}
+	
+	
 		
 }
