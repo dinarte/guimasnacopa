@@ -32,10 +32,13 @@ public class SingUpService {
 	 * Cria um usuario, o participante e os palpites 
 	 * @param usuario
 	 */
-	public void criarUsuarioEParticipante(Usuario usuario, String linkBolao) {	
+	public void criarUsuario(Usuario usuario, String linkBolao) {	
 		usuario.setAdmin(false);
 		usuario.setUrlFoto("https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/man-user-color-icon.png");
-		userRepo.save(usuario);
+		userRepo.save(usuario);		
+	}
+	
+	public void criarParticipante(Usuario usuario, String linkBolao) {	
 		
 		Bolao bolao = bolaoRepo.findOneByPermalink(linkBolao);
 		
@@ -46,8 +49,7 @@ public class SingUpService {
 		p.setClassificacao(1);
 		participanteRepo.save(p);
 		
-		//palpiteService.criarPalpites(p);
-		
+		//palpiteService.criarPalpites(p)		
 	}
 
 	

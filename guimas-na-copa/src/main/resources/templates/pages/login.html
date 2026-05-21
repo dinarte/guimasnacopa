@@ -17,12 +17,10 @@
                     <div class="panel-heading">
                     
                     	<div>
-	            		<span class="title">GUIMAS.BET. </span>
-			               <span class="title" th:text="${bolao?.nome}">Título do Bolao</span>
+	            		<span class="title">GUIMASBET.COM.BR </span>
+			               <!--  span class="title" th:text="${bolao?.nome}">Título do Bolao</span -->
 		            	</div>
-	                    
-                    
-                        <h3 class="panel-title">Identifique-se Jogador!</h3>
+	                
                     </div>
                     
                     
@@ -58,11 +56,13 @@
                     <div class="panel-body">
                     	<div class="col-12" >
 	                    	<div class="col-md-6" >
-	                    		<div class="text-center" ><img width="100" class="logo" src="/img/the-new-copa-america-2024-logo.jpg" /></div>
-    							<div class="text-center" ><img width="100" class="logo" src="/img/euro-2024-logo.png"></div>
+	                    		<div class="text-center" >
+	                    			<img width="250" class="logo" src="/img/pailolo-inicio.png" />
+	                    		</div>
 	                    	</div>
                     		<div class="col-md-6" >
 		                        <form role="form" action="/#" th:action="@{/login}"  method="post">
+		                        	<h4 class="">Identifique-se Jogador:</h3>
 		                            <fieldset>
 		                                <div class="form-group">
 		                                    <input class="form-control" placeholder="E-mail"  name="email" type="email" autofocus>

@@ -80,13 +80,13 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 	public void updateAproveitamento();	
 	
 	
-	@Query(value="select to_char(jogo.data, 'yyyy-mm-dd') as dia, coalesce(sum(pontuacao_atingida),0) as pontuacao \r\n" + 
+	@Query(value="select to_char(jogo.data, 'yyyy-mm-dd') as dia, cast(coalesce(sum(pontuacao_atingida),0) as integer) as pontuacao \r\n" + 
 			"from palpite pal\r\n" + 
 			"join participante par on (par.id = pal.participante_id)\r\n" + 
 			"join usuario u on u.id = par.usuario_id\r\n" + 
 			"join jogo on jogo.id = pal.jogo_id\r\n" + 
 			"where  par.id = :participanteId \r\n" + 
-			"and to_char(jogo.data, 'yymmdd') <= to_char(now(), 'yymmdd')\r\n" + 
+			"and jogo.data <= now() " +
 			"group by to_char(jogo.data, 'yyyy-mm-dd')\r\n" + 
 			"order by 1" , nativeQuery = true)
 	public List<Map<String, Object>> findAproveitameto(@Param("participanteId") Integer participanteId);

@@ -5,7 +5,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.1.RELEASE")
+        //classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.1.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.18.RELEASE")
     }
 }
 
@@ -71,18 +72,18 @@ ssh.settings {
 }
 
 remotes {
-  ContaigeClaud {
-    host = 'ag-br1-17.conteige.cloud' 
-    port = 28626
+  production {
+    host = 'app-producao-dinartealvesmart-xhcp.hospedagemelastica.com.br' 
+    port = 28010
     user = 'application'
-    identity = file("${System.properties['user.home']}/.ssh/guimas_rsa_id") 
+    identity = file("${System.properties['user.home']}/.ssh/github_actions_deploy_rsa") 
   }
 }  
 
 task deploy {
   doLast {
     ssh.run {
-      session(remotes.ContaigeClaud) {
+      session(remotes.production) {
         put from: "$buildDir/${buildBaseName}-${buildVersion}.war", into: 'appserver/webapps/ROOT.war'
       }
     }
@@ -98,8 +99,11 @@ tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+//sourceCompatibility = 1.8
+//targetCompatibility = 1.8
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -109,6 +113,15 @@ dependencies {
     implementation("org.postgresql:postgresql")
     implementation("com.mashape.unirest:unirest-java:1.4.9")
 	implementation("com.google.api-client:google-api-client:1.32.1")
+	
+	// Necessário no Java 11
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
+    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.1")
+    implementation("javax.activation:javax.activation-api:1.2.0")
+    
+    // MongoDB par a fazer chache da api
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	
     
     testImplementation("junit:junit")

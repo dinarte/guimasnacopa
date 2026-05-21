@@ -49,6 +49,10 @@ public class Autenticacao{
 		if (bolao == null) throw new BolaoNaoSelecionadoException("Você precisa selecionar um bolão antes de acessar esta funcionalidade."); 
 	}
 	
+	public boolean isBolaoSelecionado() {
+		return !Objects.isNull(bolao);
+	}
+	
 	public void checkAdminAthorization(Model model) throws LoginException {
 		checkAdminAthorization();
 		model.addAttribute(this);

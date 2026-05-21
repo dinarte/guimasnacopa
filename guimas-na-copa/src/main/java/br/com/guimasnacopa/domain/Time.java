@@ -16,6 +16,8 @@ public class Time implements Comparable<Time>{
 	
 	private String flag;
 	
+	private String sigla;
+	
 	private String emoji;
 	
 	private Long idApi;
@@ -43,6 +45,15 @@ public class Time implements Comparable<Time>{
 
 	public void setFlag(String flag) {
 		this.flag = flag;
+	}
+	
+
+	public String getSigla() {
+		return sigla;
+	}
+
+	public void setSigla(String sigla) {
+		this.sigla = sigla;
 	}
 
 	public Long getIdApi() {

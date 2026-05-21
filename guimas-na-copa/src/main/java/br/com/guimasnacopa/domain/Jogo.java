@@ -32,6 +32,8 @@ public class Jogo {
 	
 	private String grupo;
 	
+	private Integer rodada;
+	
 	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private LocalDateTime limiteAposta;
 	
@@ -92,6 +94,14 @@ public class Jogo {
 
 	public void setGrupo(String grupo) {
 		this.grupo = grupo;
+	}
+
+	public Integer getRodada() {
+		return rodada;
+	}
+
+	public void setRodada(Integer rodada) {
+		this.rodada = rodada;
 	}
 
 	public Fase getFase() {
@@ -158,7 +168,8 @@ public class Jogo {
 		this.execucao = execucao;
 	}
 	
-	
+
+
 	@Transient
 	public boolean isInicioHoraPrevista() {
 		if (limiteAposta != null) {

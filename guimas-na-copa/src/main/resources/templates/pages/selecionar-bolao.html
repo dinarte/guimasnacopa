@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+   
+<body>
+
+    <div class="container">
+       
+    	<div class="row"> 
+            
+            <div class="col-md-8 col-md-offset-2">
+            	
+            
+                <div class="login-panel panel panel-default">
+                
+                    <div class="panel-heading">
+                    
+                    	<div>
+	            		<span class="title">GUIMASBET.COM.BR </span>
+			               <!--  span class="title" th:text="${bolao?.nome}">Título do Bolao</span -->
+		            	</div>
+	                
+                    </div>
+                    
+                    
+             
+                    <div th:if="${appMessages} != null">
+                   	   <div th:each="msg : ${appMessages.successList}">
+                           <div class="alert alert-success" >
+                              <span th:text="${msg}"> menssagem do sistema</span>
+                           </div>
+                       </div>
+                    
+                       <div th:each="msg : ${appMessages.infoList}">    
+                           <div class="alert alert-info" >
+                            <span th:text="${msg}"> menssagem do sistema</span>
+                           </div>
+                       </div>
+                           
+                       <div th:each="msg : ${appMessages.warningList}">   
+                           <div class="alert alert-warning">
+                               <span th:text="${msg}"> menssagem do sistema</span>
+                           </div>
+                       </div>
+                           
+                        <div th:each="msg : ${appMessages.errorList}">  
+                           <div class="alert alert-danger">
+                               <span th:text="${msg}"> menssagem do sistema</span>
+                           </div>
+                     	 </div>
+                    </div>       
+                    
+
+                    
+                    <div class="panel-body">
+                    	<div class="col-12" >
+	                    	
+                    			<h3> SELECIONE UM BOÃO:</h3>
+		                        
+		                        <div th:each="bolao : ${bolaoList}">  
+		                           <div class="alert alert-success">
+		                               	<span th:text="${bolao.nome}"> Nome do Bolão</span>
+		                               
+		                               
+		                              	<a  
+	                       					class="btn btn-primary"  
+	                       					href="/permalink">
+	                       					Selecionar
+	                       				</a>
+		                               
+		                           </div>
+		                     	 </div>
+		                        
+		                        
+	                      
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    
+        <!-- cards-->
+        <!-- <div class="row">
+            <div class="col-lg-12 col-lg-offset-1">
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-users fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge" th:text="${qtdParticipantes}">38</div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/' + bolao.permalink + '/participantes'}" href="/participantes">
+                            <div class="panel-footer">
+                                <span class="pull-left">Participantes.</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-usd fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge" th:text="${premioEstimado}">R$ 1.500,00</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/' + bolao.permalink + '/regulamento'}" href="/regulamento">
+                            <div class="panel-footer">
+                                <span class="pull-left">Prêmio Estimado!</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-yellow">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-trophy fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/' + bolao.permalink + '/ranking'}" href="/ranking">
+                            <div class="panel-footer">
+                                <span class="pull-left">Ranking completo</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-gray">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa  fa-bar-chart-o fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/palpite/consultar'}" href="/ranking">
+                            <div class="panel-footer">
+                                <span class="pull-left">Análise de Desempenho</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div> 
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-book fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge"></div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <a th:href="${'/' + bolao.permalink + '/regulamento'}" href="/regulamento">
+                            <div class="panel-footer">
+                                <span class="pull-left">Regulamento</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <!-- cards end -->
+        <div class="row text-center">
+            	[[${domain}]]:[[${appVersion}]]
+        </div>
+	</div>
+
+    <!-- 
+    <script th:replace="fragments/main :: scrptsblock" />
+    
+    <script src="/js/service.js"></script>
+     -->
+
+</body>
+
+</html>

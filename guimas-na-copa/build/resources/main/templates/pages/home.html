@@ -15,6 +15,9 @@
            
 	            <div class="row">
 	                <div class="col-lg-12">
+	                
+	                <h3 th:text="${bolao.nome}">Nome do Bolão</h3>
+	                
 	                <th:block th:if="${jogosPendentes == 0}">
 	                	<a href="/palpite/editar">
 		                    <div class="progress" style="margin-top: 10px;" >
@@ -134,7 +137,7 @@
             <!-- /.row -->
             
             
-            <div class="flourish-embed flourish-bar-chart-race" data-src="visualisation/18443430"><script src="https://public.flourish.studio/resources/embed.js"></script></div>
+            <!--  div class="flourish-embed flourish-bar-chart-race" data-src="visualisation/18443430"><script src="https://public.flourish.studio/resources/embed.js"></script></div>-->
             
             <div class="panel panel-default">
                <div class="panel-heading">
@@ -261,7 +264,7 @@
 			    	
 			        }, 
 			    error: function(jqXHR, textStatus, errorThrown) {
-			            alert(jqXHR.status);
+			            //alert(jqXHR.status);
 			        },
 			   dataType: "json"
 			});

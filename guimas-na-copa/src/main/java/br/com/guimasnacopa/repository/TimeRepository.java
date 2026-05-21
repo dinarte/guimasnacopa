@@ -14,9 +14,13 @@ import br.com.guimasnacopa.domain.Time;
 @Repository
 public interface TimeRepository  extends CrudRepository<Time, Integer>{
 
+	public List<Time> findAll();
+	
 	public List<Time> findAllByFlag(String flag);
 	
 	@Query("select distinct tnj.time from TimeNoJogo tnj where tnj.jogo.fase.bolao = :bolao order by tnj.time.nome")
 	public List<Time> findAllByBolao(@Param("bolao") Bolao bolao);
 	
+	@Query("select t.idApi from Time t where t.idApi is not null")
+	List<Long> findAllIdsApi();
 }

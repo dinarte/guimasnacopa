@@ -49,18 +49,22 @@ public class ConsultarPalpiteController {
 	HomeController home;
 	
 	
-	@GetMapping("/palpite/{participante}/consultar")
-	public String consultarPalpitesDoParticipante(@PathVariable("participante") Participante participante, Model model) throws LoginException{
+	@GetMapping("/palpite/{participanteId}/consultar")
+	public String consultarPalpitesDoParticipante(@PathVariable("participanteId") Integer participanteId, Model model) throws LoginException{
 		autenticacao.checkAthorization();
+		Participante participante = new Participante();
+		participante.setId(participanteId);
 		palpiteHelper.processarConsultaDePalpite(participante, model, palpiteRepo.findAllByParticipante(participante));
-		model.addAttribute("colunasCards",3);
+		model.addAttribute("colunasCards",4);
 		model.addAttribute("meuPalpite",false);
 		return "pages/palpite_participante";
 	}
 	
-	@GetMapping("/palpite/{participante}/consultar/tab")
-	public String consultarPalpitesDoParticipanteEmTabela(@PathVariable("participante") Participante participante, Model model) throws LoginException{
+	@GetMapping("/palpite/{participanteId}/consultar/tab")
+	public String consultarPalpitesDoParticipanteEmTabela(@PathVariable("participanteId") Integer participanteId, Model model) throws LoginException{
 		autenticacao.checkAthorization();
+		Participante participante = new Participante();
+		participante.setId(participanteId);
 		palpiteHelper.processarConsultaDePalpite(participante, model, palpiteRepo.findAllByParticipante(participante));
 		model.addAttribute("meuPalpite",false);
 		return "pages/palpite_participante_tabela";
@@ -79,9 +83,11 @@ public class ConsultarPalpiteController {
 	
 	}
 	
-	@GetMapping("/palpite/{palpite}/detalhar")
-	public String detalharPalpite(@PathVariable("palpite") Palpite palpite, Model m) throws LoginException, br.com.guimasnacopa.exception.LoginException, AppException {
+	@GetMapping("/palpite/{palpiteId}/detalhar")
+	public String detalharPalpite(@PathVariable("palpiteId") Integer palpiteId, Model m) throws LoginException, br.com.guimasnacopa.exception.LoginException, AppException {
 		autenticacao.checkAthorization();
+		Palpite palpite = new Palpite();
+		palpite.setId(palpiteId);
 		palpite = palpiteRepo.findById(palpite.getId()).get();
 		if (palpite.isApostaAberta()){
 			appMessages.getWarningList().add("Calma atacente, você está impedido!!! Este jogo ainda está com o período de palpites aberto e nesse período não é permitido acessar os detalhes dos palpites, volte aqui depois!");

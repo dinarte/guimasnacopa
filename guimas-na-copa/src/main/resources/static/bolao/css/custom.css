@@ -112,6 +112,11 @@ img.img-perfil-peq {
 	background-color: #ED9477;
 }
 
+.bonusfinal{border: 1px solid #DA70D6}
+.bonusfinal .panel-heading{
+	background-color: #DA70D6;
+}
+
 .grupo{border: 1px solid #ED9455}
 .grupo .panel-heading{
 	background-color: #ED9455;
@@ -149,9 +154,39 @@ img.img-perfil-peq {
 .grupoh .panel-heading{
 	background-color: #DA70D6;
 }
-.bonusfinal{border: 1px solid #DA70D6}
-.bonusfinal .panel-heading{
-	background-color: #DA70D6;
+.grupoi{border: 1px solid #CD853F}
+.grupoi .panel-heading{
+	background-color: #CD853F;
+}
+
+.grupoj{border: 1px solid #20B2AA}
+.grupoj .panel-heading{
+	background-color: #20B2AA;
+}
+
+.grupok{border: 1px solid #9370DB}
+.grupok .panel-heading{
+	background-color: #9370DB;
+}
+
+.grupol{border: 1px solid #3CB371}
+.grupol .panel-heading{
+	background-color: #3CB371;
+}
+
+.grupom{border: 1px solid #FF7F50}
+.grupom .panel-heading{
+	background-color: #FF7F50;
+}
+
+.grupon{border: 1px solid #4682B4}
+.grupon .panel-heading{
+	background-color: #4682B4;
+}
+
+.grupoo{border: 1px solid #9ACD32}
+.grupoo .panel-heading{
+	background-color: #9ACD32;
 }
             
 .loader {

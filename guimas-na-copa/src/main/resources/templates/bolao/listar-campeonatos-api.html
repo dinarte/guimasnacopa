@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+                <div class="col-lg-10">
+                    <h1 class="page-header">Gerenciar Bolão - Habilitar Competição</h1>
+                    <h3>Bolões</h3>
+                </div>
+                <!--  
+                <div class="col-lg-2" style="vertical-align: middle; text-align: center; padding: 8px;">
+                	<a href="/bolao/novo" class="btn btn-primary"> + Novo Bolão</a>
+                </div>
+                -->
+            </div>
+            
+            <div th:replace="fragments/main :: messages" />
+        
+        
+            <table class="table">
+                        	<thead>
+                        		<tr>
+                        			<th>Nome</th>
+                        			<th>Temporada</th>
+                        			<th>Slug</th>
+                        			<th>Status</th>
+                        			<th></th>
+                        		</tr>
+                        	</thead>
+                        	<tbody>
+                        		<th:block th:each="campeonatoApi : ${campeonatoList}">
+	                        		<tr th:if="${campeonatoApi.status != 'finalizado' }">
+	                        			<td th:text="${campeonatoApi.nome}">Nome do Campeonato</td>
+	                        			<td th:text="${campeonatoApi.edicaoAtual.temporada}">2026</td>
+	                        			<td th:text="${campeonatoApi.slug}"> copa-do-mundo </td>
+	                        			<td><span th:text="${campeonatoApi.status}">Andamento</td>
+	                        			<td>
+		                        			<a class="btn btn-success" th:href="${'/competicao/habilitar-api/' + campeonatoApi.campeonatoId}"
+		                        				data-toggle="tooltip" 
+		                        				data-placement="top" 
+                        				title="Disponibilizar competição para a criação de bolões.">
+		                        				<span class="glyphicon glyphicon-log-in"></span>
+		                        			</a>
+	                        			</td>
+	                        		</tr>
+                        		</th:block>
+                        	</tbody>
+                        </table>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>

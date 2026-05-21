@@ -65,9 +65,11 @@ public class PalpiteHelper {
 		palpites.forEach(p ->{
 			meusPalpites.forEach(meuPalpite ->{
 				if (meuPalpite.isResultado()) {
-					if (meuPalpite.getJogo().getId().equals(p.getJogo().getId())) {
+
+					if (p.getJogo()!=null && meuPalpite.getJogo().getId().equals(p.getJogo().getId())) {
 						p.setPalpiteComparado(meuPalpite);
 					}
+
 				} else if (meuPalpite.getBolaoCompeticao().getId().equals(p.getBolaoCompeticao().getId())) {
 					if (meuPalpite.isAcertarTimes() && p.isAcertarTimes() || (meuPalpite.isAcertarCampeao() && p.isAcertarCampeao()) ) {
 						p.setPalpiteComparado(meuPalpite);

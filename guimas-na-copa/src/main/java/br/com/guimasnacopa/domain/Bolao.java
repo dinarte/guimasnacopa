@@ -1,10 +1,15 @@
 package br.com.guimasnacopa.domain;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 public class Bolao {
@@ -26,7 +31,18 @@ public class Bolao {
 	private Double valor;
 	
 	private Double taxaAdministrativa;
+	
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+	private LocalDateTime dataInicio;
+	
+	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+	private LocalDateTime dataFim;
+	
+	
+	@Transient
+	private Competicao competicao;
 
+	
 	public Integer getId() {
 		return id;
 	}
@@ -82,6 +98,29 @@ public class Bolao {
 	public void setInstrucoesPagamento(String instrucoesPagamento) {
 		this.instrucoesPagamento = instrucoesPagamento;
 	}
-	
-	
+
+	public LocalDateTime getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(LocalDateTime dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public LocalDateTime getDataFim() {
+		return dataFim;
+	}
+
+	public void setDataFim(LocalDateTime dataFim) {
+		this.dataFim = dataFim;
+	}
+
+	public Competicao getCompeticao() {
+		return competicao;
+	}
+
+	public void setCompeticao(Competicao competicao) {
+		this.competicao = competicao;
+	}
+		
 }

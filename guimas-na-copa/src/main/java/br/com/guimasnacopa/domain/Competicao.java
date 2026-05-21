@@ -8,6 +8,10 @@ import javax.persistence.Id;
 @Entity
 public class Competicao implements Comparable<Competicao>{
 	
+	public static final String STATUS_FINALIZADO = "finalizado";
+	public static final String STATUS_ANDAMENTO = "andamento";
+	public static final String STATUS_AGENDADO = "agendado";
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -21,6 +25,8 @@ public class Competicao implements Comparable<Competicao>{
 	private String logoUrl;
 	
 	private Long idApi;
+	
+	private String status;
 
 	public Integer getId() {
 		return id;
@@ -71,11 +77,17 @@ public class Competicao implements Comparable<Competicao>{
 		this.idApi = idApi;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
 	@Override
 	public int compareTo(Competicao o) {
 		return this.getNome().compareTo(o.getNome());
 	}
-	
-	
 
 }

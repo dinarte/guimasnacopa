@@ -72,7 +72,7 @@
 						    		</tr>
 						    		<tr>
 						    			<td class="time" >
-							    			<input th:if="${autenticacao.adminDoBolao && palpite.jogo.emAndamento && palpite.jogo.fase.faseFinal}" 
+							    			<input th:if="${autenticacao.adminDoBolao && palpite.jogoEmAndamento && palpite.jogo.fase.faseFinal}" 
 							    			 			type="radio" 
 							    			 			alt="Marcar como campeão"
 							    			 			th:id="${'vencedor_a_radio_'+palpite.id}" 
@@ -91,7 +91,7 @@
 						    			</td>
 						    			<td class="p-result" th:if="${palpiteComResultado}" width="50px">
 						    				
-						    				<input	th:if="${autenticacao.adminDoBolao && palpite.jogo.emAndamento}" 
+						    				<input	th:if="${autenticacao.adminDoBolao && palpite.jogoEmAndamento}" 
 						    						type="number" 
 						    						th:id="${'gols_time_a_'+palpite.id}" 
 						    						th:value="${palpite.golsDoJogoTimaA}" 
@@ -99,13 +99,13 @@
 						    						style="padding: 3px; height: 20px;"
 						    						min="0"
 						    						th:onChange="${'popularGols('+palpite.id+')'}">
-						    				<span th:if="${!autenticacao.adminDoBolao || !palpite.jogo.emAndamento}" th:text="${palpite.golsDoJogoTimaA}" > 1 </span>
+						    				<span th:if="${!autenticacao.adminDoBolao || !palpite.jogoEmAndamento}" th:text="${palpite.golsDoJogoTimaA}" > 1 </span>
 						    			</td>
 						    		</tr>
 						    		<tr>
 						    			<td class="time" >
 						    			
-							    			<input th:if="${autenticacao.adminDoBolao && palpite.jogo.emAndamento && palpite.jogo.fase.faseFinal}" 
+							    			<input th:if="${autenticacao.adminDoBolao && palpite.jogoEmAndamento && palpite.jogo.fase.faseFinal}" 
 							    			 			type="radio" 
 							    			 			alt="Marcar como campeão"
 							    			 			th:id="${'vencedor_b_radio_'+palpite.id}" 
@@ -128,7 +128,7 @@
 						    				<span th:text="${palpite.palpiteComparado.golsTimeB}" > 1 </span>
 						    			</td>
 						    			<td class="p-result" th:if="${palpiteComResultado}">
-						    			 	<input	th:if="${autenticacao.adminDoBolao && palpite.jogo.emAndamento}" 
+						    			 	<input	th:if="${autenticacao.adminDoBolao && palpite.jogoEmAndamento}" 
 						    			 			type="number" 
 						    			 			th:id="${'gols_time_b_'+palpite.id}"
 						    			 			th:value="${palpite.golsDoJogoTimaB}" 
@@ -136,7 +136,7 @@
 						    			 			style="padding: 3px; height: 20px;"
 						    			 			min="0"
 						    			 			th:onChange="${'popularGols('+palpite.id+')'}" /> 
-						    				<span  th:if="${!autenticacao.adminDoBolao || !palpite.jogo.emAndamento}" th:text="${palpite.golsDoJogoTimaB}" > 1 </span>
+						    				<span  th:if="${!autenticacao.adminDoBolao || !palpite.jogoEmAndamento}" th:text="${palpite.golsDoJogoTimaB}" > 1 </span>
 						    			</td>
 						    		</tr>
 						    	
@@ -172,7 +172,7 @@
 						    	
 						    	<span th:if="${palpite.jogo.encerrado}" class="badge">Encenrrado</span>
 						    	
-						    	<span> <img src="/img/bola-rolando.gif" width="20px" th:if="${palpite.jogo.emAndamento}" />  </span>
+						    	<span> <img src="/img/bola-rolando.gif" width="20px" th:if="${palpite.jogoEmAndamento}" />  </span>
 						    	
 						    	<button type="button" th:if="${palpite.exibePontuacaoNoCard}" data-toggle="modal" th:data-target="${'#modal_' + palpite.id}">
 	                                [[${palpite.pontuacaoAtingida}]] Pontos
@@ -181,10 +181,10 @@
 				    			<button type="submit" th:if="${palpite.jogo.previsto && palpite.jogo.inicioHoraPrevista && autenticacao.adminDoBolao}" data-loading="loader">
 	                            	Marcar como Em Andamento      
 	                            </button>
-	                            <button type="submit" th:if="${palpite.jogo.emAndamento && autenticacao.adminDoBolao }" disabled="disabled" id="btnRaking" data-loading="loader">
+	                            <button type="submit" th:if="${palpite.jogoEmAndamento && autenticacao.adminDoBolao }" disabled="disabled" id="btnRaking" data-loading="loader">
 		                            Atualizar ranking
 		                        </button>
-		                        <button type="submit" th:if="${palpite.jogo.emAndamento && autenticacao.adminDoBolao }" id="btnRaking" th:onclick="${'setEncerrado('+palpite.id+')'}" data-loading="loader">
+		                        <button type="submit" th:if="${palpite.jogoEmAndamento && autenticacao.adminDoBolao }" id="btnRaking" th:onclick="${'setEncerrado('+palpite.id+')'}" data-loading="loader">
 		                            Encerrar jogo
 		                        </button>
 	                         </form>  	
@@ -199,7 +199,7 @@
                              <div class="modal-content">
                                  <div class="modal-header text-center">
                                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                      <img src="/img/bola-rolando.gif" width="25px" th:if="${palpite.jogo.emAndamento}" /> 
+                                      <img src="/img/bola-rolando.gif" width="25px" th:if="${palpite.jogoEmAndamento}" /> 
                                      <h4 class="modal-title" id="myModalLabel" th:utext="${palpite.descricaoJogo}" >Modal title</h4>
                                  </div>
                                  <div class="modal-body">

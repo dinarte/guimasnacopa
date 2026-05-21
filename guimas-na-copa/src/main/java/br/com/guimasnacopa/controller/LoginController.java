@@ -1,7 +1,6 @@
 package br.com.guimasnacopa.controller;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,7 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.Cookie;
@@ -116,6 +114,7 @@ public class LoginController {
 		autenticacao.setUsuario(uRepo.findOneByEmailSenha(usuario.getEmail(), usuario.getPass()));
 		if ( autenticacao.getUsuario() != null) {
 			autenticacao.setAutenticado(true);
+			
 			autenticacao.setBolao(bolaoRepo.findOneByPermalink(bolaoAtivo));
 			
 			String idAutorizacao = gerarToken(autenticacao.getUsuario().getId());
@@ -130,6 +129,10 @@ public class LoginController {
 			autenticacao.setAutorizacao(autorizacao);
 			model.addAttribute(autenticacao);
 			
+			/*
+			if (!autenticacao.isBolaoSelecionado())
+				return "redirect:/bolao/selecionar";
+			*/
 			return redirectAccordingByKindOfUser();
 		}
 		else {
@@ -222,7 +225,7 @@ public class LoginController {
 	
 	
 	public String login(String linkBolao, Model model) throws BolaoNaoSelecionadoException {
-		return login(bolaoAtivo, model, null);
+		return login(linkBolao, model, null);
 	}
 	
 	public String login(Model model) throws BolaoNaoSelecionadoException {

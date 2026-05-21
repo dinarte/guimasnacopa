@@ -24,6 +24,18 @@
         			
         		 <input type="hidden" th:field="*{id}">
         	
+        	
+        		  <div class="form-group">
+				    <label for="nome">Competição:</label>
+				    
+				    <select th:field="*{competicao.id}" class="form-control" id="fase">
+					  	<option th:each="c : ${competicaoList}" 
+					          th:value="${c.id}" 
+					          th:text="${c.nome +' - '+ c.sessao}">Copa do Mundo - 2026</option>
+					 </select>
+				    
+				  </div>
+        	
 	        	  <div class="form-group">
 				    <label for="nome">Nome do Bolão:</label>
 				    <input type="text" class="form-control" id="nome" th:field="*{nome}">

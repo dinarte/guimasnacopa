@@ -1,6 +1,6 @@
 package br.com.guimasnacopa.domain;
 
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,6 +22,8 @@ public class Fase {
 	private Competicao competicao;
 	
 	private String nome;
+	
+	private String tipo;
 	
 	private Date inicioPalpite;
 	
@@ -67,6 +69,14 @@ public class Fase {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+	
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 	public Date getInicioPalpite() {

@@ -36,12 +36,12 @@ public class ParticipanteController {
 	
 	
 	
-	@GetMapping("participante/{participante}/alterarpagamento")
-	public String alterarPagamento(@PathVariable("participante") Participante p, Model model) throws AppException, LoginException {	
+	@GetMapping("participante/{participanteId}/alterarpagamento")
+	public String alterarPagamento(@PathVariable("participanteId") Integer participanteId, Model model) throws AppException, LoginException {	
 		
 		autenticacao.checkAdminAthorization();
 		
-		p = participanteRepo.findById(p.getId()).get();
+		Participante p = participanteRepo.findById(participanteId).get();
 		if (p.getPg() == true)
 			p.setPg(false);
 		else

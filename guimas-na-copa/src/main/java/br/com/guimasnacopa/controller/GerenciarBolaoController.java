@@ -12,11 +12,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.annotation.RequestScope;
 
+import br.com.guimasnacopa.apifootbol.dto.CampeonatoDTO;
 import br.com.guimasnacopa.domain.Bolao;
+import br.com.guimasnacopa.domain.Competicao;
 import br.com.guimasnacopa.messages.AppMessages;
 import br.com.guimasnacopa.repository.BolaoRepository;
+import br.com.guimasnacopa.repository.CompeticaoRepository;
 import br.com.guimasnacopa.security.Autenticacao;
 import br.com.guimasnacopa.service.ApiService;
+import br.com.guimasnacopa.service.BolaoService;
+import br.com.guimasnacopa.service.CarregarCampeonatosDaApiService;
 
 @Controller
 @RequestScope
@@ -26,10 +31,19 @@ public class GerenciarBolaoController{
 	BolaoRepository bolaoRepo;
 	
 	@Autowired 
+	BolaoService bolaoService;
+	
+	@Autowired 
 	Autenticacao autenticacao;
 	
 	@Autowired
 	ApiService apiService;
+	
+	@Autowired
+	CarregarCampeonatosDaApiService carregarCampeonatosDaApiService;
+	
+	@Autowired
+	CompeticaoRepository competicaoRepository;
 	
 	@Autowired
 	AppMessages appMessages;
@@ -56,13 +70,14 @@ public class GerenciarBolaoController{
 		autenticacao.checkAdminAthorization(model);
 		Bolao bolao = new Bolao();
 		model.addAttribute(bolao);
+		model.addAttribute("competicaoList", competicaoRepository.findByStatusNot(Competicao.STATUS_FINALIZADO));
 		return "/bolao/form";
 	}
 	
 	@PostMapping("/bolao/salvar")
 	public String salvar(Bolao bolao, Model model) throws LoginException {
 		autenticacao.checkAdminAthorization(model);
-		bolaoRepo.save(bolao);
+		bolaoService.criarBolao(bolao);
 		model.addAttribute(bolao);
 		appMessages.getSuccessList().add("Operação realizada com sucesso.");
 		return listar(model);
@@ -86,7 +101,24 @@ public class GerenciarBolaoController{
 		return "/bolao/erro";
 	}
 	
+	@GetMapping("/competicao/listar-api")
+	public String habilitarCompeticaoListar(Model model) throws LoginException{
+		autenticacao.checkAdminAthorization(model);
+		List<CampeonatoDTO> campeonatoList = carregarCampeonatosDaApiService.listAllByApi();
+		model.addAttribute("campeonatoList", campeonatoList);
+		return "/bolao/listar-campeonatos-api";
+	}
 	
+	
+	@GetMapping("/competicao/habilitar-api/{campeonatoId}")
+	public String habilitarCompeticao(@PathVariable("campeonatoId") Long campeonatoId, Model model) throws LoginException{
+		autenticacao.checkAdminAthorization(model);
+		carregarCampeonatosDaApiService.carregarCompeticao(campeonatoId);
+		appMessages.getSuccessList().add("A competição foi disponibilizada com sucesso: Agora os usuários já podem criar bolões para ");
+		return listar(model);
+	}
+	
+	@Deprecated
 	@GetMapping("/bolao/{id}/associar-competicoes")
 	public String associarCompeticoes(Integer id, Model model) throws LoginException {
 		autenticacao.checkAdminAthorization(model);

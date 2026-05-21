@@ -71,7 +71,7 @@
 		                        			
 			                        			<span th:if="${palpite.apostaAberta}" > ? </span>
 			                       				<span th:if="${!palpite.apostaAberta}" th:utext="${palpite.timeA.nome + ' ' + palpite.timeA.flag}"></span>
-			                       				<span style="color: #ccc" th:utext="${palpite.palpiteComparado?.timeA.nome + ' ' + palpite.palpiteComparado?.timeA.flag}"></span>
+			                       				<span style="color: #ccc" th:utext="${palpite?.palpiteComparado?.timeA?.nome + ' ' + palpite?.palpiteComparado?.timeA?.flag}"></span>
 			                        			
 			                        		
 		                        			</td>

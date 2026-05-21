@@ -48,6 +48,8 @@ public class ApiService {
 	
 	//https://api-football-v1.p.rapidapi.com/v3/fixtures?league=9&season=2024
 	
+	//https://livescore-api.com/api-client/competitions/participants.json?key=kVh1EGuzlp8LPy9Q&secret=1gKA7IXbxlYm7ERrA9tfQYPbnYWdw63x&competition_id=362&season=2026
+	
 	private static final String API_BASE_HOST = "api-football-v1.p.rapidapi.com/v3";
 	private static final String API_KEY = "55011da490msh8d921becc26ce28p13dd2cjsnac64cd16c124";
 	private static final String API_RECURSO_KEY_TEMPLATE = "{recurso}"; 
@@ -132,6 +134,10 @@ public class ApiService {
 		System.out.println(API_BASE_URI_TEMPLATE);
 		String json = api.getJogosByCompeticaoAndSeasson("9","2024");
 		
+		System.out.println(json);
+		
+		
+		/*
 		ObjectMapper mapper = new ObjectMapper();
 		List<FixturesLeague> jogosDto;
 		try {
@@ -161,6 +167,8 @@ public class ApiService {
 			e.printStackTrace();
 		}
 		
+		
+		*/
 	}
 	
 	

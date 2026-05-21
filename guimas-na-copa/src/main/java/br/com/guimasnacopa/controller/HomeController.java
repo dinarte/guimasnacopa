@@ -22,6 +22,7 @@ import br.com.guimasnacopa.domain.Participante;
 import br.com.guimasnacopa.exception.AppException;
 import br.com.guimasnacopa.exception.LoginException;
 import br.com.guimasnacopa.messages.AppMessages;
+import br.com.guimasnacopa.repository.BolaoRepository;
 import br.com.guimasnacopa.repository.JogoRepository;
 import br.com.guimasnacopa.repository.PalpiteRepository;
 import br.com.guimasnacopa.repository.ParticipanteRepository;
@@ -59,6 +60,8 @@ public class HomeController {
 	
 	@Autowired JogoRepository jogoRepo;
 	
+	@Autowired BolaoRepository bolaoRepo;
+	
 	@Autowired
 	AppMessages appMessages;
 	
@@ -69,8 +72,27 @@ public class HomeController {
 	
 	@RequestMapping("/")
 	public String home(Model m) throws AppException {
-		return "redirect:/" + bolaoAtivo;
 		
+		
+		if (autenticacao.isBolaoSelecionado())
+			return "redirect:/" + autenticacao.getBolao().getPermalink();
+		else
+			return "redirect:/" + bolaoAtivo;
+		/*
+		if (!autenticacao.isAutenticado()) {
+			return LoginController.login(m);
+		} else if (!autenticacao.isBolaoSelecionado()) {
+			return "redirect:/bolao/selecionar";
+		} else {
+			return "redirect:/" + autenticacao.getBolao();
+		}*/
+	}
+	
+	@RequestMapping("/bolao/selecionar")
+	public String selecionarBolao(Model m) {
+		List<Bolao> bolaoList = bolaoRepo.findAllByOrderByDataInicioDesc();
+		m.addAttribute(bolaoList);
+		return "pages/selecionar-bolao";
 	}
 	
 	@RequestMapping("/{linkBolao}")
@@ -79,7 +101,7 @@ public class HomeController {
 			criarUsuarioAdminCasoNecessario();
 			Bolao bolao = bolaoHelper.getBolaoByPermaLink(linkBolao);
 			autenticacao.setBolao(bolao);
-			populaHomDoParticipante(m, bolao);
+			populaHomeDoParticipante(m, bolao);
 			//return redirecionaDeAcordoComAutenticacao(m,linkBolao);
 			return "pages/home";
 		}else {
@@ -88,7 +110,7 @@ public class HomeController {
 			
 	}
 
-	private void populaHomDoParticipante(Model m, Bolao bolao) {
+	private void populaHomeDoParticipante(Model m, Bolao bolao) {
 
 			//seta o card de participante
 			Participante participante = participanteRepo.findOneByBolaoAndUsuario(bolao, autenticacao.getUsuario());
