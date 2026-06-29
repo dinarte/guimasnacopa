@@ -1,0 +1,425 @@
+<div th:fragment="cards" class="js-game-cards-container">
+                 	 
+	         <div class="row" style="margin-bottom: 15px;">
+	         	<div class="col-lg-12 text-right">
+	         		<label for="game-cards-sort" style="margin-right: 8px;">Ordenar por:</label>
+	         		<select id="game-cards-sort" class="form-control input-sm js-game-cards-sort" style="display: inline-block; width: auto;">
+	         			<option value="phase-group">Por fase / grupo</option>
+	         			<option value="game-date">Por data do jogo</option>
+	         		</select>
+	         	</div>
+	         </div>
+
+	         <div class="row js-game-cards-row">
+         
+         	
+	         	<th:block th:each="palpite : ${palpites}">
+		          	<div th:class="${'col-lg-'+ colunasCards + ' minheight js-game-card-item' }"> 
+					  <div th:class="${'panel panel-info grupo ' + palpite.colorClass}"
+					       th:attr="data-fase-grupo=${palpite.jogo != null ? ((palpite.jogo.fase?.nome != null ? palpite.jogo.fase.nome : '') + ' - ' + (palpite.jogo.grupo != null ? palpite.jogo.grupo : '')) : (palpite.descricaoDaFase != null ? palpite.descricaoDaFase : '')},
+					                data-jogo-data=${palpite.jogo?.data != null ? #temporals.format(palpite.jogo.data, 'yyyy-MM-dd') : ''},
+					                data-jogo-hora=${palpite.jogo?.data != null ? #temporals.format(palpite.jogo.data, 'HH:mm') : ''},
+					                data-time-a=${palpite.timeA?.nome},
+					                data-time-b=${palpite.timeB?.nome},
+					                data-gols-a=${palpite.golsTimeA},
+					                data-gols-b=${palpite.golsTimeB}" > 
+					  	<div class="panel-heading" >
+					  		<div class="row">
+						  		<div class="col-sm-2 col-md-2 col-lg-2">
+						  			<img height="40" th:src="${palpite.bolaoCompeticao.competicao.logoUrl}">
+						  		</div>
+						  		<div class="col-sm-10 col-md-10 col-lg-10">
+							  		<span th:text="${palpite.bolaoCompeticao.competicao.nome} ">Copa do Mundo</span><br />
+							  		<span th:text="${palpite.descricaoDaFase} ">Eliminatórias - Grupo A</span> 
+						  		</div>
+					  		</div>
+					  	</div>
+					    <div class="panel-body">
+					    	<table class="tab-jogo">
+						    	<tr>
+						    		<th></th>
+						    		<th></th>
+						    		<th class="dsc-p"></th>
+						    		<th class="dsc-p"></th>
+					    		</tr>
+					    		<tr>
+					    			<td colspan="4" class="data_h">
+					    				<span th:if="${palpite.resultado}" th:text="${#temporals.format(palpite.jogo.data, 'dd MMM HH:mm')}">12:20</span>
+					    				<span th:if="${palpite.jogo?.data == null}" style="color: #fff"> - </span>
+					    				<a th:href="${'/palpite/'+palpite.id+'/detalhar'}" class="glyphicon glyphicon-search" 
+					    					aria-hidden="true" 
+					    					title="Detalhar palpite"></a>
+					    				</td>
+					    		</tr>
+					    		
+					    		<th:block th:if="${palpite.acertarCampeao}" >
+						    		<tr>
+						    			<td colspan="4" class="campeao">
+						    					<span th:utext="${ palpite.apostaAberta ? '?' : palpite.timeA.flag + ' ' + palpite.timeA?.nome}">Brasil</span>
+						    					<br />
+						    					<span th:if="${!meuPalpite}" style="color: #ccc" th:text="${palpite.palpiteComparado.timeA?.nome}">Uruguai</span>
+						    			</td>
+						    		</tr>
+					    		</th:block>
+					    		
+					    		
+					    		<th:block th:if="${palpite.acertarTimes}" >
+						    		<tr>
+						    			<td colspan="1" class="campeao">
+						    					<span th:utext="${ palpite.apostaAberta ? '?' :  palpite.timeA?.flag + ' ' + palpite.timeA?.nome}">Brasil</span>
+						    					<br />
+						    					<span th:if="${!meuPalpite}" style="color: #ccc" th:text="${palpite.palpiteComparado.timeA?.nome}">Uruguai</span>
+						    			</td>
+						    			<td colspan="1" style="text-align: cent;"> VS </td>
+						    			<td colspan="2" class="campeao">
+						    					<span th:utext="${ palpite.apostaAberta ? '?' :  palpite.timeB?.flag + ' ' + palpite.timeB?.nome}">Brasil</span>
+						    					<br />
+						    					<span th:if="${!meuPalpite}" style="color: #ccc" th:text="${palpite.palpiteComparado?.timeB?.nome}">Uruguai</span>
+						    			</td>
+						    		</tr>
+					    		</th:block>
+		
+		
+					    		<th:block th:if="${palpite.resultado}" >
+					    		
+						    		<tr>
+						    			<td rowspan="3" class="vs">
+						    				 VS
+						    			</td>
+						    		</tr>
+						    		<tr>
+						    			<td class="time" >
+							    			<input th:if="${autenticacao.adminDoBolao && palpite.jogoEmAndamento && palpite.jogo.fase.faseFinal}" 
+							    			 			type="radio" 
+							    			 			alt="Marcar como campeão"
+							    			 			th:id="${'vencedor_a_radio_'+palpite.id}" 
+							    			 			th:name="${'vencedor_radio_'+palpite.id}"
+							    			 			th:value="${'timeA'}" 
+							    			 			th:attr="onchange=|popularVencedor(this, ${palpite.id})|"/>
+							    			 			
+							    			<span th:utext="${palpite.timeA.flag + ' ' + palpite.timeA?.nome}"> Brasil </span>
+						    			</td>
+						    			<td class="p-valor">
+						    				<span th:if="${palpite.apostaAberta && !meuPalpite}"> ? </span>
+						    				<span th:if="${!palpite.apostaAberta || meuPalpite}"  th:text="${palpite.golsTimeA}" > 1 </span>
+						    			</td>
+						    			<td class="p-compara" th:if="${palpiteComComparacao}">
+						    				<span th:text="${palpite.palpiteComparado.golsTimeA}" > 1 </span>
+						    			</td>
+						    			<td class="p-result" th:if="${palpiteComResultado}" width="50px">
+						    				
+						    				<input	th:if="${autenticacao.adminDoBolao && palpite.jogoEmAndamento}" 
+						    						type="number" 
+						    						th:id="${'gols_time_a_'+palpite.id}" 
+						    						th:value="${palpite.golsDoJogoTimaA}" 
+						    						class="form-control"
+						    						style="padding: 3px; height: 20px;"
+						    						min="0"
+						    						th:attr="onchange=|popularGols(${palpite.id})|">
+						    				<span th:if="${!autenticacao.adminDoBolao || !palpite.jogoEmAndamento}" th:text="${palpite.golsDoJogoTimaA}" > 1 </span>
+						    			</td>
+						    		</tr>
+						    		<tr>
+						    			<td class="time" >
+						    			
+							    			<input th:if="${autenticacao.adminDoBolao && palpite.jogoEmAndamento && palpite.jogo.fase.faseFinal}" 
+							    			 			type="radio" 
+							    			 			alt="Marcar como campeão"
+							    			 			th:id="${'vencedor_b_radio_'+palpite.id}" 
+							    			 			th:name="${'vencedor_radio_'+palpite.id}" 
+							    			 			th:value="${'timeB'}"
+							    			 			th:attr="onchange=|popularVencedor(this, ${palpite.id})|"/>
+							    			
+							    			<span th:utext="${ palpite.timeB.flag + ' ' + palpite.timeB?.nome}">Espanha</span>
+						    			
+						    			</td>
+						    			<td class="p-valor">
+						    				<span th:if="${palpite.apostaAberta && !meuPalpite}" > 
+						    					?
+						    				</span>
+						    				<span th:if="${!palpite.apostaAberta || meuPalpite}"  th:text="${palpite.golsTimeB}" >
+						    				 	1 
+						    				 </span>
+						    			</td>
+						    			<td class="p-compara" th:if="${palpiteComComparacao}">
+						    				<span th:text="${palpite.palpiteComparado.golsTimeB}" > 1 </span>
+						    			</td>
+						    			<td class="p-result" th:if="${palpiteComResultado}">
+						    			 	<input	th:if="${autenticacao.adminDoBolao && palpite.jogoEmAndamento}" 
+						    			 			type="number" 
+						    			 			th:id="${'gols_time_b_'+palpite.id}"
+						    			 			th:value="${palpite.golsDoJogoTimaB}" 
+						    			 			class="form-control"
+						    			 			style="padding: 3px; height: 20px;"
+						    			 			min="0"
+						    			 			th:attr="onchange=|popularGols(${palpite.id})|" /> 
+						    				<span  th:if="${!autenticacao.adminDoBolao || !palpite.jogoEmAndamento}" th:text="${palpite.golsDoJogoTimaB}" > 1 </span>
+						    			</td>
+						    		</tr>
+						    	
+						    	
+					    		</th:block>
+					    		
+					    	</table>
+					    </div>
+					   
+					    <div style="text-align: center; color:blue; height:35px; font-size:12px; padding-bottom: 3px;">
+					    
+					    	<button th:if="${!palpite.resultado}" 
+					    			type="button"  data-toggle="modal" th:data-target="${'#modal_' + palpite.id}">
+	                                [[${palpite.pontuacaoAtingida}]] Pontos
+	                           	</button> 
+					    	
+					    	<form	th:if="${palpite.resultado}"
+					    			th:id="${'form_' + palpite.id}"
+					    			th:action="${'/'+autenticacao.bolao.permalink+'/jogo/'+palpite.jogo.id+'/execucao'}" 
+			    					method="post" 
+			    					onsubmit="return submitForm();"
+			    					 >
+			    					
+			    				<input type="hidden" name="_method" value="put" />
+			    				<input type="hidden" name="idTimeA" id="idTimeA" th:value="${palpite.timeNoJogoTimeA}" />
+			    				<input type="hidden" name="golsTimeA" id="golsTimeA" th:value="${palpite.golsDoJogoTimaA}"/>
+			    				<input type="hidden" name="idTimeB" id="idTimeB" th:value="${palpite.timeNoJogoTimeB}"/>
+			    				<input type="hidden" name="golsTimeB" id="golsTimeB" th:value="${palpite.golsDoJogoTimaB}"/>
+			    				<input type="hidden" name="execucao" id="execucao" value="Em andamento" /> 
+			    				<input type="hidden" name="vencedor" id="vencedor" />
+			    				
+			    					
+						    	
+						    	<span th:if="${palpite.jogo.encerrado}" class="badge">Encerrado</span>
+						    	
+						    	<span> <img src="/img/bola-rolando.gif" width="20px" th:if="${palpite.jogoEmAndamento}" />  </span>
+						    	
+						    	<button type="button" th:if="${palpite.exibePontuacaoNoCard}" data-toggle="modal" th:data-target="${'#modal_' + palpite.id}">
+	                                [[${palpite.pontuacaoAtingida}]] Pontos
+	                           	</button>
+	                           	
+				    			<button type="submit" th:if="${palpite.jogo.previsto && palpite.jogo.inicioHoraPrevista && autenticacao.adminDoBolao}" data-loading="loader">
+	                            	Marcar como Em Andamento      
+	                            </button>
+	                            <button type="submit" th:if="${palpite.jogoEmAndamento && autenticacao.adminDoBolao }" disabled="disabled" id="btnRaking" data-loading="loader">
+		                            Atualizar ranking
+		                        </button>
+		                        <button type="submit" th:if="${palpite.jogoEmAndamento && autenticacao.adminDoBolao }" id="btnRaking" th:attr="onclick=|setEncerrado(${palpite.id})|" data-loading="loader">
+		                            Encerrar jogo
+		                        </button>
+	                         </form>  	
+	                        
+                           	 
+			    	  </div>
+					  </div>
+					 </div>
+					 
+					 <div class="modal fade" th:id="${'modal_' + palpite.id}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                         <div class="modal-dialog">
+                             <div class="modal-content">
+                                 <div class="modal-header text-center">
+                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                      <img src="/img/bola-rolando.gif" width="25px" th:if="${palpite.jogoEmAndamento}" /> 
+                                     <h4 class="modal-title" id="myModalLabel" th:utext="${palpite.descricaoJogo}" >Modal title</h4>
+                                 </div>
+                                 <div class="modal-body">
+                                      <table class="table" th:if="${palpite.resultado}" >
+                                     
+                                      	<tr>
+                                      		<td> Palpite: </td>
+                							<td th:utext="${palpite.golsTimeA + ' x ' + palpite.golsTimeB  }"></td>
+                                      	</tr>
+                                      	<tr>
+                                      		<td> Resultado: </td>
+                							<td th:utext="${palpite.golsDoJogoTimaA + ' x ' + palpite.golsDoJogoTimaB}"></td>
+                                      	</tr>
+                                      </table>
+                                      <h4>Extrato da pontuação atingida:</h4>
+                                      <table class="table">
+                                      	<tr>
+                                      		<th>Item:</th><th>Pontuação</th>
+                                      	</tr>
+                                      	<tr th:each="entry : ${palpite.detalhePontuacaoMap}">
+                                      		<td th:text="${entry.key}"></td>
+                							<td th:text="${entry.value}"></td>
+                                      	</tr>
+                                      </table>
+                                 </div>
+                                 <div class="modal-footer">
+                                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                 </div>
+                             </div>
+                             <!-- /.modal-content -->
+                         </div>
+                         <!-- /.modal-dialog -->
+                     </div>
+
+					 
+				</th:block> 
+			</div>
+			
+<script>
+
+function submitForm() {
+	
+	var retorno = confirm('Deseja confirmar que o jogo está '+ $('#execucao').val() +'?');
+	
+	if (!retorno) {
+		$(".loader").fadeOut("fast"); 
+	}
+	
+	return retorno;
+}
+
+
+function popularGols(id) {
+	var formId = "form#form_" + id;
+	
+	var golsTimeA = $(formId+' #golsTimeA');
+	var golsTimeB = $(formId+' #golsTimeB');
+	
+	$(golsTimeA).val($('#gols_time_a_'+id).val()); 
+	$(golsTimeB).val($('#gols_time_b_'+id).val()); 
+	$(formId+' #btnRaking').prop('disabled', false);
+}
+
+
+function popularVencedor(obj, id) {
+	var formId = "form#form_" + id;
+	$(formId+' #btnRaking').prop('disabled', false);
+	$(formId+' #vencedor').val($(obj).val());
+}
+
+function setEncerrado(id) {
+	var formId = "form#form_" + id;
+	$(formId+' #execucao').val('Encerrado')
+}
+
+function compareNullableValues(valueA, valueB) {
+	var normalizedA = valueA || '';
+	var normalizedB = valueB || '';
+	var hasValueA = normalizedA !== '';
+	var hasValueB = normalizedB !== '';
+
+	if (!hasValueA && !hasValueB) {
+		return 0;
+	}
+
+	if (!hasValueA) {
+		return 1;
+	}
+
+	if (!hasValueB) {
+		return -1;
+	}
+
+	if (normalizedA < normalizedB) {
+		return -1;
+	}
+
+	if (normalizedA > normalizedB) {
+		return 1;
+	}
+
+	return 0;
+}
+
+function buildGameDateKey(card) {
+	var gameDate = card.find('.panel.grupo').attr('data-jogo-data') || '';
+	var gameHour = card.find('.panel.grupo').attr('data-jogo-hora') || '';
+
+	if (!gameDate) {
+		return '';
+	}
+
+	return gameDate + ' ' + (gameHour || '99:99');
+}
+
+function sortGameCards(container, sortType) {
+	var cardsRow = container.find('.js-game-cards-row').first();
+	var cards = cardsRow.children('.js-game-card-item').get();
+
+	cards.sort(function(cardA, cardB) {
+		var currentCardA = $(cardA);
+		var currentCardB = $(cardB);
+		var panelA = currentCardA.find('.panel.grupo').first();
+		var panelB = currentCardB.find('.panel.grupo').first();
+		var comparison = 0;
+
+		if (sortType === 'game-date') {
+			comparison = compareNullableValues(buildGameDateKey(currentCardA), buildGameDateKey(currentCardB));
+			if (comparison === 0) {
+				comparison = compareNullableValues(panelA.attr('data-fase-grupo'), panelB.attr('data-fase-grupo'));
+			}
+		} else {
+			comparison = compareNullableValues(panelA.attr('data-fase-grupo'), panelB.attr('data-fase-grupo'));
+			if (comparison === 0) {
+				comparison = compareNullableValues(buildGameDateKey(currentCardA), buildGameDateKey(currentCardB));
+			}
+		}
+
+		if (comparison === 0) {
+			return Number(currentCardA.attr('data-initial-order')) - Number(currentCardB.attr('data-initial-order'));
+		}
+
+		return comparison;
+	});
+
+	$.each(cards, function(index, card) {
+		cardsRow.append(card);
+	});
+}
+
+function getGameCardsSortStorageKey(container) {
+	var pagePath = window.location && window.location.pathname ? window.location.pathname : 'default';
+	var containerIndex = $('.js-game-cards-container').index(container);
+
+	return 'game-cards-sort:' + pagePath + ':' + containerIndex;
+}
+
+function readStoredGameCardsSort(container) {
+	try {
+		return window.localStorage ? window.localStorage.getItem(getGameCardsSortStorageKey(container)) : null;
+	} catch (error) {
+		return null;
+	}
+}
+
+function storeGameCardsSort(container, sortType) {
+	try {
+		if (window.localStorage) {
+			window.localStorage.setItem(getGameCardsSortStorageKey(container), sortType);
+		}
+	} catch (error) {
+		return;
+	}
+}
+
+function initializeGameCardsOrdering() {
+	$('.js-game-cards-container').each(function() {
+		var container = $(this);
+		var cards = container.find('.js-game-cards-row').first().children('.js-game-card-item');
+		var sortSelect = container.find('.js-game-cards-sort').first();
+		var storedSortType = readStoredGameCardsSort(container);
+
+		cards.each(function(index) {
+			$(this).attr('data-initial-order', index);
+		});
+
+		if (storedSortType && sortSelect.find('option[value="' + storedSortType + '"]').length > 0) {
+			sortSelect.val(storedSortType);
+		}
+
+		sortSelect.off('change.gameCardsOrder').on('change.gameCardsOrder', function() {
+			var selectedSortType = $(this).val();
+			storeGameCardsSort(container, selectedSortType);
+			sortGameCards(container, selectedSortType);
+		});
+
+		sortGameCards(container, sortSelect.val());
+	});
+}
+
+$(initializeGameCardsOrdering);
+
+</script>
+</div>			
+
+
