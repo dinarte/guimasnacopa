@@ -292,71 +292,71 @@ public class CampeonatoDetalhesApiDTO {
     public static class Partidas {
 
         @JsonProperty("segunda-fase")
-        private List<Partida> segundaFase;
+		private Object segundaFase;
 
         @JsonProperty("oitavas-de-final")
-        private List<Partida> oitavasDeFinal;
+		private Object oitavasDeFinal;
 
         @JsonProperty("quartas-de-final")
-        private List<Partida> quartasDeFinal;
+		private Object quartasDeFinal;
 
         @JsonProperty("semi-final")
-        private List<Partida> semiFinal;
+		private Object semiFinal;
 
         @JsonProperty("disputa-3o-lugar")
-        private List<Partida> disputa3oLugar;
+		private Object disputa3oLugar;
 
         @JsonProperty("final")
-        private List<Partida> finalPartidas;
+		private Object finalPartidas;
 
         @JsonProperty("fase-de-grupos")
         private Grupos faseDeGrupos;
 
-		public List<Partida> getSegundaFase() {
+		public Object getSegundaFase() {
 			return segundaFase;
 		}
 
-		public void setSegundaFase(List<Partida> segundaFase) {
+		public void setSegundaFase(Object segundaFase) {
 			this.segundaFase = segundaFase;
 		}
 
-		public List<Partida> getOitavasDeFinal() {
+		public Object getOitavasDeFinal() {
 			return oitavasDeFinal;
 		}
 
-		public void setOitavasDeFinal(List<Partida> oitavasDeFinal) {
+		public void setOitavasDeFinal(Object oitavasDeFinal) {
 			this.oitavasDeFinal = oitavasDeFinal;
 		}
 
-		public List<Partida> getQuartasDeFinal() {
+		public Object getQuartasDeFinal() {
 			return quartasDeFinal;
 		}
 
-		public void setQuartasDeFinal(List<Partida> quartasDeFinal) {
+		public void setQuartasDeFinal(Object quartasDeFinal) {
 			this.quartasDeFinal = quartasDeFinal;
 		}
 
-		public List<Partida> getSemiFinal() {
+		public Object getSemiFinal() {
 			return semiFinal;
 		}
 
-		public void setSemiFinal(List<Partida> semiFinal) {
+		public void setSemiFinal(Object semiFinal) {
 			this.semiFinal = semiFinal;
 		}
 
-		public List<Partida> getDisputa3oLugar() {
+		public Object getDisputa3oLugar() {
 			return disputa3oLugar;
 		}
 
-		public void setDisputa3oLugar(List<Partida> disputa3oLugar) {
+		public void setDisputa3oLugar(Object disputa3oLugar) {
 			this.disputa3oLugar = disputa3oLugar;
 		}
 
-		public List<Partida> getFinalPartidas() {
+		public Object getFinalPartidas() {
 			return finalPartidas;
 		}
 
-		public void setFinalPartidas(List<Partida> finalPartidas) {
+		public void setFinalPartidas(Object finalPartidas) {
 			this.finalPartidas = finalPartidas;
 		}
 

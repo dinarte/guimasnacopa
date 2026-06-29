@@ -24,8 +24,7 @@
 	                   	Detalhe Palpite - [[${palpiteReferencia.bolaoCompeticao.competicao.nome}]]
 	                   	<h4 th:utext="${palpiteReferencia.descricaoPalpite}">Time a x Time B</h4>
 	                   	<h4 class="text-primary"><span th:text="${palpiteReferencia.golsDoJogoTimaA}"></span> vs <span th:text="${palpiteReferencia.golsDoJogoTimaB}"></span></h4>
-	                   	<span th:if="${!palpiteReferencia.jogoEemAndamento}" th:text="${palpiteReferencia.jogo.execucao}" class="badge">Encenrrado</span>
-	                   	<img src="/img/bola-rolando.gif" width="20px" th:if="${palpiteReferencia.jogoEemAndamento}" />
+	                   	
 	                   	<br /><br />
 	                 
 	                   	<a class="btn btn-block btn-default compartilhar-whatsapp" th:href="${'whatsapp://send?text='+textWapp}">

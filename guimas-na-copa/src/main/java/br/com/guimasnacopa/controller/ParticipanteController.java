@@ -1,5 +1,8 @@
 package br.com.guimasnacopa.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.security.auth.login.LoginException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +73,16 @@ public class ParticipanteController {
 		autenticacao.checkAthorization();
 		participanteHelper.prepareRankingParticipantes(linkBolao, model);
 		return "pages/ranking";
+	}
+
+	@GetMapping("/{linkBolao}/ranking-analitico")
+	public String rankingAnalitico(@PathVariable("linkBolao") String linkBolao, Model model) throws AppException, LoginException {
+		autenticacao.checkAthorization();
+		participanteHelper.prepareRankingParticipantes(linkBolao, model);
+		List<Participante> top10 = participanteRepo.findTop10ByBolaoAndPgOrderByClassificacaoAscExibirClassificacaoNoRankingDesc(
+				autenticacao.getBolao(), true);
+		model.addAttribute("top10Ids", top10.stream().map(Participante::getId).collect(Collectors.toList()));
+		return "pages/ranking-analitico";
 	}
 	
 	@DeleteMapping("/participantes")

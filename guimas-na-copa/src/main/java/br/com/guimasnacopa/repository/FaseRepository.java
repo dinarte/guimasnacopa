@@ -16,5 +16,7 @@ public interface FaseRepository  extends CrudRepository<Fase, Integer>{
 	
 	public List<Fase> findAllByBolaoOrderByCompeticao_nomeAscNomeAsc(Bolao bolao);
 
+	public Fase findOneByBolaoAndCompeticaoAndIdApi(Bolao bolao, br.com.guimasnacopa.domain.Competicao competicao, Long idApi);
+
 	
 }

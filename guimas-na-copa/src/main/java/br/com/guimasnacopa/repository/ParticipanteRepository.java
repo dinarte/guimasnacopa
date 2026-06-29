@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import br.com.guimasnacopa.domain.Bolao;
+import br.com.guimasnacopa.domain.ChartDesempenhoVo;
 import br.com.guimasnacopa.domain.Participante;
 import br.com.guimasnacopa.domain.Usuario;
 
@@ -80,7 +81,7 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 	public void updateAproveitamento();	
 	
 	
-	@Query(value="select to_char(jogo.data, 'yyyy-mm-dd') as dia, cast(coalesce(sum(pontuacao_atingida),0) as integer) as pontuacao \r\n" + 
+	@Query(value="select to_char(jogo.data, 'yyyy-mm-dd') as dia, cast(coalesce(sum(pontuacao_atingida),0) as numeric) as pontuacao \r\n" + 
 			"from palpite pal\r\n" + 
 			"join participante par on (par.id = pal.participante_id)\r\n" + 
 			"join usuario u on u.id = par.usuario_id\r\n" + 
@@ -89,7 +90,7 @@ public interface ParticipanteRepository  extends CrudRepository<Participante, In
 			"and jogo.data <= now() " +
 			"group by to_char(jogo.data, 'yyyy-mm-dd')\r\n" + 
 			"order by 1" , nativeQuery = true)
-	public List<Map<String, Object>> findAproveitameto(@Param("participanteId") Integer participanteId);
+	public List<ChartDesempenhoVo> findAproveitameto(@Param("participanteId") Integer participanteId);
 	
 	
 	@Modifying(clearAutomatically = true)

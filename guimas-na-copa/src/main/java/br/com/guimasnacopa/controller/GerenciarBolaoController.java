@@ -93,6 +93,14 @@ public class GerenciarBolaoController{
 		appMessages.getSuccessList().add("Registro removido com sucesso.");
 		return listar(model);
 	}
+
+	@GetMapping("/bolao/{id}/atualizar-jogos-api")
+	public String atualizarJogosDaApi(@PathVariable("id") Integer id, Model model) throws LoginException {
+		autenticacao.checkAdminAthorization(model);
+		bolaoService.atualizarFasesEJogosDaApi(id);
+		appMessages.getSuccessList().add("Fases e jogos foram atualizados com sucesso.");
+		return listar(model);
+	}
 	
 	
 	@GetMapping("/bolao/erro")

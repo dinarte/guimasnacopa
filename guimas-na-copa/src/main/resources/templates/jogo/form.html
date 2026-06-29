@@ -25,7 +25,7 @@
         		 
         		 <div class="form-group">
 				    <label for="fase">Fase:</label>
-        		 <select th:field="*{fase}" class="form-control" id="fase">
+        		 <select th:field="*{fase.id}" class="form-control" id="fase">
 				  	<option th:each="f : ${faseList}" 
 				          th:value="${f.id}" 
 				          th:text="${f.competicao.nome +' - '+ f.nome}">Wireframe</option>
@@ -34,7 +34,7 @@
 				 
 				 <div class="form-group">
 				    <label for="timeA">Time A:</label>
-        		 <select th:field="*{timeA}" class="form-control" id="timeA">
+        		 <select th:field="*{timeA.id}" class="form-control" id="timeA">
 				  	<option th:each="t : ${timeList}" 
 				          th:value="${t.id}" 
 				          th:text="${t.nome}">Brasil</option>
@@ -43,7 +43,7 @@
 				 
 				 <div class="form-group">
 				    <label for="timeB">Time B:</label>
-        		 <select th:field="*{timeB}" class="form-control" id="timeB">
+        		 <select th:field="*{timeB.id}" class="form-control" id="timeB">
 				  	<option th:each="t : ${timeList}" 
 				          th:value="${t.id}" 
 				          th:text="${t.nome}">Brasil</option>

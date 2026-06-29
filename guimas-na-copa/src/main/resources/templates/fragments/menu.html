@@ -28,6 +28,7 @@
                         <li th:if="${autenticacao.bolao}">
                             <a data-loading="loader" th:href="${'/' + autenticacao.bolao.permalink}" href="/"><i class="fa fa-home fa-fw"></i> Principal </a>
                         </li>
+                        
                         <li th:if="${session.autenticacao.adminDoBolao}">
                             <a href="#"><i class="fa fa-gears fa-fw"></i> Gerenciar <span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
@@ -55,6 +56,17 @@
 		                </li>
                         <li data-loading="loader" th:if="${autenticacao.participanteDoBolao}">
                             <a data-loading="loader" href="/palpite/editar"><i class="fa fa-plus-circle fa-fw"></i> Informar Palpites </a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-trophy fa-fw"></i> Ranking <span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a data-loading="loader" th:href="${'/' + bolao.permalink + '/ranking'}" href="/ranking"><i class="fa fa-list-ol fa-fw"></i> Ranking completo </a>
+                                </li>
+                                <li>
+                                    <a data-loading="loader" th:href="${'/' + bolao.permalink + '/ranking-analitico'}" href="/ranking-analitico"><i class="fa fa-bar-chart fa-fw"></i> Ranking analitico </a>
+                                </li>
+                            </ul>
                         </li>
                         <!-- 
                         <li th:if="${autenticacao.participanteDoBolao}">

@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import br.com.guimasnacopa.domain.Bolao;
+import br.com.guimasnacopa.domain.Fase;
 import br.com.guimasnacopa.domain.Jogo;
 import br.com.guimasnacopa.domain.Participante;
 
@@ -51,5 +52,7 @@ public interface JogoRepository extends CrudRepository<Jogo, Integer> {
 			+ "and not exists (select id from Palpite p where p.jogo = j and p.participante = :participante and p.tipo = 'Resultado')")
 	public Long countJogosComPalpitesPendentesByBolaoAndParticipante(@Param("bolao") Bolao bolao,
 			@Param("participante") Participante participante);
+
+	public Jogo findOneByFaseAndIdApi(Fase fase, Long idApi);
 
 }

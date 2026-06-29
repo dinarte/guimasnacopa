@@ -1,0 +1,50 @@
+# render.yaml — Infrastructure-as-Code for Render
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: guimas-na-copa
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: oregon          # closest to Brazil; change to "frankfurt" if preferred
+    plan: free              # change to "starter" or higher for production SLA
+    healthCheckPath: /actuator/health
+
+    envVars:
+      # Spring profile to activate
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+
+      # Render injects PORT automatically; the Dockerfile ENTRYPOINT reads it via ${PORT:-8080}
+
+      # ── PostgreSQL ────────────────────────────────────────────────────────
+      - key: SPRING_DATASOURCE_URL
+        sync: false          # set manually in Render dashboard
+
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+
+      # ── MongoDB ───────────────────────────────────────────────────────────
+      - key: SPRING_DATA_MONGODB_URI
+        sync: false
+
+      # ── API de futebol ────────────────────────────────────────────────────
+      - key: EXTERNAL_API_BASE_URL
+        value: https://api.api-futebol.com.br/v1
+
+      - key: EXTERNAL_API_TOKEN
+        sync: false
+
+      # ── Bolão config ──────────────────────────────────────────────────────
+      - key: GUIMASNACOPA_CONFIG_BOLAO_ATIVO
+        value: copa-2026
+
+      # ── Google OAuth ──────────────────────────────────────────────────────
+      - key: GOOGLE_OAUTH_CLIENT_ID
+        sync: false
+
+      - key: GOOGLE_OAUTH_LOGIN_URI
+        sync: false

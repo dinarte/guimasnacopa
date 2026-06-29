@@ -208,7 +208,10 @@
                             <i class="fa fa-bar-chart-o fa-fw"></i> Próximos Jogos 
                             <div class="pull-right">
                                 <div class="btn-group">
-                                	<a href="/palpite/consultar" class="btn btn-default btn-xs dropdown-toggle">Ver todos meus palpites</a>
+                                	<a href="/palpite/consultar" class="btn btn-default btn-xs">Ver todos meus palpites</a>
+                                    <a href="#" id="compartilhar-jogos-hoje" class="btn btn-default btn-xs">
+                                        <i class="fa fa-whatsapp"></i>
+                                        Compartilhar Jogos de Hoje</a>
                                     
                                     <!--  
                                     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -246,6 +249,44 @@
     <srcript th:replace="fragments/main :: scrptsblock" />
     
     <script>
+
+    function compartilharJogosDeHoje(event) {
+        event.preventDefault();
+
+        var hoje = new Date();
+        var dataHoje = [hoje.getFullYear(), String(hoje.getMonth() + 1).padStart(2, '0'), String(hoje.getDate()).padStart(2, '0')].join('-');
+        var palpitesHoje = [];
+
+        document.querySelectorAll('.panel.grupo[data-jogo-data="' + dataHoje + '"]').forEach(function(card) {
+            var hora = card.getAttribute('data-jogo-hora') || '';
+            var timeA = card.getAttribute('data-time-a') || '';
+            var timeB = card.getAttribute('data-time-b') || '';
+            var golsA = card.getAttribute('data-gols-a') || '';
+            var golsB = card.getAttribute('data-gols-b') || '';
+                var horario = hora.substring(3) === '00' ? hora.substring(0, 2) + 'h' : hora.replace(':', 'h');
+
+            if (hora && timeA && timeB && golsA !== '' && golsB !== '') {
+                    palpitesHoje.push(horario + ' - ' + timeA + ' ' + golsA + ' x ' + golsB + ' ' + timeB);
+            }
+        });
+
+        if (palpitesHoje.length === 0) {
+            alert('Não encontrei jogos de hoje para compartilhar.');
+            return false;
+        }
+
+        var mensagem = 'Aqui estão meus *palpites* para hoje:\n\n' + palpitesHoje.join('\n') + '\n\nParticipe do bolão e compartilhe os seus também! \n\nVia https://guimasbet.com.br';
+        var urlWhatsapp = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(mensagem);
+        window.open(urlWhatsapp, '_blank');
+        return false;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var botaoCompartilhar = document.getElementById('compartilhar-jogos-hoje');
+        if (botaoCompartilhar) {
+            botaoCompartilhar.addEventListener('click', compartilharJogosDeHoje);
+        }
+    });
     
     	$(function() {
 			  $.ajax({

@@ -71,7 +71,7 @@ public class PalpiteService {
 				novosPalpites.add(palpite);
 			});
 			
-			
+			/*
 			  bolaoCompeticaoList.forEach( bc -> {
 			  
 				  Palpite pfinal = new Palpite(); pfinal.setBolaoCompeticao(bc);
@@ -95,6 +95,7 @@ public class PalpiteService {
 				  entityManager.flush();
 				  
 			 });
+			*/ 
 			 
 		
 		}

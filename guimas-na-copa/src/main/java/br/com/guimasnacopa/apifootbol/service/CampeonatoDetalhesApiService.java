@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mapping.model.MappingInstantiationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -39,11 +40,16 @@ public class CampeonatoDetalhesApiService {
     }
 
     public CampeonatoDetalhesApiDTO getByCampeonatoId(Long campeonatoId) {
-    	var campeonato = campeonatoDetalhesRepository
-                .findByCampeonatoCampeonatoIdAndExpiresAtAfter(campeonatoId, LocalDateTime.now());
-    	return campeonato.isEmpty() ? 
-    			buscarNaApiESalvarCache(RESOURCE_KEY.replace("{id}", campeonatoId.toString())) : 
-    				campeonato.get() ;
+        	try {
+        		var campeonato = campeonatoDetalhesRepository
+                    .findByCampeonatoCampeonatoIdAndExpiresAtAfter(campeonatoId, LocalDateTime.now());
+        		return campeonato.isEmpty() ? 
+        				buscarNaApiESalvarCache(RESOURCE_KEY.replace("{id}", campeonatoId.toString())) : 
+        					campeonato.get() ;
+        	} catch (MappingInstantiationException ex) {
+        		campeonatoDetalhesRepository.deleteByCampeonatoCampeonatoId(campeonatoId);
+        		return buscarNaApiESalvarCache(RESOURCE_KEY.replace("{id}", campeonatoId.toString()));
+        	}
     }
         
     private CampeonatoDetalhesApiDTO buscarNaApiESalvarCache(String resourceKey) {

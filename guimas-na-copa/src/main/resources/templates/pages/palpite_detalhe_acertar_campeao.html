@@ -45,8 +45,10 @@
             		<div class="panel panel-default">
             			<div class="panel-heading">Resumo geral</div>
             			<div class="panel-body text-center">
+							<!--
             				<img th:if="${!palpite.apostaAberta}" th:src="${palpite.bolaoCompeticao.competicao.logoUrl}" height="50"/>
             				<h4>Acertar Finalistas <span th:if="${!palpite.apostaAberta}" th:utext="${palpite.bolaoCompeticao.competicao.nome}"></span></h4>
+							-->
 	            			<table class="table text-left">
 	            			<thead>
 	            				<tr>
@@ -112,9 +114,11 @@
 	  					  Detalhamento dos palpites
 	  					</div>
 	  					<div class="panel-body text-center">
+							<!--
             				<img th:if="${!palpite.apostaAberta}" th:src="${palpite.bolaoCompeticao.competicao.logoUrl}" height="50"/>
             				<h4>Acertar Campeão <span th:if="${!palpite.apostaAberta}" th:utext="${palpite.bolaoCompeticao.competicao.nome}"></span></h4>
-            				
+            				-->
+							
 		            		<table class="table text-left">
 		                        	<thead>
 		                        		<tr>

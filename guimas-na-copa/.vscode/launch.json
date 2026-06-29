@@ -1,16 +1,21 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
-
-
         {
             "type": "java",
-            "name": "Application",
+            "name": "LOCAL",
             "request": "launch",
             "mainClass": "br.com.guimasnacopa.Application",
-            "projectName": "guimas-na-copa",
-            "args": "--spring.profiles.active=local"
+            "args": "--spring.profiles.active=local",
+            "cwd": "${workspaceFolder}",
+            "vmArgs": "-Dspring.thymeleaf.cache=false -Dspring.thymeleaf.prefix=file:src/main/resources/templates/ -Dspring.resources.static-locations=file:src/main/resources/static/,classpath:/static/"
+       },
+       {
+            "type": "java",
+            "name": "SYS PROD",
+            "request": "launch",
+            "mainClass": "br.com.guimasnacopa.Application",
+            "args": "--spring.profiles.active=sysprod"
        },
         {
             "type": "chrome",
@@ -19,4 +24,4 @@
             "url": "http://localhost:8080"
         }
     ]
-}
+} 

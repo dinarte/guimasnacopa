@@ -90,9 +90,9 @@ public class ConsultarPalpiteController {
 		palpite.setId(palpiteId);
 		palpite = palpiteRepo.findById(palpite.getId()).get();
 		if (palpite.isApostaAberta()){
-			appMessages.getWarningList().add("Calma atacente, você está impedido!!! Este jogo ainda está com o período de palpites aberto e nesse período não é permitido acessar os detalhes dos palpites, volte aqui depois!");
-			m.addAttribute(appMessages);
-			return home.home(autenticacao.getBolao().getPermalink(), m);
+			//appMessages.getWarningList().add("Calma atacente, você está impedido!!! Este jogo ainda está com o período de palpites aberto e nesse período não é permitido acessar os detalhes dos palpites, volte aqui depois!");
+			//m.addAttribute(appMessages);
+			//return home.home(autenticacao.getBolao().getPermalink(), m);
 		}
 		if (palpite.isResultado())
 			return detalharPalpiteResultado(palpite, m);
@@ -175,9 +175,10 @@ public class ConsultarPalpiteController {
 		"*class.*	*ptos.*	*nome*		*palpites*\n";
 		for(Palpite palpite : palpites) {
 			System.out.println(">>>>>>" +  palpite.getParticipante().getUsuario().getName());
-			String classificacao = palpite.getParticipante().getClassificacao().toString();
-			String pontuacao = palpite.getParticipante().getPontuacao().toString();
-			String nome = getPrimeiroNome(palpite.getParticipante().getUsuario().getName()).trim();
+			
+			String classificacao = palpite.getParticipante().getClassificacao() == null ? "" : palpite.getParticipante().getClassificacao().toString();
+			String pontuacao = palpite.getParticipante().getPontuacao() == null ? "" : palpite.getParticipante().getPontuacao().toString();
+			String nome = getDoisPrimeirosNomes(palpite.getParticipante().getUsuario().getName()).trim();
 			String placar = palpite.getGolsTimeA() + " x " + palpite.getGolsTimeB();
 			text = text + classificacao +"	"+ pontuacao +"	"+ nome +"		"+ placar + "\n";
 		}
@@ -222,6 +223,33 @@ public class ConsultarPalpiteController {
         }
         return nomeCompleto.substring(0, indiceEspaco);
     }
+	
+	private String getDoisPrimeirosNomes(String nomeCompleto) {
+	    if (nomeCompleto == null || nomeCompleto.trim().isEmpty()) {
+	        return "";
+	    }
+
+	    // Remove espaços extras nas extremidades
+	    nomeCompleto = nomeCompleto.trim();
+
+	    int primeiroEspaco = nomeCompleto.indexOf(" ");
+	    
+	    // Se não tem nenhum espaço, é um nome único (Ex: "Dinarte")
+	    if (primeiroEspaco == -1) {
+	        return nomeCompleto;
+	    }
+
+	    // Procura o segundo espaço a partir da posição após o primeiro
+	    int segundoEspaco = nomeCompleto.indexOf(" ", primeiroEspaco + 1);
+
+	    // Se não tem o segundo espaço, tem apenas dois nomes (Ex: "Dinarte Filho")
+	    if (segundoEspaco == -1) {
+	        return nomeCompleto;
+	    }
+
+	    // Retorna do início até o segundo espaço (Ex: "Dinarte Alves")
+	    return nomeCompleto.substring(0, segundoEspaco);
+	}
 	
 	private Map<String, Long> agruparResumoAcertarTimes(List<Palpite> palpites, Function<Palpite, String> function) {
 		Map<String, Long> resumos = palpites.stream()

@@ -56,6 +56,14 @@
 		                        				title="Administrar Bolão">
 		                        				<span class="glyphicon glyphicon-log-in"></span>
 		                        			</a>
+
+		                        			<a class="btn btn-warning" th:href="${bolao.id+'/atualizar-jogos-api'}"
+		                        				data-toggle="tooltip"
+		                        				data-placement="top"
+		                        				onclick="return confirm('Deseja atualizar fases e jogos deste bolão agora?');"
+		                        				title="Atualizar fases e jogos via API">
+		                        				<span class="glyphicon glyphicon-refresh"></span>
+		                        			</a>
 		                        			
 	                        			</td>
 	                        		</tr>

@@ -83,100 +83,157 @@ public class BolaoService {
 		
 		if (bolao.getId() == null) {
 		
-			Competicao competicao = competicaoRepository.findById(bolao.getCompeticao().getId()).get();
-	
-			associarCompeticaoAoBolao(bolao, competicao);
-			
+			popularFasesEJogosvIApI(bolao);
+		}
+		return bolao;
+		
+	}
+
+	@Transactional
+	public void atualizarFasesEJogosDaApi(Integer bolaoId) {
+		Bolao bolao = bolaoRepo.findById(bolaoId).orElseThrow();
+		popularFasesEJogosvIApI(bolao);
+	}
+
+	private void popularFasesEJogosvIApI(Bolao bolao) {
+		Set<Object> timesFaltantes = new HashSet<Object>();
+
+		List<Competicao> competicoes = getCompeticoesDoBolao(bolao);
+		competicoes.forEach(competicao -> {
+			associarCompeticaoAoBolao(bolao, competicao); 
+
 			CampeonatoDetalhesApiDTO campeonatoDetalheApi = campeonatoDetalhesApiService
-																.getByCampeonatoId(competicao.getIdApi());
-			
+												.getByCampeonatoId(competicao.getIdApi());
+
 			List<FaseApiDTO> faseApiList = faseApiService.getAllByCampeonatoId(competicao.getIdApi());
-			
+
 			var converter = new CampeonatoDetalhesToJogosConverter();
-			
-			Set<Object> timesFaltantes = new HashSet<Object>();
-					
+
 			faseApiList.forEach(faseApi -> {
-				
-				Fase fase = saveFase(faseApi, bolao, competicao);
-				
+
+				Fase fase = findOrCreateFase(faseApi, bolao, competicao);
+
 				List<JogoApiDTO> jogosApiList = converter.converter(campeonatoDetalheApi, faseApi.getSlug());
-				
+
 				//saveTimes(converter, jogosApiList);
 				Map<Long, Integer> timesMap = getTimesMap();
 				jogosApiList.forEach(jogoApi -> {
-	
+					Jogo jogoExistente = jogoRepository.findOneByFaseAndIdApi(fase, jogoApi.getPartidaId());
+					if (jogoExistente != null) {
+						return;
+					}
+
+					Long timeMandanteId = jogoApi.getTimeMandante() != null ? jogoApi.getTimeMandante().getTimeId() : null;
+					Long timeVisitanteId = jogoApi.getTimeVisitante() != null ? jogoApi.getTimeVisitante().getTimeId() : null;
+
+					if (timeMandanteId == null || timeVisitanteId == null) {
+						return;
+					}
+
 					Jogo jogo = new Jogo();
-					
+					LocalDateTime dataJogo = convertStringToLocaldataTime(jogoApi.getDataRealizacaoIso());
+
 					jogo.setFase(fase);
 					jogo.setExecucao(Jogo.EXECUSSAO_PREVISTO);
 					jogo.setIdApi(jogoApi.getPartidaId());
 					jogo.setGrupo(jogoApi.getGrupo().replace("grupo-", "GRUPO ").toUpperCase());
 					jogo.setRodada(Integer.valueOf(jogoApi.getRodada().replace("a-rodada", "")));
-					jogo.setData(convertStringToLocaldataTime(jogoApi.getDataRealizacaoIso()));
+					jogo.setData(dataJogo);
+					jogo.setLimiteAposta(dataJogo.minusHours(1));
 					jogo.setLiberarCriacaoPalpites(true);
 					jogoRepository.save(jogo);
-					
-					
-					System.out.println("Mandante: " + jogoApi.getTimeMandante().getTimeId() + " - " + jogoApi.getTimeMandante().getNomePopular() + " ("+timesMap.get(jogoApi.getTimeMandante().getTimeId())+")");
-					System.out.println("Visitante: " + jogoApi.getTimeVisitante().getTimeId() + " - " + jogoApi.getTimeVisitante().getNomePopular() + " ("+timesMap.get(jogoApi.getTimeMandante().getTimeId())+")");
-					
-					if (timesMap.get(jogoApi.getTimeMandante().getTimeId()) == null) {
+
+
+					System.out.println("Mandante: " + timeMandanteId + " - " + jogoApi.getTimeMandante().getNomePopular() + " ("+timesMap.get(timeMandanteId)+")");
+					System.out.println("Visitante: " + timeVisitanteId + " - " + jogoApi.getTimeVisitante().getNomePopular() + " ("+timesMap.get(timeVisitanteId)+")");
+
+					if (timesMap.get(timeMandanteId) == null) {
 						Time time = new Time();
 						time.setFlag(jogoApi.getTimeMandante().getEscudo());
-						time.setIdApi(jogoApi.getTimeMandante().getTimeId());
+						time.setIdApi(timeMandanteId);
 						time.setNome(jogoApi.getTimeMandante().getNomePopular());
 						time.setSigla(jogoApi.getTimeMandante().getSigla());
 						timeRepository.save(time);
 						timesMap.put(time.getIdApi(), time.getId());
 						//timesFaltantes.add(jogoApi.getTimeMandante());
 					}
-					
-					if (timesMap.get(jogoApi.getTimeVisitante().getTimeId()) == null) {
+
+					if (timesMap.get(timeVisitanteId) == null) {
 						Time time = new Time();
 						time.setFlag(jogoApi.getTimeVisitante().getEscudo());
-						time.setIdApi(jogoApi.getTimeVisitante().getTimeId());
+						time.setIdApi(timeVisitanteId);
 						time.setNome(jogoApi.getTimeVisitante().getNomePopular());
 						time.setSigla(jogoApi.getTimeVisitante().getSigla());
 						timeRepository.save(time);
 						timesMap.put(time.getIdApi(), time.getId());
 						//timesFaltantes.add(jogoApi.getTimeVisitante());
-					} 
-					
-					
+					}
+
+
 					var timeA = new Time();
-					timeA.setId(timesMap.get(jogoApi.getTimeMandante().getTimeId()));
+					timeA.setId(timesMap.get(timeMandanteId));
 					jogo.setTimeA(timeA);
 					TimeNoJogo timeNoJogoA = new TimeNoJogo();
 					timeNoJogoA.setJogo(jogo);
 					timeNoJogoA.setTime(timeA);
 					timeNoJogoA.setMandoDeCampo(TimeNoJogo.CASA);
 					timeNoJogoRepository.save(timeNoJogoA);
-					
+
 					var timeB = new Time();
-					timeB.setId(timesMap.get(jogoApi.getTimeVisitante().getTimeId()));
-					jogo.setTimeA(timeB);
+					timeB.setId(timesMap.get(timeVisitanteId));
+					jogo.setTimeB(timeB);
 					TimeNoJogo timeNoJogoB = new TimeNoJogo();
 					timeNoJogoB.setJogo(jogo);
 					timeNoJogoB.setTime(timeB);
 					timeNoJogoB.setMandoDeCampo(TimeNoJogo.VISITANTE);
 					timeNoJogoRepository.save(timeNoJogoB);
-	
+
 				});
-				
+
 			});
-			
-			
-			System.out.println(timesFaltantes);
-			
-			timesFaltantes.forEach(timeFaltante -> {
-				TimeApiDTO dto = (TimeApiDTO) timeFaltante;
-				System.out.println(dto.getTimeId() + " - " + dto.getNomePopular());
-				
-			});
-		}
-		return bolao;
+		});
 		
+		
+		System.out.println(timesFaltantes);
+		
+		timesFaltantes.forEach(timeFaltante -> {
+			TimeApiDTO dto = (TimeApiDTO) timeFaltante;
+			System.out.println(dto.getTimeId() + " - " + dto.getNomePopular());
+			
+		});
+	}
+
+	private List<Competicao> getCompeticoesDoBolao(Bolao bolao) {
+		if (bolao.getCompeticao() != null && bolao.getCompeticao().getId() != null) {
+			Competicao competicao = competicaoRepository.findById(bolao.getCompeticao().getId()).orElse(null);
+			if (competicao == null) {
+				return List.of();
+			}
+			return List.of(competicao);
+		}
+
+		return bolaoCompeticaoRepository.findAllByBolao(bolao).stream()
+				.map(BolaoCompeticao::getCompeticao)
+				.filter(competicao -> competicao != null)
+				.collect(Collectors.toList());
+	}
+
+	private Fase findOrCreateFase(FaseApiDTO faseApi, Bolao bolao, Competicao competicao) {
+		Fase faseExistente = faseRepository.findOneByBolaoAndCompeticaoAndIdApi(bolao, competicao, faseApi.getFaseId());
+		if (faseExistente != null) {
+			return faseExistente;
+		}
+
+		Fase fase = new Fase();
+		fase.setNome(faseApi.getNome());
+		fase.setIdApi(faseApi.getFaseId());
+		fase.setInicioPalpite(new Date());
+		fase.setBolao(bolao);
+		fase.setCompeticao(competicao);
+		fase.setTipo(faseApi.getTipo());
+		fase.setFaseFinal(faseApi.getSlug().equals("final") ? true : false);
+		faseRepository.save(fase);
+		return fase;
 	}
 
 	private Map<Long, Integer> getTimesMap() {
@@ -192,6 +249,11 @@ public class BolaoService {
 	}
 
 	private void associarCompeticaoAoBolao(Bolao bolao, Competicao competicao) {
+		List<BolaoCompeticao> associacoes = bolaoCompeticaoRepository.findAllByBolaoAndCompeticao(bolao, competicao);
+		if (!associacoes.isEmpty()) {
+			return;
+		}
+
 		var bolaoCompeticao = new BolaoCompeticao();
 		bolaoCompeticao.setBolao(bolao);
 		bolaoCompeticao.setCompeticao(competicao);
@@ -213,18 +275,6 @@ public class BolaoService {
 		});
 	}
 
-	private Fase saveFase(FaseApiDTO faseApi, Bolao bolao, Competicao competicao) {
-		Fase fase = new Fase();
-		fase.setNome(faseApi.getNome());
-		fase.setIdApi(faseApi.getFaseId());
-		fase.setInicioPalpite(new Date());
-		fase.setBolao(bolao);
-		fase.setCompeticao(competicao);
-		fase.setTipo(faseApi.getTipo());
-		fase.setFaseFinal(faseApi.getSlug().equals("final") ? true : false);
-		faseRepository.save(fase);
-		return fase;
-	}
 	
 	
 	public LocalDateTime convertStringToLocaldataTime(String data) {

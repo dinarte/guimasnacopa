@@ -111,7 +111,7 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
     	Double pontuacaoAtingida = processList.stream().reduce(0.0, Double::sum);
     	Double pontuacaoAjustada = calcularAjustePontuacaoMaximaAtingida(pontuacaoAtingida);
     	this.pontuacaoAtingida = pontuacaoAjustada;
-		return pontuacaoAtingida;
+		return this.pontuacaoAtingida;
 	}
 	
 	private Double processarAcertarTimes() {
@@ -210,8 +210,9 @@ public class PalpiteProcessor implements PalpiteForProcessingVo, IParticipanteBa
     public Double calcularAjustePontuacaoMaximaAtingida(Double pontuacao) {
     	Double pontuacaoMaximaPermitida = maximoPontuacaoPossivelPalpite;
     	if (Double.compare(pontuacao, pontuacaoMaximaPermitida) > 0) {
-    		Double ajuste = Double.sum(pontuacao, -pontuacaoMaximaPermitida);
+    		Double ajuste = -Double.sum(pontuacao, -pontuacaoMaximaPermitida);
     		detalhePontuacao.put(Z_PONTUACAO_MAXIMA_ULTRAPASSADA_AJUSTE, ajuste);
+    		pontuacao = pontuacaoMaximaPermitida; 
     		return pontuacaoMaximaPermitida;
     	} 
     	return pontuacao;

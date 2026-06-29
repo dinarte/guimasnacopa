@@ -80,7 +80,7 @@ remotes {
   }
 }  
 
-task deploy {
+task deploy(dependsOn: ['setAppVersion', 'createWar']) {
   doLast {
     ssh.run {
       session(remotes.production) {
@@ -98,9 +98,6 @@ compileJava.options.encoding = 'UTF-8'
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 }
-
-//sourceCompatibility = 1.8
-//targetCompatibility = 1.8
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11

@@ -1,11 +1,28 @@
-<div th:fragment="cards">
+<div th:fragment="cards" class="js-game-cards-container">
                  	 
-         	<div class="row">
+	         <div class="row" style="margin-bottom: 15px;">
+	         	<div class="col-lg-12 text-right">
+	         		<label for="game-cards-sort" style="margin-right: 8px;">Ordenar por:</label>
+	         		<select id="game-cards-sort" class="form-control input-sm js-game-cards-sort" style="display: inline-block; width: auto;">
+	         			<option value="phase-group">Por fase / grupo</option>
+	         			<option value="game-date">Por data do jogo</option>
+	         		</select>
+	         	</div>
+	         </div>
+
+	         <div class="row js-game-cards-row">
          
          	
 	         	<th:block th:each="palpite : ${palpites}">
-		         	<div th:class="${'col-lg-'+ colunasCards + ' minheight' }"> 
-					  <div th:class="${'panel panel-info grupo ' + palpite.colorClass}" >
+		          	<div th:class="${'col-lg-'+ colunasCards + ' minheight js-game-card-item' }"> 
+					  <div th:class="${'panel panel-info grupo ' + palpite.colorClass}"
+					       th:attr="data-fase-grupo=${palpite.jogo != null ? ((palpite.jogo.fase?.nome != null ? palpite.jogo.fase.nome : '') + ' - ' + (palpite.jogo.grupo != null ? palpite.jogo.grupo : '')) : (palpite.descricaoDaFase != null ? palpite.descricaoDaFase : '')},
+					                data-jogo-data=${palpite.jogo?.data != null ? #temporals.format(palpite.jogo.data, 'yyyy-MM-dd') : ''},
+					                data-jogo-hora=${palpite.jogo?.data != null ? #temporals.format(palpite.jogo.data, 'HH:mm') : ''},
+					                data-time-a=${palpite.timeA?.nome},
+					                data-time-b=${palpite.timeB?.nome},
+					                data-gols-a=${palpite.golsTimeA},
+					                data-gols-b=${palpite.golsTimeB}" > 
 					  	<div class="panel-heading" >
 					  		<div class="row">
 						  		<div class="col-sm-2 col-md-2 col-lg-2">
@@ -31,7 +48,7 @@
 					    				<span th:if="${palpite.jogo?.data == null}" style="color: #fff"> - </span>
 					    				<a th:href="${'/palpite/'+palpite.id+'/detalhar'}" class="glyphicon glyphicon-search" 
 					    					aria-hidden="true" 
-					    					tile="Detalhar palpite"></span>
+					    					title="Detalhar palpite"></a>
 					    				</td>
 					    		</tr>
 					    		
@@ -78,7 +95,7 @@
 							    			 			th:id="${'vencedor_a_radio_'+palpite.id}" 
 							    			 			th:name="${'vencedor_radio_'+palpite.id}"
 							    			 			th:value="${'timeA'}" 
-							    			 			th:onChange="${'popularVencedor(this, '+palpite.id+')'}"/>
+							    			 			th:attr="onchange=|popularVencedor(this, ${palpite.id})|"/>
 							    			 			
 							    			<span th:utext="${palpite.timeA.flag + ' ' + palpite.timeA?.nome}"> Brasil </span>
 						    			</td>
@@ -98,7 +115,7 @@
 						    						class="form-control"
 						    						style="padding: 3px; height: 20px;"
 						    						min="0"
-						    						th:onChange="${'popularGols('+palpite.id+')'}">
+						    						th:attr="onchange=|popularGols(${palpite.id})|">
 						    				<span th:if="${!autenticacao.adminDoBolao || !palpite.jogoEmAndamento}" th:text="${palpite.golsDoJogoTimaA}" > 1 </span>
 						    			</td>
 						    		</tr>
@@ -111,7 +128,7 @@
 							    			 			th:id="${'vencedor_b_radio_'+palpite.id}" 
 							    			 			th:name="${'vencedor_radio_'+palpite.id}" 
 							    			 			th:value="${'timeB'}"
-							    			 			th:onChange="${'popularVencedor(this, '+palpite.id+')'}"/>
+							    			 			th:attr="onchange=|popularVencedor(this, ${palpite.id})|"/>
 							    			
 							    			<span th:utext="${ palpite.timeB.flag + ' ' + palpite.timeB?.nome}">Espanha</span>
 						    			
@@ -135,7 +152,7 @@
 						    			 			class="form-control"
 						    			 			style="padding: 3px; height: 20px;"
 						    			 			min="0"
-						    			 			th:onChange="${'popularGols('+palpite.id+')'}" /> 
+						    			 			th:attr="onchange=|popularGols(${palpite.id})|" /> 
 						    				<span  th:if="${!autenticacao.adminDoBolao || !palpite.jogoEmAndamento}" th:text="${palpite.golsDoJogoTimaB}" > 1 </span>
 						    			</td>
 						    		</tr>
@@ -170,7 +187,7 @@
 			    				
 			    					
 						    	
-						    	<span th:if="${palpite.jogo.encerrado}" class="badge">Encenrrado</span>
+						    	<span th:if="${palpite.jogo.encerrado}" class="badge">Encerrado</span>
 						    	
 						    	<span> <img src="/img/bola-rolando.gif" width="20px" th:if="${palpite.jogoEmAndamento}" />  </span>
 						    	
@@ -184,7 +201,7 @@
 	                            <button type="submit" th:if="${palpite.jogoEmAndamento && autenticacao.adminDoBolao }" disabled="disabled" id="btnRaking" data-loading="loader">
 		                            Atualizar ranking
 		                        </button>
-		                        <button type="submit" th:if="${palpite.jogoEmAndamento && autenticacao.adminDoBolao }" id="btnRaking" th:onclick="${'setEncerrado('+palpite.id+')'}" data-loading="loader">
+		                        <button type="submit" th:if="${palpite.jogoEmAndamento && autenticacao.adminDoBolao }" id="btnRaking" th:attr="onclick=|setEncerrado(${palpite.id})|" data-loading="loader">
 		                            Encerrar jogo
 		                        </button>
 	                         </form>  	
@@ -275,8 +292,134 @@ function setEncerrado(id) {
 	$(formId+' #execucao').val('Encerrado')
 }
 
+function compareNullableValues(valueA, valueB) {
+	var normalizedA = valueA || '';
+	var normalizedB = valueB || '';
+	var hasValueA = normalizedA !== '';
+	var hasValueB = normalizedB !== '';
+
+	if (!hasValueA && !hasValueB) {
+		return 0;
+	}
+
+	if (!hasValueA) {
+		return 1;
+	}
+
+	if (!hasValueB) {
+		return -1;
+	}
+
+	if (normalizedA < normalizedB) {
+		return -1;
+	}
+
+	if (normalizedA > normalizedB) {
+		return 1;
+	}
+
+	return 0;
+}
+
+function buildGameDateKey(card) {
+	var gameDate = card.find('.panel.grupo').attr('data-jogo-data') || '';
+	var gameHour = card.find('.panel.grupo').attr('data-jogo-hora') || '';
+
+	if (!gameDate) {
+		return '';
+	}
+
+	return gameDate + ' ' + (gameHour || '99:99');
+}
+
+function sortGameCards(container, sortType) {
+	var cardsRow = container.find('.js-game-cards-row').first();
+	var cards = cardsRow.children('.js-game-card-item').get();
+
+	cards.sort(function(cardA, cardB) {
+		var currentCardA = $(cardA);
+		var currentCardB = $(cardB);
+		var panelA = currentCardA.find('.panel.grupo').first();
+		var panelB = currentCardB.find('.panel.grupo').first();
+		var comparison = 0;
+
+		if (sortType === 'game-date') {
+			comparison = compareNullableValues(buildGameDateKey(currentCardA), buildGameDateKey(currentCardB));
+			if (comparison === 0) {
+				comparison = compareNullableValues(panelA.attr('data-fase-grupo'), panelB.attr('data-fase-grupo'));
+			}
+		} else {
+			comparison = compareNullableValues(panelA.attr('data-fase-grupo'), panelB.attr('data-fase-grupo'));
+			if (comparison === 0) {
+				comparison = compareNullableValues(buildGameDateKey(currentCardA), buildGameDateKey(currentCardB));
+			}
+		}
+
+		if (comparison === 0) {
+			return Number(currentCardA.attr('data-initial-order')) - Number(currentCardB.attr('data-initial-order'));
+		}
+
+		return comparison;
+	});
+
+	$.each(cards, function(index, card) {
+		cardsRow.append(card);
+	});
+}
+
+function getGameCardsSortStorageKey(container) {
+	var pagePath = window.location && window.location.pathname ? window.location.pathname : 'default';
+	var containerIndex = $('.js-game-cards-container').index(container);
+
+	return 'game-cards-sort:' + pagePath + ':' + containerIndex;
+}
+
+function readStoredGameCardsSort(container) {
+	try {
+		return window.localStorage ? window.localStorage.getItem(getGameCardsSortStorageKey(container)) : null;
+	} catch (error) {
+		return null;
+	}
+}
+
+function storeGameCardsSort(container, sortType) {
+	try {
+		if (window.localStorage) {
+			window.localStorage.setItem(getGameCardsSortStorageKey(container), sortType);
+		}
+	} catch (error) {
+		return;
+	}
+}
+
+function initializeGameCardsOrdering() {
+	$('.js-game-cards-container').each(function() {
+		var container = $(this);
+		var cards = container.find('.js-game-cards-row').first().children('.js-game-card-item');
+		var sortSelect = container.find('.js-game-cards-sort').first();
+		var storedSortType = readStoredGameCardsSort(container);
+
+		cards.each(function(index) {
+			$(this).attr('data-initial-order', index);
+		});
+
+		if (storedSortType && sortSelect.find('option[value="' + storedSortType + '"]').length > 0) {
+			sortSelect.val(storedSortType);
+		}
+
+		sortSelect.off('change.gameCardsOrder').on('change.gameCardsOrder', function() {
+			var selectedSortType = $(this).val();
+			storeGameCardsSort(container, selectedSortType);
+			sortGameCards(container, selectedSortType);
+		});
+
+		sortGameCards(container, sortSelect.val());
+	});
+}
+
+$(initializeGameCardsOrdering);
+
 </script>
 </div>			
-
 
 

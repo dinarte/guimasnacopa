@@ -123,7 +123,7 @@ public interface PalpiteRepository  extends CrudRepository<Palpite, Integer>{
 					+ "		u.name,\r\n"
 					+ "		u.email, \r\n"
 					+ "		u.url_foto as urlFoto,\r\n"
-					+ "		tipo as tipo, \r\n"
+					+ "		p.tipo as tipo, \r\n"
 					+ "		timea_id as timeAId, \r\n"
 					+ "		timeb_id as timeBId, \r\n"
 					+ "		gols_timea as golsTimeA, \r\n"

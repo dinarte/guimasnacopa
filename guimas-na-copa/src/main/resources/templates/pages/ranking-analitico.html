@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+                    <div class="col-lg-8">
+                    <h1 class="page-header" th:text="${bolao.nome}">Descriçãoo do Bolão</h1>
+                        <h3>Ranking Analítico</h3>
+                        <p class="text-muted">Compare a evolução acumulada dos participantes por dia. O usuário logado e os 10 primeiros já entram marcados.</p>
+                </div> 
+                    <div class="col-lg-4 text-right" style="margin-top:29px;">
+                    	<a th:href="${'/' + bolao.permalink + '/ranking'}" class="btn btn-default">Voltar ao ranking</a>
+                    </div>
+            </div>
+        	
+        	<style>
+        	.participante td{
+        		background-color: #eee;
+        	}
+            	.participante-toggle {
+            		margin: 0 6px 6px 0;
+            	}
+            	.participante-toggle.active {
+            		font-weight: 600;
+            	}
+            	#analitico-chart {
+            		min-height: 360px;
+            	}
+        	</style>
+
+            	<div class="row">
+            		<div class="col-lg-12">
+            			<div class="panel panel-default">
+            				<div class="panel-heading">
+            					<div class="row">
+            						<div class="col-sm-6">
+            							<i class="fa fa-line-chart fa-fw"></i> Evolução acumulada
+            						</div>
+            						<div class="col-sm-6 text-right">
+            							<div class="btn-group btn-group-sm" role="group">
+            								<button type="button" class="btn btn-default periodo-btn" data-dias="5">5 dias</button>
+            								<button type="button" class="btn btn-default periodo-btn" data-dias="10">10 dias</button>
+            								<button type="button" class="btn btn-default periodo-btn active btn-primary" data-dias="0">Todos</button>
+            							</div>
+            						</div>
+            					</div>
+            				</div>
+            				<div class="panel-body">
+            					<div id="analitico-chart" class="text-center text-danger"></div>
+            					<div id="analitico-empty" class="text-center text-muted" style="display:none; padding: 20px 0;"></div>
+            				</div>
+            			</div>
+            		</div>
+            	</div>
+
+            	<div class="row">
+            		<div class="col-lg-12">
+            			<div class="panel panel-default">
+            				<div class="panel-heading">
+            					<i class="fa fa-users fa-fw"></i> Participantes no gráfico
+            				</div>
+            				<div class="panel-body">
+            					<div class="form-group">
+            						<input id="filtro-participante" type="text" class="form-control" placeholder="Filtrar participante...">
+            					</div>
+            					<div id="participantes-toggle-container">
+            						<th:block th:each="participante, stat : ${participantes}">
+            							<button type="button"
+            									class="btn btn-xs participante-toggle"
+            									th:classappend="${(participante.id == autenticacao.participante.id || stat.index < 5) ? 'btn-primary active' : 'btn-default'}"
+            									th:attr="data-participante-id=${participante.id}, data-participante-nome=${participante.usuario.name}">
+            								<span th:text="${participante.usuario.name}">Participante</span>
+            							</button>
+            						</th:block>
+            					</div>
+            				</div>
+            			</div>
+            		</div>
+            	</div>
+        
+	          
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+
+    <script>
+        var rankingAnaliticoRaw = [];
+        var rankingAnaliticoChart = null;
+        var periodoDias = 0;
+        var lastDisplayedLabel = null;
+        var bolaoId = [[${bolao.id}]];
+
+        function formatDate(date) {
+            if (typeof date === 'string') {
+                var parts = date.split('-');
+                return parts[2] + '/' + parts[1];
+            }
+            var dia = String(date.getDate()).padStart(2, '0');
+            var mes = String(date.getMonth() + 1).padStart(2, '0');
+            return dia + '/' + mes;
+        }
+
+        // Paleta de cores para as linhas do gráfico
+        var coresPaleta = ['#0b62f4', '#f04124', '#fdb045', '#46BFBD', '#949FB1', '#4D5360', '#AC193D', '#00A8E8', '#00C9A7', '#F18F01'];
+        
+        function getCorParticipante(index) {
+            return coresPaleta[index % coresPaleta.length];
+        }
+
+        function getSelectedParticipantes() {
+            var selected = [];
+            document.querySelectorAll('.participante-toggle.active').forEach(function(button) {
+                selected.push({
+                    id: String(button.getAttribute('data-participante-id')),
+                    nome: button.getAttribute('data-participante-nome')
+                });
+            });
+            return selected;
+        }
+
+        function buildChartData(selected, diasLimite) {
+            var dataByDate = {};
+            var dates = [];
+            var lastValues = {};
+            var hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            var hojeStr = hoje.getFullYear() + '-' + 
+                         String(hoje.getMonth() + 1).padStart(2, '0') + '-' +
+                         String(hoje.getDate()).padStart(2, '0');
+
+            rankingAnaliticoRaw.forEach(function(row) {
+                var dateKey = row.data;
+                var participantKey = String(row.participanteId);
+
+                if (!dataByDate[dateKey]) {
+                    dataByDate[dateKey] = {};
+                    dates.push(dateKey);
+                }
+
+                dataByDate[dateKey][participantKey] = row;
+            });
+
+            dates.sort();
+
+            var datesFiltered = [];
+            if (diasLimite > 0 && dates.length > 0) {
+                var primeiroData = dates[0];
+                var ultimoData = dates[dates.length - 1];
+                
+                datesFiltered.push(primeiroData);
+                var dataAtual = new Date(primeiroData + 'T00:00:00');
+                
+                while (true) {
+                    dataAtual.setDate(dataAtual.getDate() + diasLimite);
+                    var dataStr = dataAtual.getFullYear() + '-' + 
+                                 String(dataAtual.getMonth() + 1).padStart(2, '0') + '-' +
+                                 String(dataAtual.getDate()).padStart(2, '0');
+                    
+                    if (dataStr > ultimoData) break;
+                    
+                    if (dates.indexOf(dataStr) >= 0) {
+                        datesFiltered.push(dataStr);
+                    } else {
+                        var proximaDataEncontrada = null;
+                        for (var i = 0; i < dates.length; i++) {
+                            if (dates[i] >= dataStr && dates[i] <= ultimoData) {
+                                proximaDataEncontrada = dates[i];
+                                break;
+                            }
+                        }
+                        if (proximaDataEncontrada && datesFiltered.indexOf(proximaDataEncontrada) < 0) {
+                            datesFiltered.push(proximaDataEncontrada);
+                        }
+                    }
+                }
+                
+                if (datesFiltered.indexOf(hojeStr) < 0 && hojeStr >= ultimoData) {
+                    datesFiltered.push(hojeStr);
+                }
+            } else {
+                datesFiltered = dates;
+            }
+
+            selected.forEach(function(participante) {
+                lastValues[participante.id] = 0;
+            });
+
+            return datesFiltered.map(function(dateKey) {
+                var point = { data: dateKey };
+                selected.forEach(function(participante) {
+                    var row = dataByDate[dateKey] && dataByDate[dateKey][participante.id];
+                    if (row && row.pontuacaoAcumulada != null) {
+                        lastValues[participante.id] = Number(row.pontuacaoAcumulada);
+                    }
+                    point['p_' + participante.id] = lastValues[participante.id];
+                });
+                return point;
+            });
+        }
+
+        function renderChart() {
+            var selected = getSelectedParticipantes();
+            var emptyMessage = document.getElementById('analitico-empty');
+            var chartContainer = document.getElementById('analitico-chart');
+
+            if (!selected.length) {
+                chartContainer.innerHTML = '';
+                emptyMessage.style.display = 'block';
+                emptyMessage.textContent = 'Selecione ao menos um participante para exibir o gráfico.';
+                return;
+            }
+
+            var chartData = buildChartData(selected, periodoDias);
+            if (!chartData.length) {
+                chartContainer.innerHTML = '';
+                emptyMessage.style.display = 'block';
+                emptyMessage.textContent = 'Ainda não há pontos suficientes para desenhar o histórico neste período.';
+                return;
+            }
+
+            emptyMessage.style.display = 'none';
+            chartContainer.innerHTML = '';
+            lastDisplayedLabel = null;
+            
+            // Remover legenda anterior se existir
+            var legendaAnterior = chartContainer.parentElement.querySelector('.legenda-participantes');
+            if (legendaAnterior) {
+                legendaAnterior.remove();
+            }
+
+            // Gerar cores para cada participante
+            var cores = selected.map(function(p, i) { return getCorParticipante(i); });
+
+            var chartOptions = {
+                element: 'analitico-chart',
+                data: chartData,
+                xkey: 'data',
+                ykeys: selected.map(function(participante) { return 'p_' + participante.id; }),
+                labels: selected.map(function(participante) { return participante.nome; }),
+                colors: cores,
+                hideHover: 'auto',
+                resize: true,
+                pointSize: 3,
+                lineWidth: 2
+            };
+
+            chartOptions.xLabelFormat = function(x) { 
+                var label = formatDate(x);
+                if (label === lastDisplayedLabel) {
+                    return '';
+                }
+                lastDisplayedLabel = label;
+                return label;
+            };
+
+            rankingAnaliticoChart = Morris.Line(chartOptions);
+            
+            // Adicionar legenda com cores ao lado do gráfico
+            var legendaDiv = document.createElement('div');
+            legendaDiv.className = 'legenda-participantes';
+            legendaDiv.style.marginTop = '20px';
+            legendaDiv.style.fontSize = '13px';
+            legendaDiv.style.display = 'flex';
+            legendaDiv.style.flexWrap = 'wrap';
+            legendaDiv.style.gap = '15px';
+            
+            selected.forEach(function(participante, index) {
+                var cor = cores[index];
+                var itemLegenda = document.createElement('div');
+                itemLegenda.className = 'legenda-item';
+                itemLegenda.style.display = 'flex';
+                itemLegenda.style.alignItems = 'center';
+                itemLegenda.style.gap = '6px';
+                itemLegenda.style.cursor = 'pointer';
+                itemLegenda.style.padding = '4px 8px';
+                itemLegenda.style.borderRadius = '4px';
+                itemLegenda.style.transition = 'background-color 0.2s';
+                itemLegenda.setAttribute('data-participante-id', participante.id);
+                
+                var quadradoCor = document.createElement('div');
+                quadradoCor.style.width = '15px';
+                quadradoCor.style.height = '15px';
+                quadradoCor.style.backgroundColor = cor;
+                quadradoCor.style.borderRadius = '2px';
+                
+                var nomeSpan = document.createElement('span');
+                nomeSpan.textContent = participante.nome;
+                
+                itemLegenda.appendChild(quadradoCor);
+                itemLegenda.appendChild(nomeSpan);
+                
+                // Event listeners para destacar a linha ao passar o mouse
+                itemLegenda.addEventListener('mouseover', function() {
+                    itemLegenda.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+                    highlightLine('p_' + participante.id, true);
+                });
+                
+                itemLegenda.addEventListener('mouseout', function() {
+                    itemLegenda.style.backgroundColor = 'transparent';
+                    highlightLine('p_' + participante.id, false);
+                });
+                
+                legendaDiv.appendChild(itemLegenda);
+            });
+            
+            if (chartContainer.parentElement) {
+                chartContainer.parentElement.appendChild(legendaDiv);
+            }
+        }
+        
+        // Função para destacar a linha do gráfico
+        function highlightLine(ykey, isHighlight) {
+            if (!rankingAnaliticoChart) return;
+            
+            var chartElement = document.getElementById('analitico-chart');
+            if (!chartElement) return;
+            
+            // Encontra o índice da série
+            var ykeys = rankingAnaliticoChart.options.ykeys;
+            var seriesIndex = ykeys.indexOf(ykey);
+            
+            if (seriesIndex < 0) return;
+            
+            // Procura pela cor da série
+            var cores = rankingAnaliticoChart.options.colors;
+            var corSerie = cores[seriesIndex];
+            
+            if (!corSerie) return;
+            
+            // Encontra todos os paths SVG com a cor correspondente
+            var svg = chartElement.querySelector('svg');
+            if (!svg) return;
+            
+            var paths = svg.querySelectorAll('path[stroke="' + corSerie + '"]');
+            
+            paths.forEach(function(path) {
+                if (isHighlight) {
+                    path.setAttribute('stroke-width', '4');
+                    path.style.filter = 'drop-shadow(0 0 3px ' + corSerie + ')';
+                } else {
+                    path.setAttribute('stroke-width', '2');
+                    path.style.filter = 'none';
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.participante-toggle').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    if (button.classList.contains('active')) {
+                        button.classList.remove('active', 'btn-primary');
+                        button.classList.add('btn-default');
+                    } else {
+                        button.classList.add('active', 'btn-primary');
+                        button.classList.remove('btn-default');
+                    }
+                    renderChart();
+                });
+            });
+
+            document.querySelectorAll('.periodo-btn').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.periodo-btn').forEach(function(b) {
+                        b.classList.remove('active', 'btn-primary');
+                        b.classList.add('btn-default');
+                    });
+                    button.classList.add('active', 'btn-primary');
+                    button.classList.remove('btn-default');
+                    periodoDias = parseInt(button.getAttribute('data-dias'));
+                    renderChart();
+                });
+            });
+
+            document.getElementById('filtro-participante').addEventListener('input', function(event) {
+                var filtro = event.target.value.toLowerCase();
+                document.querySelectorAll('.participante-toggle').forEach(function(button) {
+                    var nome = (button.getAttribute('data-participante-nome') || '').toLowerCase();
+                    button.style.display = nome.indexOf(filtro) >= 0 ? 'inline-block' : 'none';
+                });
+            });
+
+            $.ajax({
+                type: 'GET',
+                url: '/ia/api/ranking/' + bolaoId + '/pontuacao-por-dia',
+                success: function(data) {
+                    rankingAnaliticoRaw = data || [];
+                    renderChart();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Erro ao carregar dados do gráfico:', status, error, xhr);
+                    document.getElementById('analitico-empty').style.display = 'block';
+                    document.getElementById('analitico-empty').textContent = 'Não foi possível carregar os dados do gráfico.';
+                },
+                dataType: 'json'
+            });
+        });
+    </script>
+    
+
+</body>
+
+</html>

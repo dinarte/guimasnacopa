@@ -1,4 +1,25 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: guimas-na-copa
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI:-mongodb://admin:admin123@mongodb:27017/appdb?authSource=admin}
+      EXTERNAL_API_BASE_URL: https://api.api-futebol.com.br/v1
+      EXTERNAL_API_TOKEN: ${EXTERNAL_API_TOKEN}
+      GUIMASNACOPA_CONFIG_BOLAO_ATIVO: copa-2026
+    depends_on:
+      - mongodb
+
   mongodb:
     image: mongo:8.0
     container_name: mongodb-8

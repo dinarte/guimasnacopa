@@ -28,7 +28,7 @@
         		 
 	        		 <div class="form-group col-lg-3 col-md-6 col-sm-12">
 					    <label for="competicao">Competição:</label>
-		        		 <select th:field="*{competicao}" class="form-control">
+		        		 <select th:field="*{competicao.id}" class="form-control">
 						  	<option th:each="c : ${competicaoList}" 
 						          th:value="${c.id}" 
 						          th:text="${c.nome}">Wireframe</option>

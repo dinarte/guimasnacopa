@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.com.guimasnacopa.domain.ChartDesempenhoVo;
+
 public class MorrisChartOptions {
 
 	String element = "morris-area-chart";
 
-	List<Map<String,Object>> data = new ArrayList<>();
+	List<ChartDesempenhoVo> data = new ArrayList<>();
     
 	String xkey = "periodo";
     
@@ -29,12 +31,7 @@ public class MorrisChartOptions {
 	
 	String dateFormat;
     
-     
-	public void addDataItem(String key, Object value) {
-		Map<String,Object> item = new HashMap<>();
-		item.put(key, value);
-		data.add(item);
-	}
+    
 	
 	public String getElement() {
 		return element;
@@ -43,10 +40,10 @@ public class MorrisChartOptions {
 		this.element = element;
 	}
 	
-	public List<Map<String, Object>> getData() {
+	public List<ChartDesempenhoVo> getData() {
 		return data;
 	}
-	public void setData(List<Map<String, Object>> data) {
+	public void setData(List<ChartDesempenhoVo> data) {
 		this.data = data;
 	}
 	public String getXkey() {

@@ -1,0 +1,39 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Gradle: Deploy",
+            "type": "shell",
+            "command": "gradlew.bat",
+            "args": [
+                "deploy",
+                "--console=plain"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Gradle: Build",
+            "type": "shell",
+            "command": "gradlew.bat",
+            "args": [
+                "build",
+                "--console=plain"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

@@ -12,5 +12,7 @@ public interface CampeonatoDetalhesRepository
 	
 	Optional<CampeonatoDetalhesApiDTO> findByCampeonatoCampeonatoIdAndExpiresAtAfter(
 			Long campeonadoId, LocalDateTime now);
+
+	void deleteByCampeonatoCampeonatoId(Long campeonadoId);
 	
 }

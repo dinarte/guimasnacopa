@@ -38,6 +38,18 @@ public class CampeonatoDetalhesToJogosConverter {
                 .path("partidas")
                 .path(fase);
 
+        if (faseNode.isArray()) {
+            adicionarJogos(
+                jogos,
+                partidasJaAdicionadas,
+                faseNode,
+                fase,
+                "1a-rodada",
+                "grupo-unico"
+            );
+            return jogos;
+        }
+
         if (!faseNode.isObject()) {
             return jogos;
         }
@@ -68,16 +80,80 @@ public class CampeonatoDetalhesToJogosConverter {
             String grupo = grupoEntry.getKey();
             JsonNode grupoNode = grupoEntry.getValue();
 
-            if (!isGrupoValido(grupo, grupoNode)) {
+            if (grupoNode == null || grupoNode.isMissingNode() || grupoNode.isNull()) {
                 continue;
             }
 
-            processarRodadasDoGrupo(
+            // Suporta estruturas variadas da API (ex.: grupo-a -> 1a-rodada[] e chave-1 -> ida{}).
+            adicionarJogosRecursivo(
                     jogos,
                     partidasJaAdicionadas,
                     grupoNode,
                     fase,
+                    grupo,
+                    "1a-rodada"
+            );
+        }
+    }
+
+    private void adicionarJogosRecursivo(
+            List<JogoApiDTO> jogos,
+            Set<Long> partidasJaAdicionadas,
+            JsonNode node,
+            String fase,
+            String grupo,
+            String rodadaPadrao
+    ) {
+
+        if (node == null || node.isMissingNode() || node.isNull()) {
+            return;
+        }
+
+        if (node.isArray()) {
+            adicionarJogos(
+                    jogos,
+                    partidasJaAdicionadas,
+                    node,
+                    fase,
+                    rodadaPadrao,
                     grupo
+            );
+            return;
+        }
+
+        if (!node.isObject()) {
+            return;
+        }
+
+        if (node.hasNonNull("partida_id")) {
+            adicionarJogo(
+                    jogos,
+                    partidasJaAdicionadas,
+                    node,
+                    fase,
+                    rodadaPadrao,
+                    grupo
+            );
+            return;
+        }
+
+        Iterator<Map.Entry<String, JsonNode>> campos = node.fields();
+
+        while (campos.hasNext()) {
+            Map.Entry<String, JsonNode> campo = campos.next();
+            JsonNode filho = campo.getValue();
+
+            String rodada = isRodadaValida(campo.getKey(), filho)
+                    ? campo.getKey()
+                    : rodadaPadrao;
+
+            adicionarJogosRecursivo(
+                    jogos,
+                    partidasJaAdicionadas,
+                    filho,
+                    fase,
+                    grupo,
+                    rodada
             );
         }
     }
@@ -125,29 +201,48 @@ public class CampeonatoDetalhesToJogosConverter {
 
         for (JsonNode jogoNode : jogosNode) {
 
-            if (!jogoNode.hasNonNull("partida_id")) {
-                continue;
-            }
-
-            Long partidaId = jogoNode.get("partida_id").asLong();
-
-            if (partidasJaAdicionadas.contains(partidaId)) {
-                continue;
-            }
-
-            JogoApiDTO jogo = mapper.convertValue(
+            adicionarJogo(
+                    jogos,
+                    partidasJaAdicionadas,
                     jogoNode,
-                    JogoApiDTO.class
+                    fase,
+                    rodada,
+                    grupo
             );
-
-            jogo.setFase(fase);
-            jogo.setRodada(rodada);
-            jogo.setGrupo(grupo);
-
-            jogos.add(jogo);
-
-            partidasJaAdicionadas.add(partidaId);
         }
+    }
+
+    private void adicionarJogo(
+            List<JogoApiDTO> jogos,
+            Set<Long> partidasJaAdicionadas,
+            JsonNode jogoNode,
+            String fase,
+            String rodada,
+            String grupo
+    ) {
+
+        if (jogoNode == null || !jogoNode.hasNonNull("partida_id")) {
+            return;
+        }
+
+        Long partidaId = jogoNode.get("partida_id").asLong();
+
+        if (partidasJaAdicionadas.contains(partidaId)) {
+            return;
+        }
+
+        JogoApiDTO jogo = mapper.convertValue(
+                jogoNode,
+                JogoApiDTO.class
+        );
+
+        jogo.setFase(fase);
+        jogo.setRodada(rodada);
+        jogo.setGrupo(grupo);
+
+        jogos.add(jogo);
+
+        partidasJaAdicionadas.add(partidaId);
     }
 
     private boolean isGrupoValido(

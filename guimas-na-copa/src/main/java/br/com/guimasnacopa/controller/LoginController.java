@@ -133,7 +133,7 @@ public class LoginController {
 			if (!autenticacao.isBolaoSelecionado())
 				return "redirect:/bolao/selecionar";
 			*/
-			return redirectAccordingByKindOfUser();
+			return redirectAccordingKindOfUser();
 		}
 		else {
 			throw new LoginException("Que é isso jogador? errou seus dados! Tente novamente...");
@@ -241,15 +241,15 @@ public class LoginController {
 	public String login(@PathVariable("linkBolao") String linkBolao, Model model, @CookieValue( name = "guimasbet-session-id") String autIdOpt) throws BolaoNaoSelecionadoException {
 		
 		String autId = getAutId(autIdOpt);
+		model.addAttribute(appMessages);
 		
 		if (getAutorizacaFromCookie(autId).isPresent()) {
 			model.addAttribute(autenticacao);
-			return redirectAccordingByKindOfUser();
+			return redirectAccordingKindOfUser();
 		} else {
 		
 			Bolao bolao = bolaoService.getBolaoByPermaLink(linkBolao);
 			model.addAttribute(bolao);
-			model.addAttribute(appMessages);
 			model.addAttribute("usuario", new Usuario());
 			
 			String domain = request.getServerName();
@@ -354,7 +354,17 @@ public class LoginController {
 		return Optional.ofNullable(autenticacao.getAutorizacao());
 	}
 	
-	private String redirectAccordingByKindOfUser() {
+	private String redirectAccordingKindOfUser() {
+		/*
+		if (autenticacao.getUsuario().getEmail().contains("gmail.com")
+				&& (autenticacao.getUsuario().getLoginStrategy() == null 
+					|| !autenticacao.getUsuario().getLoginStrategy().contains("GoogleOAuthStrategy")) ) {
+		
+			appMessages.getInfoList().add("Para uma melhor experiência, associe seu usuário a sua conta Google clicando no botão [Entrar com o Google]");
+		
+			return "pages/login-associar-google.html";
+		}
+		*/
 		if (autenticacao.getUsuario().getAdmin() != true)
 			return "redirect:/" + bolaoAtivo; 
 		else

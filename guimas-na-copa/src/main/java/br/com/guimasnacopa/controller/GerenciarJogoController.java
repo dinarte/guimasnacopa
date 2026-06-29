@@ -195,9 +195,9 @@ public class GerenciarJogoController {
 		//atualisa os palpites
 		List<Palpite> palpites = palpiteRepo.findAllByJogoAndTipo(jogo,Palpite.RESULTADO);
 		palpites.forEach(p -> {
-			List<BolaoCompeticao>  bolaoCompeticao = bolaoCompeticaoRepo.findAllByBolaoAndCompeticao(jogo.getFase().getBolao(), jogo.getFase().getCompeticao());
+			//List<BolaoCompeticao>  bolaoCompeticao = bolaoCompeticaoRepo.findAllByBolaoAndCompeticao(jogo.getFase().getBolao(), jogo.getFase().getCompeticao());
 			p.setLimiteAposta(jogo.getLimiteAposta());
-			p.setBolaoCompeticao(bolaoCompeticao.get(0));
+			//p.setBolaoCompeticao(bolaoCompeticao.get(0));
 			p.setTimeA(jogo.getTimeA());
 			p.setTimeB(jogo.getTimeB());
 			palpiteRepo.save(p);

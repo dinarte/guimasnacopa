@@ -1,5 +1,12 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-11",
+            "path": "C:/DEV/Java/jdk-11.0.27",
+            "default": true
+        }
+    ],
     "sqltools.connections": [
         {
             "previewLimit": 50,
@@ -12,5 +19,6 @@
             "database": "guimas-2024",
             "username": "postgres"
         }
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

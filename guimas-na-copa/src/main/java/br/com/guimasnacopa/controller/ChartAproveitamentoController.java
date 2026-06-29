@@ -4,6 +4,7 @@ import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,12 +27,12 @@ public class ChartAproveitamentoController {
 	
 	
 	@ResponseBody()
-	@RequestMapping(value = "/chart/desempenho/{participante}", method = RequestMethod.GET, produces = "application/json")
-	public MorrisChartOptions desempenho(@PathParam("participante") Participante participante) {
+	@RequestMapping(value = "/chart/desempenho/{participanteId}", method = RequestMethod.GET, produces = "application/json")
+	public MorrisChartOptions desempenho(@PathVariable("participanteId") Integer participanteId) {
 		MorrisChartOptions desempenho = new MorrisChartOptions();
 		
 		desempenho.setData(participanteRepo
-				.findAproveitameto(participante.getId()));
+				.findAproveitameto(participanteId));
 			
 		desempenho.setXkey("dia");
 		desempenho.getYkeys().add("pontuacao");
