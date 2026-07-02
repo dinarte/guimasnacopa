@@ -38,11 +38,35 @@
             <div class="alert alert-warning" role="alert">
 		 	 <strong>ATENÇÃO:</strong> O ranking levará em consideração apenas gols marcados dentro do tempo regulamentar! Não será levado em consideração gols marcados em prorrogações ou disputa por penálti
 			</div>
+
+            <div class="alert alert-info" role="alert" id="session-timer-box">
+                <strong>Tempo restante da sessão para edição:</strong>
+                <span id="session-countdown">25:00</span>
+            </div>
+
+            <div id="session-timeout-modal" class="session-timeout-modal" aria-hidden="true">
+                <div class="session-timeout-modal-content" role="dialog" aria-modal="true" aria-labelledby="session-timeout-title">
+                    <h4 id="session-timeout-title">Tempo da sessão encerrado</h4>
+                    <p>
+                        O tempo de sessão chegou ao fim. Para não haver perda de dados, salve os placares agora.
+                    </p>
+                    <p>
+                        Tempo para ação automática: <strong id="auto-save-countdown">25:00</strong>
+                    </p>
+                    <p id="auto-save-message" style="display:none;" class="text-danger">
+                        Os placares serão salvos automaticamente.
+                    </p>
+                    <div>
+                        <button type="button" class="btn btn-success" id="timeout-save-yes">Sim, salvar</button>
+                        <button type="button" class="btn btn-default" id="timeout-save-no">Não</button>
+                    </div>
+                </div>
+            </div>
 			
 			
 			
             
-            <form role="form" action="/#" th:action="@{/palpite/save}"  method="post">
+            <form id="palpite-form" role="form" action="/#" th:action="@{/palpite/save}"  method="post">
             
 	            <div th:if="${palpitesEmAbertoNodes.size() > 0}">
 		            <br />
@@ -81,7 +105,157 @@
         .minheight {
             height: 200px; /* Defina a altura m�nima desejada */
         }
+
+        #session-countdown {
+            font-size: 20px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        #session-timer-box {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1100;
+            margin: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        .session-timeout-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1200;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .session-timeout-modal.show {
+            display: flex;
+        }
+
+        .session-timeout-modal-content {
+            width: 100%;
+            max-width: 520px;
+            background: #fff;
+            border-radius: 6px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .session-timeout-modal-content h4 {
+            margin-top: 0;
+        }
+
+        .session-timeout-modal-content .btn {
+            margin-right: 8px;
+        }
     </style>
+
+    <script>
+        (function () {
+            var totalSeconds = 25 * 60;
+            var autoSaveSeconds = 25 * 60;
+            var inAutoSavePhase = false;
+            var userRespondedTimeoutModal = false;
+            var countdownElement = document.getElementById('session-countdown');
+            var timerBox = document.getElementById('session-timer-box');
+            var palpiteForm = document.getElementById('palpite-form');
+            var timeoutModal = document.getElementById('session-timeout-modal');
+            var autoSaveCountdownElement = document.getElementById('auto-save-countdown');
+            var autoSaveMessage = document.getElementById('auto-save-message');
+            var saveYesButton = document.getElementById('timeout-save-yes');
+            var saveNoButton = document.getElementById('timeout-save-no');
+
+            if (!countdownElement || !palpiteForm) {
+                return;
+            }
+
+            function formatTime(seconds) {
+                var minutes = Math.floor(seconds / 60);
+                var secs = seconds % 60;
+                var minuteText = String(minutes).padStart(2, '0');
+                var secondText = String(secs).padStart(2, '0');
+                return minuteText + ':' + secondText;
+            }
+
+            function showTimeoutModal() {
+                if (!timeoutModal) {
+                    return;
+                }
+                timeoutModal.classList.add('show');
+                timeoutModal.setAttribute('aria-hidden', 'false');
+            }
+
+            function hideTimeoutModal() {
+                if (!timeoutModal) {
+                    return;
+                }
+                timeoutModal.classList.remove('show');
+                timeoutModal.setAttribute('aria-hidden', 'true');
+            }
+
+            countdownElement.textContent = formatTime(totalSeconds);
+            if (autoSaveCountdownElement) {
+                autoSaveCountdownElement.textContent = formatTime(autoSaveSeconds);
+            }
+
+            if (saveYesButton) {
+                saveYesButton.addEventListener('click', function () {
+                    userRespondedTimeoutModal = true;
+                    palpiteForm.submit();
+                });
+            }
+
+            if (saveNoButton) {
+                saveNoButton.addEventListener('click', function () {
+                    userRespondedTimeoutModal = true;
+                    hideTimeoutModal();
+                });
+            }
+
+            var timerId = setInterval(function () {
+                if (!inAutoSavePhase) {
+                    totalSeconds--;
+
+                    if (totalSeconds <= 0) {
+                        totalSeconds = 0;
+                        inAutoSavePhase = true;
+
+                        if (timerBox) {
+                            timerBox.className = 'alert alert-danger';
+                        }
+
+                        showTimeoutModal();
+                    }
+
+                    countdownElement.textContent = formatTime(totalSeconds);
+                    return;
+                }
+
+                autoSaveSeconds--;
+
+                if (autoSaveCountdownElement) {
+                    autoSaveCountdownElement.textContent = formatTime(Math.max(autoSaveSeconds, 0));
+                }
+
+                if (autoSaveSeconds <= 0) {
+                    clearInterval(timerId);
+
+                    if (!userRespondedTimeoutModal) {
+                        if (autoSaveMessage) {
+                            autoSaveMessage.style.display = 'block';
+                        }
+                        setTimeout(function () {
+                            palpiteForm.submit();
+                        }, 1200);
+                    }
+                }
+            }, 1000);
+        })();
+    </script>
     
 
 </body>

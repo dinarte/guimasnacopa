@@ -18,7 +18,17 @@ public class GroupNode implements Comparable<GroupNode> {
 	}
 
 	public List<Object> getChildren() {
-		return children.stream().sorted().collect(Collectors.toList());
+		if (children == null || children.isEmpty()) {
+			return children;
+		}
+
+		Object primeiroFilho = children.get(0);
+		if (primeiroFilho instanceof GroupNode) {
+			return children.stream().sorted().collect(Collectors.toList());
+		}
+
+		// Folhas (ex.: lista de Palpite) devem manter a ordem já calculada no controller.
+		return children;
 	}
 	
 	public List<Object> getChildrenAsLastLevel() {

@@ -179,7 +179,7 @@ public class ConsultarPalpiteController {
 			String classificacao = palpite.getParticipante().getClassificacao() == null ? "" : palpite.getParticipante().getClassificacao().toString();
 			String pontuacao = palpite.getParticipante().getPontuacao() == null ? "" : palpite.getParticipante().getPontuacao().toString();
 			String nome = getDoisPrimeirosNomes(palpite.getParticipante().getUsuario().getName()).trim();
-			String placar = palpite.getGolsTimeA() + " x " + palpite.getGolsTimeB();
+			String placar = palpite.isApostaAberta() ? "? x ?" : palpite.getGolsTimeA() + " x " + palpite.getGolsTimeB();
 			text = text + classificacao +"	"+ pontuacao +"	"+ nome +"		"+ placar + "\n";
 		}
 		text = text + 

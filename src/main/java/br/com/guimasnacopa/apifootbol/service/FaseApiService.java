@@ -40,10 +40,15 @@ public class FaseApiService {
 
     public List<FaseApiDTO> getAllByCampeonatoId(Long campeonatoId) {
     	var list = faseRepository
-                .findByExpiresAtAfter(LocalDateTime.now());
+                .findByCampeonatoIdAndExpiresAtAfter(campeonatoId, LocalDateTime.now());
     	return list.isEmpty() ? 
     			buscarNaApiESalvarCache(RESOURCE_KEY.replace("{id}", campeonatoId.toString())) : 
     				list ;
+    }
+
+    public List<FaseApiDTO> getAllByCampeonatoIdSemCache(Long campeonatoId) {
+        faseRepository.deleteByCampeonatoId(campeonatoId);
+        return buscarNaApiESalvarCache(RESOURCE_KEY.replace("{id}", campeonatoId.toString()));
     }
     
     public FaseApiDTO getById(Long id) {

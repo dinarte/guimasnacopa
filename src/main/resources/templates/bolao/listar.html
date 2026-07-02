@@ -60,10 +60,18 @@
 		                        			<a class="btn btn-warning" th:href="${bolao.id+'/atualizar-jogos-api'}"
 		                        				data-toggle="tooltip"
 		                        				data-placement="top"
-		                        				onclick="return confirm('Deseja atualizar fases e jogos deste bolão agora?');"
-		                        				title="Atualizar fases e jogos via API">
+		                        				title="Buscar atualizacao via API e conferir antes de persistir">
 		                        				<span class="glyphicon glyphicon-refresh"></span>
 		                        			</a>
+
+	                        					<a class="btn btn-info" href="#"
+	                        						th:attr="data-bolao-id=${bolao.id},data-permalink=${bolao.permalink}"
+	                        						onclick="return exportarBolaoFromButton(this);"
+	                        						data-toggle="tooltip"
+	                        						data-placement="top"
+	                        						title="Exportar jogos com resultados e palpites">
+	                        						<span class="glyphicon glyphicon-download-alt"></span>
+	                        					</a>
 		                        			
 	                        			</td>
 	                        		</tr>
@@ -75,6 +83,49 @@
 
     </div>
     <!-- /#wrapper -->
+
+	<script type="text/javascript">
+		function exportarBolaoFromButton(button) {
+			var bolaoId = button.getAttribute('data-bolao-id');
+			var permalink = button.getAttribute('data-permalink') || 'bolao';
+			var url = '/ia/api/boloes/' + bolaoId + '/jogos-com-resultados-e-palpites';
+
+			button.classList.add('disabled');
+
+			fetch(url, { credentials: 'same-origin' })
+				.then(function(response) {
+					if (!response.ok) {
+						throw new Error('Falha ao exportar bolão (HTTP ' + response.status + ').');
+					}
+					return response.blob();
+				})
+				.then(function(blob) {
+					var agora = new Date();
+					var yy = String(agora.getFullYear()).slice(-2);
+					var mm = String(agora.getMonth() + 1).padStart(2, '0');
+					var dd = String(agora.getDate()).padStart(2, '0');
+					var hh = String(agora.getHours()).padStart(2, '0');
+					var mi = String(agora.getMinutes()).padStart(2, '0');
+					var nomeArquivo = permalink + '_' + yy + mm + dd + '_' + hh + mi + '.json';
+
+					var link = document.createElement('a');
+					link.href = window.URL.createObjectURL(blob);
+					link.download = nomeArquivo;
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
+					window.URL.revokeObjectURL(link.href);
+				})
+				.catch(function(error) {
+					alert(error.message || 'Não foi possível exportar este bolão agora.');
+				})
+				.finally(function() {
+					button.classList.remove('disabled');
+				});
+
+			return false;
+		}
+	</script>
 
     <srcript th:replace="fragments/main :: scrptsblock" />
     

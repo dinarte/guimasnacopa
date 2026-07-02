@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar" />
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Conferencia de Atualizacao da API</h1>
+                    <h3 th:text="'Bolao: ' + ${preview.bolaoNome}">Bolao</h3>
+                </div>
+            </div>
+
+            <div th:replace="fragments/main :: messages" />
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Fases cadastradas</div>
+                        <div class="panel-body">
+                            <strong th:text="${#lists.size(preview.fasesCadastradas)}">0</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">Fases novas</div>
+                        <div class="panel-body">
+                            <strong th:text="${#lists.size(preview.fasesNovas)}">0</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Jogos cadastrados</div>
+                        <div class="panel-body">
+                            <strong th:text="${#lists.size(preview.jogosCadastrados)}">0</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">Jogos novos</div>
+                        <div class="panel-body">
+                            <strong th:text="${#lists.size(preview.jogosNovos)}">0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h4>Fases ja cadastradas</h4>
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Competicao</th>
+                                <th>Fase</th>
+                                <th>ID API</th>
+                                <th>Tipo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(preview.fasesCadastradas)}">
+                                <td colspan="4">Nenhuma fase cadastrada encontrada.</td>
+                            </tr>
+                            <tr th:each="fase : ${preview.fasesCadastradas}">
+                                <td th:text="${fase.competicaoNome}">Competicao</td>
+                                <td th:text="${fase.faseNome}">Fase</td>
+                                <td th:text="${fase.faseIdApi}">0</td>
+                                <td th:text="${fase.tipo}">tipo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h4>Fases que serao cadastradas</h4>
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Competicao</th>
+                                <th>Fase</th>
+                                <th>ID API</th>
+                                <th>Tipo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(preview.fasesNovas)}">
+                                <td colspan="4">Nenhuma fase nova para cadastrar.</td>
+                            </tr>
+                            <tr th:each="fase : ${preview.fasesNovas}">
+                                <td th:text="${fase.competicaoNome}">Competicao</td>
+                                <td th:text="${fase.faseNome}">Fase</td>
+                                <td th:text="${fase.faseIdApi}">0</td>
+                                <td th:text="${fase.tipo}">tipo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h4>Jogos ja cadastrados</h4>
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Competicao</th>
+                                <th>Fase</th>
+                                <th>Partida API</th>
+                                <th>Confronto</th>
+                                <th>Grupo</th>
+                                <th>Rodada</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(preview.jogosCadastrados)}">
+                                <td colspan="7">Nenhum jogo cadastrado encontrado.</td>
+                            </tr>
+                            <tr th:each="jogo : ${preview.jogosCadastrados}">
+                                <td th:text="${jogo.competicaoNome}">Competicao</td>
+                                <td th:text="${jogo.faseNome}">Fase</td>
+                                <td th:text="${jogo.partidaId}">0</td>
+                                <td th:text="${jogo.confronto}">A x B</td>
+                                <td th:text="${jogo.grupo}">Grupo</td>
+                                <td th:text="${jogo.rodada}">1</td>
+                                <td th:text="${jogo.dataIso}">data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h4>Jogos que serao cadastrados</h4>
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Competicao</th>
+                                <th>Fase</th>
+                                <th>Partida API</th>
+                                <th>Confronto</th>
+                                <th>Grupo</th>
+                                <th>Rodada</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(preview.jogosNovos)}">
+                                <td colspan="7">Nenhum jogo novo para cadastrar.</td>
+                            </tr>
+                            <tr th:each="jogo : ${preview.jogosNovos}">
+                                <td th:text="${jogo.competicaoNome}">Competicao</td>
+                                <td th:text="${jogo.faseNome}">Fase</td>
+                                <td th:text="${jogo.partidaId}">0</td>
+                                <td th:text="${jogo.confronto}">A x B</td>
+                                <td th:text="${jogo.grupo}">Grupo</td>
+                                <td th:text="${jogo.rodada}">1</td>
+                                <td th:text="${jogo.dataIso}">data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row" style="margin-bottom: 20px;">
+                <div class="col-lg-12">
+                    <form method="post" th:action="@{'/bolao/' + ${preview.bolaoId} + '/atualizar-jogos-api/confirmar'}" style="display:inline-block;">
+                        <input type="hidden" name="token" th:value="${token}" />
+                        <button type="submit" class="btn btn-success"
+                            onclick="return confirm('Confirmar persistencia das fases e jogos novos?');">
+                            Confirmar e Persistir
+                        </button>
+                    </form>
+
+                    <a href="/bolao/listar" class="btn btn-default" style="margin-left: 8px;">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+
+</body>
+
+</html>

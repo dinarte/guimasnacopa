@@ -39,12 +39,40 @@
 					    <label for="nome">Nome da Fase:</label>
 					    <input type="text" class="form-control" id="nome" th:value="*{nome}" th:field="*{nome}">
 					  </div>
+
+				  <div class="form-group col-lg-2 col-md-4 col-sm-6">
+				    <label for="tipo">Tipo:</label>
+				    <select class="form-control" id="tipo" th:field="*{tipo}">
+				    	<option value="">Selecione</option>
+				    	<option value="grupo">grupo</option>
+				    	<option value="mata-mata">mata-mata</option>
+				    </select>
+				  </div>
+
+					  <div class="form-group col-lg-2 col-md-4 col-sm-6">
+					    <label for="idApi">ID API:</label>
+					    <input type="number" step="1" class="form-control" id="idApi" th:value="*{idApi}" th:field="*{idApi}">
+					  </div>
+
+					  <div class="form-group col-lg-2 col-md-4 col-sm-6">
+					    <label for="ordinal">Ordem:</label>
+					    <input type="number" step="1" class="form-control" id="ordinal" th:value="*{ordinal}" th:field="*{ordinal}">
+					  </div>
 					  
 					  <div class="form-group col-lg-2 col-md-4 col-sm-4">
 					    <label for="faseFinal">Esta é a fase final?:</label> 
 					    <input type="checkbox" class="form-control" id="faseFinal" th:value="*{faseFinal}" th:field="*{faseFinal}">
 					  </div>
 				 </div>	  
+
+				 <div class="row">
+				 	<div class="col-lg-12">
+				 		<button type="button" class="btn btn-default" data-toggle="modal" data-target="#importarRegrasModal">
+				 			Importar regras de outra fase
+				 		</button>
+				 	</div>
+				 </div>
+				 <br>
 				  
 				  
 				  <div class="panel panel-default">
@@ -55,15 +83,15 @@
 	                    <div class="row">
 							  <div class="form-group col-lg-3 col-md-6 col-sm-12">
 							    <label for="pontuacaoAcertarVencedor">Acertar o vencedor:</label>
-							    <input type="number" step="0.50" class="form-control" id="pontuacaoAcertarVencedor" th:value="*{pontuacaoAcertarVencedor}" th:field="*{pontuacaoAcertarVencedor}">
+							    <input type="number" step="0.1" class="form-control" id="pontuacaoAcertarVencedor" th:value="*{pontuacaoAcertarVencedor}" th:field="*{pontuacaoAcertarVencedor}">
 							  </div>
 							  <div class="form-group col-lg-3 col-md-6 col-sm-12">
 							    <label for="acertarEmpate">Acertar empate:</label>
-							    <input type="number" step="0.50" class="form-control" id="acertarEmpate" th:value="*{acertarEmpate}" th:field="*{acertarEmpate}">
+							    <input type="number" step="0.1" class="form-control" id="acertarEmpate" th:value="*{acertarEmpate}" th:field="*{acertarEmpate}">
 							  </div>
 							  <div class="form-group col-lg-3 col-md-6 col-sm-12">
 							    <label for="acertarQtdGolsUmDosTimes">Acertar gols de um dos times:</label>
-							    <input type="number" step="0.50" class="form-control" id="acertarQtdGolsUmDosTimes" th:value="*{acertarQtdGolsUmDosTimes}" th:field="*{acertarQtdGolsUmDosTimes}">
+							    <input type="number" step="0.1" class="form-control" id="acertarQtdGolsUmDosTimes" th:value="*{acertarQtdGolsUmDosTimes}" th:field="*{acertarQtdGolsUmDosTimes}">
 							  </div>
 					  	</div> 
                     </div>
@@ -76,7 +104,7 @@
                     <div class="panel-body">
                     	<div class="form-group col-lg-3 col-md-6 col-sm-12">
 						    <label for="pontuacaoAcertarPlacar" class="br-2">Prêmio de placar exato:</label>
-						    <input type="number" step="0.50" class="form-control" id="acertarPlacar" th:value="*{pontuacaoAcertarPlacar}" th:field="*{pontuacaoAcertarPlacar}">
+						    <input type="number" step="0.1" class="form-control" id="acertarPlacar" th:value="*{pontuacaoAcertarPlacar}" th:field="*{pontuacaoAcertarPlacar}">
 						</div>
                     	<div class="form-group col-lg-3 col-md-6 col-sm-12">
 						    <label for="qtdGolsConsideraPlacarAlto" class="br-2">Número de gols de um time para ser considerado placar alto:</label>
@@ -84,16 +112,16 @@
 					  	</div>
 					  	<div class="form-group col-lg-3 col-md-6 col-sm-12">
 						    <label for="pontuacaoAcertarPlacarAlto" class="br-2">Pontuação bonus por acertar placal alto:</label>
-						    <input type="number" step="0.50" class="form-control" id="pontuacaoAcertarPlacarAlto" th:value="*{pontuacaoAcertarPlacarAlto}" th:field="*{pontuacaoAcertarPlacarAlto}">
+						    <input type="number" step="0.1" class="form-control" id="pontuacaoAcertarPlacarAlto" th:value="*{pontuacaoAcertarPlacarAlto}" th:field="*{pontuacaoAcertarPlacarAlto}">
 					  	</div>
 					  	<div class="form-group col-lg-3 col-md-6 col-sm-12">
 						    <label for="maximoPontuacaoPossivelPalpite" class="br-2">Total máximo de pontuação possível em um palpite:</label>
-						    <input type="number" step="0.50" class="form-control" id="maximoPontuacaoPossivelPalpite" th:value="*{maximoPontuacaoPossivelPalpite}" th:field="*{maximoPontuacaoPossivelPalpite}">
+						    <input type="number" step="0.1" class="form-control" id="maximoPontuacaoPossivelPalpite" th:value="*{maximoPontuacaoPossivelPalpite}" th:field="*{maximoPontuacaoPossivelPalpite}">
 					  	</div>
                     </div>
                   </div>  
                   
-                  <div class="panel panel-default">
+				  <div class="panel panel-default" id="painelPredicaoFinalistas">
 				  	<div class="panel-heading">
                         Bets - Pontos por Predição de finalistas
                         <span class="text-primary">Preencha apenas se esta fase for a Final do campeonato.</span>
@@ -103,12 +131,12 @@
 							
 							<div class="form-group col-lg-2">
 								<label for="acertarTimes">Acertar Finalistas:</label>
-								<input type="number" step="0.50" class="form-control" id="acertarTimes" th:value="*{acertarTimes}" th:field="*{acertarTimes}">
+								<input type="number" step="0.1" class="form-control" id="acertarTimes" th:value="*{acertarTimes}" th:field="*{acertarTimes}">
 							</div>
 							
 							<div class="form-group col-lg-2">
 								<label for="form-control">Acertar Campão:</label>
-								<input type="number" step="0.50" class="form-control" id="acertarUmTime" th:value="*{acertarUmTime}" th:field="*{acertarUmTime}">
+								<input type="number" step="0.1" class="form-control" id="acertarUmTime" th:value="*{acertarUmTime}" th:field="*{acertarUmTime}">
 							</div>
 							 
 						</div>
@@ -124,12 +152,140 @@
 				  
 				
         	</form>
+
+				<div class="modal fade" id="importarRegrasModal" tabindex="-1" role="dialog" aria-labelledby="importarRegrasModalLabel">
+				  <div class="modal-dialog" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				        <h4 class="modal-title" id="importarRegrasModalLabel">Importar regras</h4>
+				      </div>
+				      <div class="modal-body">
+				        <div class="form-group">
+				          <label for="faseOrigemRegras">Fase de origem:</label>
+				          <select id="faseOrigemRegras" class="form-control">
+				            <option value="">Selecione uma fase</option>
+				            <option th:each="fOrigem : ${faseImportList}"
+				                    th:if="${fase.id == null || fOrigem.id != fase.id}"
+				                    th:value="${fOrigem.id}"
+				                    th:text="${fOrigem.competicao.nome + ' - ' + fOrigem.nome}"
+				                    th:attr="
+				                      data-pontuacao-acertar-vencedor=${fOrigem.pontuacaoAcertarVencedor},
+				                      data-acertar-empate=${fOrigem.acertarEmpate},
+				                      data-acertar-qtd-gols-um-dos-times=${fOrigem.acertarQtdGolsUmDosTimes},
+				                      data-pontuacao-acertar-placar=${fOrigem.pontuacaoAcertarPlacar},
+				                      data-qtd-gols-considera-placar-alto=${fOrigem.qtdGolsConsideraPlacarAlto},
+				                      data-pontuacao-acertar-placar-alto=${fOrigem.pontuacaoAcertarPlacarAlto},
+				                      data-maximo-pontuacao-possivel-palpite=${fOrigem.maximoPontuacaoPossivelPalpite},
+				                      data-acertar-times=${fOrigem.acertarTimes},
+				                      data-acertar-um-time=${fOrigem.acertarUmTime}">
+				              Fase
+				            </option>
+				          </select>
+				        </div>
+
+				        <div class="form-group">
+				          <label for="fatorMultiplicacaoRegras">Fator multiplicativo:</label>
+				          <input type="number" id="fatorMultiplicacaoRegras" class="form-control" min="0" step="0.1" value="1.0" placeholder="Ex.: 1.0">
+				          <p class="help-block">Valor numérico com uma casa decimal.</p>
+				        </div>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+				        <button type="button" class="btn btn-primary" id="btnConfirmarImportacaoRegras">Importar</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
             
         </div>
         <!-- /#page-wrapper -->
 
     </div>
     <!-- /#wrapper -->
+
+	<script th:inline="javascript">
+		(function () {
+			function togglePainelPredicaoFinalistas() {
+				var checkboxFaseFinal = document.getElementById('faseFinal');
+				var painelPredicaoFinalistas = document.getElementById('painelPredicaoFinalistas');
+
+				if (!checkboxFaseFinal || !painelPredicaoFinalistas) {
+					return;
+				}
+
+				painelPredicaoFinalistas.style.display = checkboxFaseFinal.checked ? '' : 'none';
+			}
+
+			function parseValue(value) {
+				if (value === undefined || value === null || value === '') {
+					return null;
+				}
+
+				var parsed = parseFloat(value);
+				return isNaN(parsed) ? null : parsed;
+			}
+
+			function formatWithSingleDecimal(value) {
+				return value.toFixed(1);
+			}
+
+			function applyImportedValue(fieldId, sourceValue, factor, multiply) {
+				var targetField = document.getElementById(fieldId);
+				if (!targetField) {
+					return;
+				}
+
+				if (sourceValue === null) {
+					targetField.value = '';
+					return;
+				}
+
+				var finalValue = multiply ? sourceValue * factor : sourceValue;
+				targetField.value = multiply ? formatWithSingleDecimal(finalValue) : finalValue;
+			}
+
+			document.getElementById('btnConfirmarImportacaoRegras').addEventListener('click', function () {
+				var faseSelect = document.getElementById('faseOrigemRegras');
+				var fatorInput = document.getElementById('fatorMultiplicacaoRegras');
+
+				if (!faseSelect.value) {
+					alert('Selecione a fase de origem para importar as regras.');
+					return;
+				}
+
+				var fatorTexto = (fatorInput.value || '').trim().replace(',', '.');
+				if (!/^\d+\.\d$/.test(fatorTexto)) {
+					alert('Informe um fator multiplicativo numérico com uma casa decimal. Ex.: 1.0');
+					fatorInput.focus();
+					return;
+				}
+
+				var fator = parseFloat(fatorTexto);
+				var selectedOption = faseSelect.options[faseSelect.selectedIndex];
+				var data = selectedOption.dataset;
+
+				applyImportedValue('pontuacaoAcertarVencedor', parseValue(data.pontuacaoAcertarVencedor), fator, true);
+				applyImportedValue('acertarEmpate', parseValue(data.acertarEmpate), fator, true);
+				applyImportedValue('acertarQtdGolsUmDosTimes', parseValue(data.acertarQtdGolsUmDosTimes), fator, true);
+				applyImportedValue('acertarPlacar', parseValue(data.pontuacaoAcertarPlacar), fator, true);
+				applyImportedValue('qtdGolsConsideraPlacarAlto', parseValue(data.qtdGolsConsideraPlacarAlto), fator, false);
+				applyImportedValue('pontuacaoAcertarPlacarAlto', parseValue(data.pontuacaoAcertarPlacarAlto), fator, true);
+				applyImportedValue('maximoPontuacaoPossivelPalpite', parseValue(data.maximoPontuacaoPossivelPalpite), fator, true);
+				applyImportedValue('acertarTimes', parseValue(data.acertarTimes), fator, true);
+				applyImportedValue('acertarUmTime', parseValue(data.acertarUmTime), fator, true);
+
+				$('#importarRegrasModal').modal('hide');
+			});
+
+			var checkboxFaseFinal = document.getElementById('faseFinal');
+			if (checkboxFaseFinal) {
+				checkboxFaseFinal.addEventListener('change', togglePainelPredicaoFinalistas);
+			}
+
+			togglePainelPredicaoFinalistas();
+		})();
+	</script>
 
     <srcript th:replace="fragments/main :: scrptsblock" />
     

@@ -14,9 +14,11 @@ public interface FaseRepository
 	
 	List<FaseApiDTO> findByExpiresAtAfter(
 			LocalDateTime now);
-	
-	Optional<FaseApiDTO> findByCampeonatoIdAndExpiresAtAfter(
+
+	List<FaseApiDTO> findByCampeonatoIdAndExpiresAtAfter(
 			Long campeonadoId, LocalDateTime now);
+
+	void deleteByCampeonatoId(Long campeonatoId);
 	
 	Optional<FaseApiDTO> findBySlugAndExpiresAtAfter(
 			String slug, LocalDateTime now);

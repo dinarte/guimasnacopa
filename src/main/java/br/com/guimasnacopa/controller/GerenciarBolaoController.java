@@ -1,7 +1,9 @@
 package br.com.guimasnacopa.controller;
 
 import java.util.List;
+import java.util.UUID;
 
+import javax.servlet.http.HttpSession;
 import javax.security.auth.login.LoginException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.annotation.RequestScope;
 
 import br.com.guimasnacopa.apifootbol.dto.CampeonatoDTO;
@@ -26,6 +29,8 @@ import br.com.guimasnacopa.service.CarregarCampeonatosDaApiService;
 @Controller
 @RequestScope
 public class GerenciarBolaoController{
+
+	private static final String ATUALIZACAO_API_PREVIEW_PREFIX = "ATUALIZACAO_API_PREVIEW_";
 
 	@Autowired
 	BolaoRepository bolaoRepo;
@@ -95,9 +100,38 @@ public class GerenciarBolaoController{
 	}
 
 	@GetMapping("/bolao/{id}/atualizar-jogos-api")
-	public String atualizarJogosDaApi(@PathVariable("id") Integer id, Model model) throws LoginException {
+	public String atualizarJogosDaApi(@PathVariable("id") Integer id, Model model, HttpSession session) throws LoginException {
 		autenticacao.checkAdminAthorization(model);
-		bolaoService.atualizarFasesEJogosDaApi(id);
+		BolaoService.AtualizacaoApiPreview preview = bolaoService.gerarPreviewAtualizacaoApi(id);
+		String token = UUID.randomUUID().toString();
+		session.setAttribute(ATUALIZACAO_API_PREVIEW_PREFIX + token, preview);
+
+		model.addAttribute("preview", preview);
+		model.addAttribute("token", token);
+		return "/bolao/conferencia-atualizacao-api";
+	}
+
+	@PostMapping("/bolao/{id}/atualizar-jogos-api/confirmar")
+	public String confirmarAtualizacaoJogosDaApi(@PathVariable("id") Integer id,
+			@RequestParam("token") String token,
+			Model model,
+			HttpSession session) throws LoginException {
+		autenticacao.checkAdminAthorization(model);
+
+		Object previewObj = session.getAttribute(ATUALIZACAO_API_PREVIEW_PREFIX + token);
+		if (!(previewObj instanceof BolaoService.AtualizacaoApiPreview)) {
+			appMessages.getErrorList().add("Não foi possível confirmar a atualização. Gere uma nova conferência.");
+			return listar(model);
+		}
+
+		BolaoService.AtualizacaoApiPreview preview = (BolaoService.AtualizacaoApiPreview) previewObj;
+		if (!id.equals(preview.getBolaoId())) {
+			appMessages.getErrorList().add("Os dados da conferência não correspondem ao bolão selecionado.");
+			return listar(model);
+		}
+
+		bolaoService.persistirAtualizacaoApi(preview);
+		session.removeAttribute(ATUALIZACAO_API_PREVIEW_PREFIX + token);
 		appMessages.getSuccessList().add("Fases e jogos foram atualizados com sucesso.");
 		return listar(model);
 	}

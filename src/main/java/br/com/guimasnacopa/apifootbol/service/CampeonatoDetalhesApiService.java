@@ -51,6 +51,11 @@ public class CampeonatoDetalhesApiService {
         		return buscarNaApiESalvarCache(RESOURCE_KEY.replace("{id}", campeonatoId.toString()));
         	}
     }
+
+    public CampeonatoDetalhesApiDTO getByCampeonatoIdSemCache(Long campeonatoId) {
+        campeonatoDetalhesRepository.deleteByCampeonatoCampeonatoId(campeonatoId);
+        return buscarNaApiESalvarCache(RESOURCE_KEY.replace("{id}", campeonatoId.toString()));
+    }
         
     private CampeonatoDetalhesApiDTO buscarNaApiESalvarCache(String resourceKey) {
     	String resourceUrl = baseUrl + "/" + resourceKey;

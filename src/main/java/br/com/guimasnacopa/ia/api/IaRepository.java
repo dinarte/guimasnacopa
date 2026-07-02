@@ -104,8 +104,6 @@ public interface IaRepository extends JpaRepository<Bolao, Integer> {
 			+ "  left join participante pa on pa.id = p.participante_id "
 			+ "  left join usuario u on u.id = pa.usuario_id "
 			+ " where b.id = :bolaoId "
-			+ "   and tnja.gols is not null "
-			+ "   and tnjb.gols is not null "
 			+ " order by c.nome, f.ordinal, f.id, j.data, j.id, pa.classificacao, u.name ", nativeQuery = true)
 	List<IaBolaoJogosPalpitesFlat> getJogosComResultadosEPalpites(@Param("bolaoId") Integer bolaoId);
 

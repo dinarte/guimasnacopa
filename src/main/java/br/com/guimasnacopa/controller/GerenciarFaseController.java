@@ -1,6 +1,7 @@
 package br.com.guimasnacopa.controller;
 
 import java.util.List;
+import java.util.Collections;
 
 import javax.security.auth.login.LoginException;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.annotation.RequestScope;
 
 import br.com.guimasnacopa.domain.Fase;
+import br.com.guimasnacopa.domain.Bolao;
 import br.com.guimasnacopa.exception.BolaoNaoSelecionadoException;
 import br.com.guimasnacopa.messages.AppMessages;
 import br.com.guimasnacopa.repository.CompeticaoRepository;
@@ -41,7 +43,7 @@ public class GerenciarFaseController {
 	public String listar(Model model) throws LoginException, BolaoNaoSelecionadoException{
 		autenticacao.checkAdminAthorization(model);
 		autenticacao.checkBolaoNaoSelecionado();
-		List<Fase> faseList = (List<Fase>) faseRepo.findAllByBolaoOrderByCompeticao_nomeAsc(autenticacao.getBolao());
+		List<Fase> faseList = (List<Fase>) faseRepo.findAllByBolaoOrderByCompeticao_nomeAscOrdinalAscNomeAsc(autenticacao.getBolao());
 		model.addAttribute("faseList", faseList);
 		return "/fase/listar";
 	}
@@ -50,7 +52,11 @@ public class GerenciarFaseController {
 	public String editar(@PathVariable("id") Integer id, Model model) throws LoginException {
 		autenticacao.checkAdminAthorization(model);
 		Fase fase = faseRepo.findById(id).get();
-		model.addAttribute("falseList", faseRepo.findAll());
+		Bolao bolao = fase.getBolao();
+		List<Fase> faseImportList = bolao == null
+				? Collections.emptyList()
+				: faseRepo.findAllByBolaoOrderByCompeticao_nomeAscOrdinalAscNomeAsc(bolao);
+		model.addAttribute("faseImportList", faseImportList);
 		model.addAttribute("competicaoList", competicaoRepo.findAll());
 		model.addAttribute(fase);
 		return "/fase/form";
@@ -61,7 +67,12 @@ public class GerenciarFaseController {
 	public String novo(Model model) throws LoginException {
 		autenticacao.checkAdminAthorization(model);
 		Fase fase = new Fase();
+		Bolao bolao = autenticacao.getBolao();
+		List<Fase> faseImportList = bolao == null
+				? Collections.emptyList()
+				: faseRepo.findAllByBolaoOrderByCompeticao_nomeAscOrdinalAscNomeAsc(bolao);
 		model.addAttribute(fase);
+		model.addAttribute("faseImportList", faseImportList);
 		model.addAttribute("competicaoList", competicaoRepo.findAll());
 		return "/fase/form";
 	}

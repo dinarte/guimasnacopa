@@ -52,6 +52,21 @@ public class ParticipanteController {
 		participanteRepo.save(p);
 		return participantes(p.getBolao().getPermalink(), model);
 	}
+
+	@GetMapping("participante/{participanteId}/alteraradminbolao")
+	public String alterarAdminBolao(@PathVariable("participanteId") Integer participanteId, Model model) throws AppException, LoginException {
+		autenticacao.checkAdminAthorization();
+
+		Participante p = participanteRepo.findById(participanteId).get();
+
+		if (p.getUsuario().getId().equals(autenticacao.getUsuario().getId())) {
+			return participantes(p.getBolao().getPermalink(), model);
+		}
+
+		p.setAdmin(!p.getAdmin());
+		participanteRepo.save(p);
+		return participantes(p.getBolao().getPermalink(), model);
+	}
 	
 	
 	@GetMapping("/participantes")

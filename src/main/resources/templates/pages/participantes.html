@@ -50,8 +50,8 @@
 	                        			</td>
 	                        			
 	                        			
-	                        			<td th:if="${autenticacao.adminDoBolao}" style="text-align: right;"> 
-	                        				<form action="/participantes" method="post" onsubmit="javascript:confirm('Remover participante do bolão: Isso fará com que todos os palpites do particiapnte sejam removidos e esta operação não poderá ser desfeita. Temcerteza que deseja remover esse participante do bolão? ]')">
+	                        			<td th:if="${autenticacao.adminDoBolao}" style="text-align: left;"> 
+	                        				<form action="/participantes" method="post" onsubmit="return confirm('Remover participante do bolão? Todos os palpites deste participante serão apagados e essa ação não poderá ser desfeita.');">
 		                        				<input type="hidden" name="_method" value="delete"/>
 		                        				<input type="hidden" name="id" th:value="${participante.id}"/>
 		                        				<button type="submit" class="btn btn-warning">
@@ -63,6 +63,14 @@
 		                        					th:href="${'/participante/'+ participante.id +'/alterarpagamento' }"  
 		                        					th:text="${participante.pg == true ? 'Confirmado' : 'Pendente'}">
 		                        					Confirmado
+		                        				</a>
+
+		                        				<a
+		                        					th:if="${participante.usuario.id != autenticacao.usuario.id}"
+		                        					th:class="${participante.admin == true ? 'btn btn-default' : 'btn btn-info'}"
+		                        					th:href="${'/participante/'+ participante.id +'/alteraradminbolao' }"
+		                        					th:text="${participante.admin == true ? 'Rem Adm.' : 'Tornar Adm do Bolão'}">
+		                        					Tornar Adm.
 		                        				</a>
 		                        				
 	                        				</form>

@@ -1,39 +1,44 @@
 <div th:fragment="showTable (palpitesNode)">
-	<div th:each="group : ${palpitesNode}">
+	<div th:each="competicaoNode : ${palpitesNode}">
 
-		<div class="text-center" th:with="competicao=${group.node}">
+		<div class="text-center" th:with="competicao=${competicaoNode.node}">
 			<img th:src="${competicao.logoUrl}" width="90px" /> <br /> <br />
 		</div>
 
+		<div class="panel panel-default" th:each="faseNode : ${competicaoNode.children}">
 
-		<div class="panel panel-default" th:each="group : ${group.children}">
-
-			<div class="panel-heading" th:with="grupo=${group.node}">
-				<span th:text="${grupo}">GRUPO A</span>
+			<div class="panel-heading" th:with="fase=${faseNode.node}">
+				<strong>Fase: </strong><span th:text="${fase}">Fase</span>
 			</div>
 
-			<div class="panel-body">
+			<div class="panel panel-default" th:each="grupoNode : ${faseNode.children}">
 
-				<br />
+				<div class="panel-heading" th:with="grupo=${grupoNode.node}">
+					<span th:text="${grupo}">GRUPO A</span>
+				</div>
 
-				<th:block th:each="palpite : ${group.children}"
-					th:with="times=${timesMap[palpite.bolaoCompeticao.competicao.id]}">
-					<div class="col-lg-4 col-md-6  col-sm-12 minheight">
-						<div
-							th:class="${'panel panel-default grupo ' + palpite.colorClass}">
-							<div class="panel-heading text-center ">
-								<span th:utext="${palpite.bolaoCompeticao.competicao.nome} ">Copa
-									do Mundo</span> <br /> <span th:utext="${palpite.descricaoDaFase} ">Eliminatórias
-									- Grupo A</span>
-							</div>
-							<div class="panel-body">
-								<table class="tab-jogo">
-									<tr>
-										<th></th>
-										<th></th>
-										<th class="dsc-p"></th>
-										<th class="dsc-p"></th>
-									</tr>
+				<div class="panel-body">
+
+					<br />
+
+					<th:block th:each="palpite : ${grupoNode.children}"
+						th:with="times=${timesMap[palpite.bolaoCompeticao.competicao.id]}">
+						<div class="col-lg-4 col-md-6  col-sm-12 minheight">
+							<div
+								th:class="${'panel panel-default grupo ' + palpite.colorClass}">
+								<div class="panel-heading text-center ">
+									<span th:utext="${palpite.bolaoCompeticao.competicao.nome} ">Copa
+										do Mundo</span> <br /> <span th:utext="${palpite.descricaoDaFase} ">Eliminatórias
+										- Grupo A</span>
+								</div>
+								<div class="panel-body">
+									<table class="tab-jogo">
+										<tr>
+											<th></th>
+											<th></th>
+											<th class="dsc-p"></th>
+											<th class="dsc-p"></th>
+										</tr>
 
 
 									<th:block th:if="${palpite.acertarCampeao}"
@@ -115,21 +120,23 @@
 
 									</th:block>
 
-								</table>
-							</div>
-							<div class="panel-footer text-center" th:if="${palpite.apostaAberta}">
-								Palpite até: <span
-									th:text="${#temporals.format(palpite.limiteAposta, 'dd MMM HH:mm')}">
-									12:20</span>
-							</div>
-							<div class="panel-footer text-center text-danger text-bold" th:if="${!palpite.apostaAberta}">
-								Palpite encerrado em: <span
-									th:text="${#temporals.format(palpite.limiteAposta, 'dd MMM HH:mm')}">
-									12:20</span>
+									</table>
+								</div>
+								<div class="panel-footer text-center" th:if="${palpite.apostaAberta}">
+									Palpite até: <span
+										th:text="${#temporals.format(palpite.limiteAposta, 'dd MMM HH:mm')}">
+										12:20</span>
+								</div>
+								<div class="panel-footer text-center text-danger text-bold" th:if="${!palpite.apostaAberta}">
+									Palpite encerrado em: <span
+										th:text="${#temporals.format(palpite.limiteAposta, 'dd MMM HH:mm')}">
+										12:20</span>
+								</div>
 							</div>
 						</div>
-					</div>
-				</th:block>
+					</th:block>
+
+				</div>
 
 			</div>
 

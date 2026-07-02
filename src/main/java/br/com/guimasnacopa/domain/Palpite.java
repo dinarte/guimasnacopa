@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -857,11 +858,22 @@ public class Palpite implements Comparable<Palpite> {
 
 	@Override
 	public int compareTo(Palpite o) {
-		// TODO Auto-generated method stub
-		if (Objects.nonNull(this.getLimiteAposta()) && Objects.nonNull(o.getLimiteAposta())) {
-			return this.getLimiteAposta().compareTo(o.getLimiteAposta());
-		} 
-		return 1;
+		Comparator<LocalDateTime> comparatorData = Comparator.nullsLast(LocalDateTime::compareTo);
+
+		LocalDateTime thisDataJogo = this.getJogo() != null ? this.getJogo().getData() : null;
+		LocalDateTime otherDataJogo = o.getJogo() != null ? o.getJogo().getData() : null;
+		int compareDataJogo = comparatorData.compare(thisDataJogo, otherDataJogo);
+		if (compareDataJogo != 0) {
+			return compareDataJogo;
+		}
+
+		int compareLimite = comparatorData.compare(this.getLimiteAposta(), o.getLimiteAposta());
+		if (compareLimite != 0) {
+			return compareLimite;
+		}
+
+		Comparator<Integer> comparatorId = Comparator.nullsLast(Integer::compareTo);
+		return comparatorId.compare(this.getId(), o.getId());
 		
 	}
 
