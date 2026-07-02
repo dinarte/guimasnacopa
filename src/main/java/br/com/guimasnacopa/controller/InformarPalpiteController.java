@@ -135,6 +135,10 @@ public class InformarPalpiteController {
 	}
 
 	private GrupoGroupKey obterChaveDoGrupo(Palpite palpite, Map<String, LocalDateTime> ordemGrupoPorData) {
+		if (isFaseMataMata(palpite)) {
+			return GrupoGroupKey.mataMata();
+		}
+
 		String nomeGrupo = palpite.getDescricaoGrupo();
 		if (nomeGrupo == null || nomeGrupo.trim().isEmpty()) {
 			nomeGrupo = "SEM GRUPO";
@@ -142,6 +146,14 @@ public class InformarPalpiteController {
 
 		LocalDateTime dataPrimeiroJogoDoGrupo = ordemGrupoPorData.get(montarChaveGrupoOrdenacao(palpite));
 		return new GrupoGroupKey(dataPrimeiroJogoDoGrupo, nomeGrupo);
+	}
+
+	private boolean isFaseMataMata(Palpite palpite) {
+		return palpite != null
+				&& palpite.getJogo() != null
+				&& palpite.getJogo().getFase() != null
+				&& palpite.getJogo().getFase().getTipo() != null
+				&& palpite.getJogo().getFase().getTipo().equalsIgnoreCase("mata-mata");
 	}
 
 	private String montarChaveGrupoOrdenacao(Palpite palpite) {
@@ -160,7 +172,15 @@ public class InformarPalpiteController {
 	}
 
 	private FaseGroupKey obterChaveDaFase(Palpite palpite) {
-		return new FaseGroupKey(obterOrdemFase(palpite), obterDescricaoDaFase(palpite));
+		return new FaseGroupKey(obterOrdemFase(palpite), obterDescricaoDaFase(palpite), obterTipoDaFase(palpite));
+	}
+
+	private String obterTipoDaFase(Palpite palpite) {
+		if (palpite != null && palpite.getJogo() != null && palpite.getJogo().getFase() != null) {
+			return palpite.getJogo().getFase().getTipo();
+		}
+
+		return null;
 	}
 
 	private String obterDescricaoDaFase(Palpite palpite) {
@@ -214,10 +234,16 @@ public class InformarPalpiteController {
 	private static class FaseGroupKey implements Comparable<FaseGroupKey> {
 		private final Integer ordem;
 		private final String nome;
+		private final String tipo;
 
-		private FaseGroupKey(Integer ordem, String nome) {
+		private FaseGroupKey(Integer ordem, String nome, String tipo) {
 			this.ordem = ordem;
 			this.nome = nome;
+			this.tipo = tipo;
+		}
+
+		public String getTipo() {
+			return tipo;
 		}
 
 		@Override
@@ -239,7 +265,7 @@ public class InformarPalpiteController {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(nome, ordem);
+			return Objects.hash(nome, ordem, tipo);
 		}
 
 		@Override
@@ -251,17 +277,25 @@ public class InformarPalpiteController {
 				return false;
 			}
 			FaseGroupKey other = (FaseGroupKey) obj;
-			return Objects.equals(nome, other.nome) && Objects.equals(ordem, other.ordem);
+			return Objects.equals(nome, other.nome)
+					&& Objects.equals(ordem, other.ordem)
+					&& Objects.equals(tipo, other.tipo);
 		}
 	}
 
 	private static class GrupoGroupKey implements Comparable<GrupoGroupKey> {
+		private static final GrupoGroupKey MATA_MATA = new GrupoGroupKey(null, "MATA-MATA");
+
 		private final LocalDateTime dataPrimeiroJogo;
 		private final String nome;
 
 		private GrupoGroupKey(LocalDateTime dataPrimeiroJogo, String nome) {
 			this.dataPrimeiroJogo = dataPrimeiroJogo;
 			this.nome = nome;
+		}
+
+		private static GrupoGroupKey mataMata() {
+			return MATA_MATA;
 		}
 
 		@Override
