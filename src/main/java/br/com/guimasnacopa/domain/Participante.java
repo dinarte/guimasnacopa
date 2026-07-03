@@ -2,6 +2,7 @@ package br.com.guimasnacopa.domain;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.guimasnacopa.api.domain.interfaces.IPalpiteBasico;
 import br.com.guimasnacopa.api.domain.interfaces.IParticipanteNoRanking;
@@ -30,6 +30,9 @@ public class Participante implements IParticipanteNoRanking {
 	private Boolean pg = false;
 	
 	private Boolean admin = false;
+
+	@Column(nullable = false, columnDefinition = "boolean default false")
+	private Boolean aviao = false;
 	
 	private Double pontuacao;
 	
@@ -58,6 +61,14 @@ public class Participante implements IParticipanteNoRanking {
 
 	public void setAdmin(Boolean admin) {
 		this.admin = admin;
+	}
+
+	public Boolean getAviao() {
+		return aviao == null ? false : aviao;
+	}
+
+	public void setAviao(Boolean aviao) {
+		this.aviao = aviao;
 	}
 
 	public int getPalpitesParaInformar() {

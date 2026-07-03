@@ -29,6 +29,7 @@
 	            		<tr>
 	            			<th colspan="2">Competição</th>
 	            			<th>Ordem</th>
+							<th>Qtd. jogos</th>
 							<th>Fase</th>
 							<th>Tipo</th>
 	            			<th></th>
@@ -40,6 +41,7 @@
 	             			<td><img th:src="${fase.competicao.logoUrl}" height="30px" /></td>
 	             			<td th:text="${fase.competicao.nome}">Competicao</td>
 	             			<td th:text="${fase.ordinal}">Fase</td>
+							<td th:text="${fase.qtdJogos}">0</td>
 							<td th:text="${fase.nome}">Fase</td>
 							<td th:text="${fase.tipo}">Tipo</td>
 	             			<td>

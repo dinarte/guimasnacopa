@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Collections;
 
 import javax.security.auth.login.LoginException;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -79,8 +81,20 @@ public class GerenciarFaseController {
 	
 	@PostMapping("/fase/salvar")
 	@Transactional
-	public String salvar(Fase fase, Model model) throws LoginException {
+	public String salvar(@Valid Fase fase, BindingResult bindingResult, Model model) throws LoginException {
 		autenticacao.checkAdminAthorization(model);
+
+		if (bindingResult.hasErrors()) {
+			Bolao bolao = autenticacao.getBolao();
+			List<Fase> faseImportList = bolao == null
+					? Collections.emptyList()
+					: faseRepo.findAllByBolaoOrderByCompeticao_nomeAscOrdinalAscNomeAsc(bolao);
+			model.addAttribute("faseImportList", faseImportList);
+			model.addAttribute("competicaoList", competicaoRepo.findAll());
+			appMessages.getErrorList().add("Revise os campos obrigatorios.");
+			return "/fase/form";
+		}
+
 		fase.setBolao(autenticacao.getBolao());
 		faseRepo.save(fase);
 		model.addAttribute(fase);

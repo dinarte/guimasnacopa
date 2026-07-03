@@ -7,6 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Column;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Fase {
@@ -52,6 +55,11 @@ public class Fase {
 	private Boolean faseFinal;
 	
 	private Integer ordinal;
+
+	@NotNull(message = "A quantidade de jogos é obrigatoria.")
+	@Min(value = 1, message = "A quantidade de jogos deve ser maior ou igual a 1.")
+	@Column(name = "qtd_jogos", nullable = false, columnDefinition = "int4 default 1")
+	private Integer qtdJogos = 1;
 	
 	private Long idApi;
 	
@@ -181,6 +189,14 @@ public class Fase {
 
 	public void setOrdinal(Integer ordinal) {
 		this.ordinal = ordinal;
+	}
+
+	public Integer getQtdJogos() {
+		return qtdJogos;
+	}
+
+	public void setQtdJogos(Integer qtdJogos) {
+		this.qtdJogos = qtdJogos;
 	}
 
 	public Integer getQtdGolsConsideraPlacarAlto() {

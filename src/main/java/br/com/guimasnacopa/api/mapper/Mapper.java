@@ -124,7 +124,6 @@ public class Mapper {
 	
 	public static Jogo fixturesLeagueToJogo(MappingData data) {
 		FixturesLeague fixturesLeague = (FixturesLeague) data.getSource();
-		Bolao bolao = data.getBolao();
 		List<LogMigracaoApi> logMigracaoApi = data.getLogMigracaoApi();
 		
 		Integer idFase = getIdFromLog(fixturesLeague.getRound().getId(), logMigracaoApi, Fase.class);

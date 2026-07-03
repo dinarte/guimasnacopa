@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+
+            <div class="row">
+                <div class="col-lg-9">
+                    <h1 class="page-header">Consulta de Processamento Aviao</h1>
+                    <h3>
+                        Execucao em
+                        <span th:text="${#dates.format(detalhe.aviao.dataHoraProcessamento, 'dd/MM/yyyy HH:mm:ss')}">00/00/0000 00:00:00</span>
+                    </h3>
+                    <h4>
+                        Criterio:
+                        <span th:text="${descricaoCriterio}">1 lugar</span>
+                    </h4>
+                </div>
+                <div class="col-lg-3" style="margin-top: 29px; text-align: right;">
+                    <form th:action="${'/aviao/' + detalhe.aviao.id + '/remover'}" method="post" onsubmit="return confirm('Deseja remover este processamento?');" style="margin-bottom:8px;">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa fa-trash"></i> Excluir processamento
+                        </button>
+                    </form>
+                    <button type="button" class="btn btn-success" onclick="compartilharAviaoWhatsapp()" style="margin-bottom:8px;">
+                        <i class="fa fa-whatsapp"></i> Compartilhar no WhatsApp
+                    </button>
+                    <br />
+                    <a href="/aviao/listar" class="btn btn-default">Voltar ao historico</a>
+                </div>
+            </div>
+
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    Jogadores registrados como aviao:
+                    <span th:text="${detalhe.eliminados.size()}">0</span>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Jogador</th>
+                                <th>Classificacao</th>
+                                <th>Pontuacao atual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <th:block th:each="item : ${detalhe.eliminados}">
+                                <tr>
+                                    <td class="participante-aviao-nome" th:text="${item.participante.usuario.name}">Jogador</td>
+                                    <td th:text="${item.participante.classificacao}">0</td>
+                                    <td th:text="${item.participante.pontuacao}">0</td>
+                                </tr>
+                            </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+
+    <script>
+        function compartilharAviaoWhatsapp() {
+            var nomes = [];
+            document.querySelectorAll('.participante-aviao-nome').forEach(function (el) {
+                var nome = (el.textContent || '').trim();
+                if (nome) {
+                    nomes.push(nome);
+                }
+            });
+
+            var listaParticipantes = nomes.length
+                ? nomes.map(function (nome) { return '- ' + nome; }).join('\n')
+                : '- Nenhum passageiro nesta execucao';
+
+            var mensagem =
+                'ATENCAO\n\n' +
+                'PAI LOLO AIRLINES INFORMA\n\n' +
+                'O aviao com destino ao proximo bolao esta saindo com os seguintes passageiros:\n\n' +
+                listaParticipantes +
+                '\n\nNao deize de ir ate o fim, vamos ver se vcs se livram pelo menos da lanterna';
+
+            var url = 'https://wa.me/?text=' + encodeURIComponent(mensagem);
+            window.open(url, '_blank');
+        }
+    </script>
+
+
+</body>
+
+</html>

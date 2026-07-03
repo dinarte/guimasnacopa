@@ -28,6 +28,8 @@ public interface PalpiteRepository  extends CrudRepository<Palpite, Integer>{
 	
 	public Set<Palpite> findAllByBolaoCompeticao_bolaoAndTipoOrderByBolaoCompeticao(Bolao bolao, String tipo);
 	
+	public Set<Palpite> findAllByParticipanteAndTipoInOrderByBolaoCompeticao(Participante participante, List<String> tipos);
+	
 
 	@Query("select p from Palpite p "
 			+ "left join p.jogo "

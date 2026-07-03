@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+
+            <div th:replace="fragments/main :: messages" />
+
+            <div class="row">
+                <div class="col-lg-9">
+                    <h1 class="page-header">Processamento do Aviao</h1>
+                    <h3>Resultado da execucao</h3>
+                </div>
+                <div class="col-lg-3" style="margin-top: 29px; text-align: right;">
+                    <a href="/aviao/listar" class="btn btn-default">Voltar ao historico</a>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">Resumo</div>
+                <div class="panel-body">
+                    <p>
+                        <strong>Data/Hora da execucao:</strong>
+                        <span th:text="${#dates.format(resultado.aviao.dataHoraProcessamento, 'dd/MM/yyyy HH:mm:ss')}">00/00/0000 00:00:00</span>
+                    </p>
+                    <p>
+                        <strong>Criterio:</strong>
+                        <span th:text="${resultado.descricaoCriterio}">1 lugar</span>
+                    </p>
+                    <p>
+                        <strong>Pontos possiveis restantes:</strong>
+                        <span th:text="${#numbers.formatDecimal(resultado.pontosPossiveisRestantes, 1, 2, 'COMMA')}">0,00</span>
+                    </p>
+                    <p>
+                        <strong th:text="${'Pontuacao de referencia (' + resultado.descricaoCriterio + '):'}">Pontuacao de referencia (1 lugar):</strong>
+                        <span th:text="${#numbers.formatDecimal(resultado.pontuacaoReferencia, 1, 2, 'COMMA')}">0,00</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <span th:text="${'Jogadores sem chance matematica de alcancar o ' + resultado.descricaoCriterio + ':'}">Jogadores sem chance matematica de alcancar o 1 lugar:</span>
+                    <span th:text="${resultado.resultadoParticipantes.size()}">0</span>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Jogador</th>
+                                <th>Pontuacao atual</th>
+                                <th>Pontuacao maxima atingivel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <th:block th:each="item : ${resultado.resultadoParticipantes}">
+                                <tr>
+                                    <td th:text="${item.participante.usuario.name}">Jogador</td>
+                                    <td th:text="${#numbers.formatDecimal(item.pontuacaoAtual, 1, 2, 'COMMA')}">0,00</td>
+                                    <td th:text="${#numbers.formatDecimal(item.pontuacaoMaximaAtingivel, 1, 2, 'COMMA')}">0,00</td>
+                                </tr>
+                            </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+
+
+</body>
+
+</html>

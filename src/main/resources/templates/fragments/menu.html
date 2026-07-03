@@ -1,6 +1,6 @@
 
                      
-            <div th:fragment="menu_principal" class="navbar-default sidebar" role="navigation" th:with="'bolao'=${autenticacao.bolao != null ? autenticacao.bolao : bolao}" >
+            <div th:fragment="menu_principal" class="navbar-default sidebar" role="navigation" th:with="'bolao'=${autenticacao.bolao != null ? autenticacao.bolao : bolao}, 'qtdPendenciasAdmin'=${session.autenticacao != null and session.autenticacao.adminDoBolao and (autenticacao.bolao != null ? autenticacao.bolao : bolao) != null ? @pendenciasAdministrativasService.getPendencias((autenticacao.bolao != null ? autenticacao.bolao : bolao)).totalPendencias : 0}" >
             	
                 <div class="sidebar-nav navbar-collapse">
                
@@ -51,6 +51,19 @@
 		                        <li>
 		                            <a data-loading="loader" href="/participantes"><i class="fa fa-gear fa-fw"></i> Participantes </a>
 		                        </li>
+                                    <li>
+                                        <a data-loading="loader" href="/admin/pendencias">
+                                        	<i class="fa fa-exclamation-triangle fa-fw"></i> Pendencias Admin
+                                        	<span th:if="${qtdPendenciasAdmin > 0}" class="badge badge-danger" th:text="${qtdPendenciasAdmin}">0</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a data-loading="loader" href="/aviao/listar"><i class="fa fa-plane fa-fw"></i> Processar Aviao </a>
+                                    </li>
+			                        
+                                    <li>
+                                        <a data-loading="loader" href="/mongodb/testar-conexao"><i class="fa fa-database fa-fw"></i> Testar MongoDB </a>
+                                    </li>
                             </ul>
                             <!-- /.nav-second-level -->
 		                </li>

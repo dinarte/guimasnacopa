@@ -41,7 +41,10 @@
                         		<th:block th:each="participante : ${participantes}">
 	                        		<tr th:class="${participante.id == autenticacao.participante.id ? 'participante' : ''}">
 	                        			<td><bage th:if="${participante.exibirClassificacaoNoRanking}" th:text="${participante.classificacao + 'ª'}">1</bage></td>
-	                        			<td th:id="${participante.id}" ><a th:href="${'/palpite/'+participante.id+'/consultar'}" th:text="${participante.usuario.name}">Dnarte</a></td>
+	                        			<td th:id="${participante.id}" >
+	                        				<a th:href="${'/palpite/'+participante.id+'/consultar'}" th:text="${participante.usuario.name}">Dnarte</a>
+	                        				<i th:if="${participante.aviao}" class="fa fa-plane text-danger" data-toggle="tooltip" title="Sem chance matematica de alcancar o primeiro lugar"></i>
+	                        			</td>
 	                        			<td th:text="${participante.pontuacao}">180</td>
 	                        			<td><span th:text="${participante.aproveitamento}">100</span>%</td>
 	                        		</tr>

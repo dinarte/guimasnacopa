@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+	<div id="wrapper">
+
+		<nav th:replace="fragments/navigation :: navbar" />
+
+		<div id="page-wrapper">
+
+			<div class="row">
+				<div class="col-lg-12">
+					<h1 class="page-header">Teste de Conexao MongoDB</h1>
+				</div>
+			</div>
+
+			<div th:replace="fragments/main :: messages" />
+
+			<form th:action="@{/mongodb/testar-conexao}" method="post">
+				<div class="form-group">
+					<label for="uri">URI MongoDB:</label>
+					<input type="text" class="form-control" id="uri" name="uri" th:value="${uri}"
+						placeholder="mongodb://usuario:senha@localhost:27017/admin" />
+				</div>
+				<button type="submit" class="btn btn-primary">Testar Conexao</button>
+			</form>
+
+			<div th:if="${resultadoTeste != null && !resultadoTeste.sucesso}" class="panel panel-danger" style="margin-top: 20px;">
+				<div class="panel-heading">Stacktrace do erro</div>
+				<div class="panel-body">
+					<pre th:text="${resultadoTeste.stacktrace}" style="white-space: pre-wrap;"></pre>
+				</div>
+			</div>
+
+		</div>
+		<!-- /#page-wrapper -->
+
+	</div>
+	<!-- /#wrapper -->
+
+	<srcript th:replace="fragments/main :: scrptsblock" />
+
+</body>
+
+</html>

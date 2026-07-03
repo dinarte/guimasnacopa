@@ -29,6 +29,7 @@ import br.com.guimasnacopa.repository.ParticipanteRepository;
 import br.com.guimasnacopa.repository.UserRepository;
 import br.com.guimasnacopa.security.Autenticacao;
 import br.com.guimasnacopa.service.BolaoService;
+import br.com.guimasnacopa.service.PendenciasAdministrativasService;
 import br.com.guimasnacopa.service.StartUpService;
 
 @Controller
@@ -64,6 +65,9 @@ public class HomeController {
 	
 	@Autowired
 	AppMessages appMessages;
+
+	@Autowired
+	PendenciasAdministrativasService pendenciasAdministrativasService;
 	
 	@Autowired LoginController LoginController;
 	
@@ -147,6 +151,12 @@ public class HomeController {
 					autenticacao.getParticipante()));
 			
 			m.addAttribute("bolao", bolao);
+
+			if (autenticacao.isAdminDoBolao()) {
+				var pendencias = pendenciasAdministrativasService.getPendencias(bolao);
+				m.addAttribute("adminTemPendencias", pendencias.hasPendencias());
+				m.addAttribute("adminTotalPendencias", pendencias.getTotalPendencias());
+			}
 			
 	}
 

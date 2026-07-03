@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+
+            <div th:replace="fragments/main :: messages" />
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Pendencias Administrativas</h1>
+                </div>
+            </div>
+
+            <div th:if="${!pendencias.hasPendencias()}" class="panel panel-success">
+                <div class="panel-heading">Nenhuma pendencia administrativa encontrada.</div>
+            </div>
+
+            <div class="panel panel-warning" th:if="${pendencias.jogosEmAndamentoAtrasados.size() > 0}">
+                <div class="panel-heading">
+                    Jogos em andamento ha mais de 2 horas:
+                    <span th:text="${pendencias.jogosEmAndamentoAtrasados.size()}">0</span>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Jogo</th>
+                                <th>Inicio</th>
+                                <th>Acao</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <th:block th:each="jogo : ${pendencias.jogosEmAndamentoAtrasados}">
+                                <tr>
+                                    <td th:utext="${jogo.timesDescricao}">Time A vs Time B</td>
+                                    <td th:text="${#temporals.format(jogo.data, 'dd/MM/yyyy HH:mm')}">00/00/0000 00:00</td>
+                                    <td>
+                                        <form th:action="${'/admin/pendencias/jogo/' + jogo.id + '/encerrar'}" method="post" style="display:inline;">
+                                            <button type="submit" class="btn btn-danger btn-sm">Encerrar jogo</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel panel-danger" th:if="${pendencias.jogosMataMataEmpatadosSemVencedor.size() > 0}">
+                <div class="panel-heading">
+                    Mata-mata empatado sem vencedor definido:
+                    <span th:text="${pendencias.jogosMataMataEmpatadosSemVencedor.size()}">0</span>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Jogo</th>
+                                <th>Placar</th>
+                                <th>Definir vencedor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <th:block th:each="jogo : ${pendencias.jogosMataMataEmpatadosSemVencedor}">
+                                <tr>
+                                    <td th:utext="${jogo.timesDescricao}">Time A vs Time B</td>
+                                    <td th:text="${jogo.timesNoJogo[0].gols + ' x ' + jogo.timesNoJogo[1].gols}">0 x 0</td>
+                                    <td>
+                                        <th:block th:each="tnj : ${jogo.timesNoJogo}">
+                                            <form th:action="${'/admin/pendencias/jogo/' + jogo.id + '/vencedor'}" method="post" style="display:inline; margin-right:4px;">
+                                                <input type="hidden" name="timeNoJogoId" th:value="${tnj.id}" />
+                                                <button type="submit" class="btn btn-primary btn-sm" th:text="${tnj.time.nome}">Time</button>
+                                            </form>
+                                        </th:block>
+                                    </td>
+                                </tr>
+                            </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+
+</body>
+
+</html>

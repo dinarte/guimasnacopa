@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+
+            <div th:replace="fragments/main :: messages" />
+
+            <div class="row">
+                <div class="col-lg-9">
+                    <h1 class="page-header">Processar Aviao</h1>
+                    <h3>Historico de processamentos</h3>
+                </div>
+                <div class="col-lg-3" style="margin-top: 29px; text-align: right;">
+                    <form th:action="@{/aviao/processar}" method="post" style="display:inline;">
+                        <select class="form-control" name="criterio" style="margin-bottom:8px;">
+                            <option th:value="${criterioPrimeiroLugar}" th:selected="${criterioSelecionado == criterioPrimeiroLugar}">Sem chance de chegar ao 1 lugar</option>
+                            <option th:value="${criterioTerceiroLugar}" th:selected="${criterioSelecionado == criterioTerceiroLugar}">Sem chance de chegar ao 3 lugar</option>
+                        </select>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa fa-plane"></i> Processar agora
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Execucao</th>
+                        <th>Criterio</th>
+                        <th>Qtd. eliminados</th>
+                        <th>Detalhes</th>
+                        <th>Remover</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <th:block th:each="item : ${processamentos}">
+                        <tr>
+                            <td th:text="${#dates.format(item.aviao.dataHoraProcessamento, 'dd/MM/yyyy HH:mm:ss')}">00/00/0000 00:00:00</td>
+                            <td th:text="${item.aviao.criterio == 'TERCEIRO_LUGAR' ? '3 lugar' : '1 lugar'}">1 lugar</td>
+                            <td th:text="${item.quantidadeEliminados}">0</td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" th:href="${'/aviao/' + item.aviao.id + '/resultado'}">
+                                    Ver resultado
+                                </a>
+                            </td>
+                            <td>
+                                <form th:action="${'/aviao/' + item.aviao.id + '/remover'}" method="post" onsubmit="return confirm('Deseja remover este processamento?');" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fa fa-trash"></i> Excluir
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </th:block>
+                </tbody>
+            </table>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+
+
+</body>
+
+</html>
