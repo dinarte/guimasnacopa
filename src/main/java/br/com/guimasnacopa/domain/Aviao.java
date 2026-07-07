@@ -19,8 +19,8 @@ public class Aviao {
 	@Column(name = "data_hora_processamento")
 	private Date dataHoraProcessamento;
 
-	@Column(name = "criterio", nullable = false, columnDefinition = "varchar(30) default 'PRIMEIRO_LUGAR'")
-	private String criterio = "PRIMEIRO_LUGAR";
+	@Column(name = "criterio", nullable = false, columnDefinition = "int4 default 1")
+	private Integer criterio = 1;
 
 	@ManyToOne
 	private Bolao bolao;
@@ -41,11 +41,11 @@ public class Aviao {
 		this.dataHoraProcessamento = dataHoraProcessamento;
 	}
 
-	public String getCriterio() {
+	public Integer getCriterio() {
 		return criterio;
 	}
 
-	public void setCriterio(String criterio) {
+	public void setCriterio(Integer criterio) {
 		this.criterio = criterio;
 	}
 

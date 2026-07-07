@@ -45,7 +45,7 @@
                     <th:block th:each="item : ${processamentos}">
                         <tr>
                             <td th:text="${#dates.format(item.aviao.dataHoraProcessamento, 'dd/MM/yyyy HH:mm:ss')}">00/00/0000 00:00:00</td>
-                            <td th:text="${item.aviao.criterio == 'TERCEIRO_LUGAR' ? '3 lugar' : '1 lugar'}">1 lugar</td>
+                            <td th:text="${item.aviao.criterio == 3 ? '3 lugar' : '1 lugar'}">1 lugar</td>
                             <td th:text="${item.quantidadeEliminados}">0</td>
                             <td>
                                 <a class="btn btn-primary btn-sm" th:href="${'/aviao/' + item.aviao.id + '/resultado'}">

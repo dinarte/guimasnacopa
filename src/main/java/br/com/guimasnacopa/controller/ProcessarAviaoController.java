@@ -43,7 +43,7 @@ public class ProcessarAviaoController {
 	}
 
 	@PostMapping("/aviao/processar")
-	public String processar(@RequestParam("criterio") String criterio, Model model)
+	public String processar(@RequestParam("criterio") Integer criterio, Model model)
 			throws LoginException, BolaoNaoSelecionadoException {
 		autenticacao.checkAdminAthorization(model);
 		autenticacao.checkBolaoNaoSelecionado();
